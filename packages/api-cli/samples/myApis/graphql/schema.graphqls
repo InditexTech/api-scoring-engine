@@ -1,0 +1,169 @@
+# GraphQL Example.
+
+"""
+An ISO-8601 encoded UTC date string (YYYY-MM-DDThh:mm:ssZ format).
+"""
+scalar DateTime
+
+"""
+Set of queries. Should include all your (R)ead operations.
+"""
+type Query {
+  """
+  Find all products applying offset-based pagination.
+  """
+  products(
+    "The brand(s) associated with a product or service, or the brand(s) maintained by an organization or business person."
+    brand: String
+    "Paging information."
+    pagination: PaginationInput
+  ): [Product]!
+
+  """
+  Find product by given product id.
+  """
+  product("Unique identifier of the product." productId: ID!): Product!
+}
+
+"""
+Set of mutations. Should include all (C)reate (U)pdate and (D)elete operations.
+"""
+type Mutation {
+  """
+  Creates a new product.
+  """
+  createProduct("Payload of the Product that wants to be created." productInput: ProductInput!): Product!
+
+  """
+  Deletes a product.
+  """
+  deleteProduct("Unique identifier of the product." productId: ID!): Boolean!
+
+  """
+  Updates a product.
+  """
+  updateProduct(
+    "Unique identifier of the product."
+    productId: ID!
+    "Payload of the product that wants to be completely updated"
+    productInput: ProductInput!
+  ): Boolean!
+}
+
+"""
+Generic Item Interface.
+"""
+interface Item {
+  "Item description."
+  description: String
+  "The brand associated with a Item."
+  brand: Brand
+}
+
+"""
+Product Model.
+"""
+type Product implements Item {
+  "Product identifier."
+  productId: ID!
+  "Product name."
+  productName: String!
+  "Product description."
+  description: String
+  "The brand associated with the Product."
+  brand: Brand
+  "A category for the Product. Greater signs or slashes can be used to informally indicate a category hierarchy."
+  category: String
+  "Global Trade Item Number."
+  ean: Int!
+  "Product price."
+  price: Price!
+  "Product Warehouse Location."
+  warehouseLocation: WarehouseLocation
+  "Product tags."
+  tags: [String]
+  "Product production date."
+  productionDate: DateTime
+}
+
+"""
+Price Model.
+"""
+type Price {
+  "Price amount."
+  amount: Float
+  "Price currency"
+  currency: String
+}
+
+"""
+WarehouseLocation Model.
+"""
+type WarehouseLocation {
+  "Wharehouse location latitude."
+  latitude: Float
+  "Wharehouse location longitude."
+  longitude: Float
+}
+
+"""
+The set of Brands supported by `Product`.
+"""
+enum Brand {
+  "sample"
+  SAMPLE
+}
+
+"""
+Input model used for enquire products operation with offset-based paging.
+"""
+input PaginationInput {
+  "Number of items in the current page."
+  limit: Int!
+  "Number of items to skip before selecting items."
+  offset: Int!
+}
+
+"""
+Input model used for create and update product operations.
+"""
+input ProductInput {
+  "Product name."
+  productName: String!
+  "Product description."
+  description: String
+  "The brand associated with the Product."
+  brand: Brand
+  "A category for the Product. Greater signs or slashes can be used to informally indicate a category hierarchy."
+  category: String
+  "Global Trade Item Number."
+  ean: Int!
+  "Product price."
+  price: PriceInput!
+  "Product Warehouse Location."
+  warehouseLocation: WarehouseLocationInput
+  "Product tags."
+  tags: [String]
+  "Product production date."
+  productionDate: DateTime
+}
+
+"""
+Price input model used for create and update product operations.
+"""
+input PriceInput {
+  "Price amount."
+  amount: Float
+  "Price currency"
+  currency: String
+}
+
+"""
+Wharehouse location input model used for create and update product operations.
+"""
+input WarehouseLocationInput {
+  "Wharehouse location latitude."
+  latitude: Float
+  "Wharehouse location longitude."
+  longitude: Float
+}

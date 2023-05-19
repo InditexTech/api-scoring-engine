@@ -1,0 +1,14 @@
+# Configuración para desarrollo local
+node:
+  env: development
+cerws:
+  log:    
+    level: debug
+  common:
+    rest:
+      client:        
+        github-rest-client:
+          base-url: https://github.com
+          auth-method: Basic
+          # username: PUT-YOUR-USERNAME-HERE
+          # password PUT-YOUR-PASSWORD-HERE

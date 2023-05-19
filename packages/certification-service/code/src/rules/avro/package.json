@@ -1,0 +1,14 @@
+{
+    "name": "@inditextech/apicertification-avro-ruleset",
+    "version": "1.0.0",
+    "description": "Inditex OpenSource avro Rulesets to be used on Spectral",
+    "main": "index.js",
+    "scripts": {
+      "clean": "rm -rf node_modules"
+    },
+    "license": "ISC",
+    "dependencies": {
+      "@stoplight/spectral-functions": "^1.7.2",
+      "@stoplight/spectral-rulesets": "^1.15.0"
+    }
+  }

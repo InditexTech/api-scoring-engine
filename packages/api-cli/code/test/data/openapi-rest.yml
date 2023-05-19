@@ -1,0 +1,24 @@
+openapi: 3.0.0
+info:
+  title: API Example
+  version: '1.0.0'
+tags:
+  - name: example
+paths:
+  /exampleendpoint:
+    post:
+      tags:
+        - example
+      summary: Example summary
+      description: Example description
+      operationId: exampleendpoint
+      responses:
+        '201':
+          description: Created - 
+          content:
+            text/plain:
+              schema:
+                type: string 
+                maxLength: 10
+                pattern: ^[a-zA-Z0-9 ]+$
+  

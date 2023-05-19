@@ -1,0 +1,24 @@
+lint:
+  rules:
+    remove:
+      - FILE_HAS_COMMENT
+      - MAX_LINE_LENGTH
+      - ENUM_FIELD_NAMES_PREFIX
+      - FIELDS_HAVE_COMMENT
+      - MESSAGES_HAVE_COMMENT
+      - RPCS_HAVE_COMMENT
+      - SERVICE_NAMES_END_WITH
+  rules_option:
+    max_line_length:
+      max_chars: 140
+      tab_chars: 2
+
+    indent:
+      style: 2
+
+    enum_field_names_zero_value_end_with:
+      suffix: UNSPECIFIED
+
+    repeated_field_names_pluralized:
+      irregular_rules:
+        sku: skus

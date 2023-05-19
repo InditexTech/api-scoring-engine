@@ -1,0 +1,867 @@
+openapi: 3.0.2
+info:
+  title: API Certification
+  description: |-
+    This is Certification & Scoring API 
+
+    ```json
+    [{
+    "apiName": "API Name example",
+    "apiProtocol": "REST",
+    "validationDateTime": "2020-09-21T07:25:48.308Z",
+    "rating": "A",
+    "ratingDescription": "Very Good",
+    "result": [
+      {
+        "designValidation": {
+          "rating": "A",
+          "ratingDescription": "Very Good"
+        },
+        "documentationValidation": {
+          "rating": "A",
+          "ratingDescription": "Very Good"
+        },
+        "securityValidation": {
+            "rating": "A",
+            "ratingDescription": "Very Good"
+        }
+      }
+    ]
+    }]
+    ```
+  version: 2.0.0
+servers:
+  - url: 'http://localhost:8080/apifirst/v1'
+    description: Local environment
+
+tags:
+  - name: Validations
+  - name: Ruleset
+security:
+  - basicAuth: []
+  - bearerAuth: []
+  - apiKeyAuth: []
+paths:
+  /rulesets/refresh:
+    post:
+      tags:
+        - Ruleset
+      summary: 'Service to perform a non CRUD action, it is only for refresh the rulesets'
+      description: This service will perform a non CRUD action on an existing collection
+      operationId: refreshRuleset
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                maxLength: 10
+                pattern: '^[a-zA-Z0-9 ]+$'
+        '400':
+          description: Bad Request - If the resource is misspelled (badly constructed URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400BadRequestError'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401UnauthorizedError'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403ForbiddenError'
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500InternalServerError'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/503ServiceUnavailableError'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/504GatewayTimeOut'
+        default:
+          description: Default Code Description
+          content:
+            text/plain:
+              schema:
+                type: string
+                maxLength: 10
+                pattern: '^[a-zA-Z0-9 ]+$'
+  /validations:
+    post:
+      tags:
+        - Validations
+      summary: Create a validation result from a a zip file (which should contain a repository) or from an repository URL.
+      description: |
+        Parse and validate an API Contract from url - zip file or url from a zipped repository.
+      operationId: validate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/validationRequestRepositoryURL'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/validationRequestForm'
+      responses:
+        '200':
+          description: validations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/arrayOfValidationResponse'
+        '400':
+          description: Bad Request - If the resource is misspelled (badly constructed URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400BadRequestError'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401UnauthorizedError'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403ForbiddenError'
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500InternalServerError'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/503ServiceUnavailableError'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/504GatewayTimeOut'
+        default:
+          description: Default description
+          content:
+            text/plain:
+              schema:
+                type: string
+                maxLength: 10
+                pattern: '^[a-zA-Z0-9 ]+$'
+  '/file-verify-protocol':
+    post:
+      tags:
+        - Validations
+      summary: Service to verify the file content.
+      description: This service verifies the file content. The payload in the request body must contain all the attributes defined for the Resource object (Bussiness Data Schema).
+      operationId: fileVerifyProtocol
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/validationRequestFileURL'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/validationRequestFileForm'
+      responses:
+        '200':
+          description: OK - The resource details were retrieved successfully and they are included in the body of the response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fileVerifyProtocolResponse'
+        '400':
+          description: Bad Request - If the resource is misspelled (badly constructed URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400BadRequestError'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401UnauthorizedError'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403ForbiddenError'
+        '404':
+          description: Not Found - If Resource ID not found or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404NotFoundError'
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500InternalServerError'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/503ServiceUnavailableError'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/504GatewayTimeOut'
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: accessToken
+  schemas:
+    apiProtocols:
+      type: integer
+      description: "API protocol: 1: REST, 2: EVENT, 3: GRPC"
+      example: 1
+      format: int32
+      maximum: 3
+      minimum: 1
+      enum:
+        - 1
+        - 2
+        - 3      
+    validationTypes:
+      type: integer
+      description: "Validation type: 1: DESIGN, 2: DOCUMENTATION, 3: SECURITY, 4: OVERALL_SCORE"
+      example: 1
+      format: int32
+      maximum: 4
+      minimum: 1
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+    apiIdentifier:
+      properties:
+        apiName:
+          type: string
+          pattern: '^[a-zA-Z0-9_. -]*$'
+          maxLength: 100
+          description: API Name
+          example: API Name example
+        apiProtocol:
+          $ref: '#/components/schemas/apiProtocols'
+    validationRequestRepositoryURL:
+      type: object
+      additionalProperties: false
+      properties:
+        url:
+          type: string
+          pattern: '^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$'
+          maxLength: 255
+          description: Repository to be certified
+          example: 'https://github.com/inditex/app-apiraptor/archive/refs/heads/main.zip'
+        isVerbose:
+          type: boolean
+          example: false
+          description: If all the rules brokens should come in the response. Defaults to false
+        validationType:
+          $ref: '#/components/schemas/validationTypes'
+      required:
+        - url
+        - validationType
+    validationRequestFileURL:
+      type: object
+      additionalProperties: false
+      properties:
+        url:
+          type: string
+          pattern: '^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$'
+          maxLength: 255
+          description: Repository to be certified
+          example: 'https://github.com/inditex/mic-apicertification/blob/develop/apigateway/INTERNAL-APICERTIFICATION/apigateway.yml'
+        apiProtocol:
+          $ref: '#/components/schemas/apiProtocols'
+      required:
+        - url
+        - apiProtocol
+    validationRequestForm:
+      type: object
+      additionalProperties: false
+      properties:
+        url:
+          type: object
+          additionalProperties: false
+          format: binary
+          description: zip to be validated        
+        isVerbose:
+          type: boolean
+          description: If all the rules brokens should come in the response. Defaults to false
+          example: false        
+        validationType:
+          $ref: '#/components/schemas/validationTypes'        
+      required:
+        - url
+        - validationType
+    validationRequestFileForm:
+      type: object
+      additionalProperties: false
+      properties:
+        url:
+          type: object
+          additionalProperties: false
+          format: binary
+          description: yaml file to be validated
+        apiProtocol:
+          $ref: '#/components/schemas/apiProtocols'          
+      required:
+        - url
+        - apiProtocol
+    arrayOfValidationResponse:
+      type: array
+      maxItems: 20
+      items:
+        $ref: '#/components/schemas/validationResponse'
+    fileVerifyProtocolResponse:
+      type: object
+      properties:
+        hasErrors:
+          type: boolean
+          description: If the file has errors or not
+          example: true
+        results:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/spectralRule'
+      additionalProperties: false
+
+    moduleDescription:
+      additionalProperties: false
+      type: object
+      properties:
+        rating:
+          type: string
+          example: A
+          description: 'Rating value - i.e. (A, B, C, D, etc.)'
+          maxLength: 2
+          pattern: '^[A-D]{1}\+?'
+          enum:
+            - A+
+            - A
+            - B
+            - C
+            - D
+        ratingDescription:
+          type: string
+          example: Very Good
+          description: Rating Description of the Rating Letter
+          pattern: ^\S*
+          maxLength: 20
+        score:
+          $ref: '#/components/schemas/score'
+    spectralRule:
+      type: object
+      additionalProperties: false
+      properties:
+        fileName:
+          type: string
+          description: Name of the file that is being validated
+          pattern: '^[a-zA-Z0-9_. -]*$'
+          maxLength: 100
+          example: openapi.yaml
+        code:
+          type: string
+          pattern: '^[a-z-]+$'
+          maxLength: 100
+          example: ensure-basepath-version
+          description: Rule validation name
+        message:
+          type: string
+          example: url version should be v3"
+          description: Rule description
+          pattern: ^\S*
+          maxLength: 100
+        severity:
+          type: integer
+          description: Error level
+          example: 1
+          format: int32
+          maximum: 10000
+          minimum: 1
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+        source:
+          type: string
+          description: the source file where the issue was found
+          example: rest/v1/address/address-api.yml
+          pattern: ^\S*
+          maxLength: 100
+        range:
+          $ref: '#/components/schemas/range'
+        path:
+          type: array
+          description: Path of the error
+          maxItems: 10
+          example:
+            - path
+          items:
+            type: string
+            example: path
+            description: Path of the error
+            pattern: '^[a-zA-Z0-9]+$'
+            maxLength: 300
+    
+    range:
+      type: object
+      description: Range of the error
+      additionalProperties: false
+      properties:
+        start:
+          $ref: '#/components/schemas/position'
+        end:
+          $ref: '#/components/schemas/position'
+
+    position:
+      type: object
+      additionalProperties: false
+      description: Start of the error
+      properties:
+        line:
+          type: integer
+          description: Line number
+          example: 1
+          format: int32
+          maximum: 10000
+          minimum: 1
+        character:
+          type: integer
+          description: Character number
+          example: 1
+          format: int32
+          maximum: 10000
+          minimum: 1
+            
+    spectralValidation:
+      type: object
+      additionalProperties: false
+      nullable: true
+      properties:
+        issues:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/spectralRule'
+
+    documentationRule:
+      type: object
+      additionalProperties: false
+      properties:
+        fileName:
+          type: string
+          description: Name of the file that is being validated
+          pattern: '^[a-zA-Z0-9_. -]*$'
+          maxLength: 100
+          example: readme.MD
+        lineNumber:
+          type: integer
+          format: int32
+          maximum: 10000
+          minimum: 1
+          example: 1
+          description: Line number of the validation
+        ruleDescription:
+          type: string
+          example: Trailing spaces
+          description: Description of the validation rule
+          pattern: ^\S*
+          maxLength: 100
+        ruleInformation:
+          type: string
+          example: 'https://github.com/DavidAnson/markdownlint/blob/v0.24.0/doc/Rules.md#md009'
+          description: Link of the rule on the open source repository
+          pattern: ^\S*
+          maxLength: 100
+        errorDetail:
+          type: string
+          example: 'Expected: 0 or 2; Actual: 1'
+          maxLength: 100
+          pattern: ^\S*
+        ruleName:
+          type: array
+          maxItems: 10
+          example:
+            - md009
+          items:
+            type: string
+            example: MD009
+            description: Name of the rule
+            pattern: ^\S*
+            maxLength: 100
+        severity:
+          type: integer
+          description: Error level
+          example: 1
+          format: int32
+          maximum: 4
+          minimum: 1
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+
+    documentationValidation:
+      type: object
+      nullable: true
+      allOf:
+        - $ref: '#/components/schemas/moduleDescription'
+      additionalProperties: false
+      properties:
+        issues:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/documentationRule'
+
+    protolintRule:
+      type: object
+      additionalProperties: false
+      properties:
+        fileName:
+          type: string
+          description: Name of the file that is being validated
+          pattern: '^[a-zA-Z0-9_. -]*$'
+          maxLength: 100
+          example: tested.proto
+        line:
+          type: integer
+          format: int32
+          maximum: 10000
+          minimum: 1
+          example: 1
+          description: Line number of the validation
+        column:
+          type: integer
+          description: Column number
+          format: int32
+          maximum: 10000
+          minimum: 0
+          example: 1
+        message:
+          type: string
+          example: 'found "\"package\" but expected [syntax]'
+          description: Rule description
+          pattern: ^\S*
+          maxLength: 100
+        rule:
+          type: string
+          example: 'ENUMS_HAVE_INDITEX_COMMENT'
+          description: Rule's unique ID
+          pattern: ^\S*
+          maxLength: 100
+        severity:
+          type: integer
+          description: Error level
+          example: 1
+          format: int32
+          maximum: 4
+          minimum: 1
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+
+    protolintValidation:
+      type: object
+      nullable: true
+      additionalProperties: false
+      properties:
+        issues:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/protolintRule'
+
+    validationResponse:
+      allOf:
+        - $ref: '#/components/schemas/apiIdentifier'
+      type: object
+      additionalProperties: false
+      properties:
+        validationDateTime:
+          type: string
+          format: date-time
+          example: '2020-09-21T07:25:48.308Z'
+          maxLength: 32
+        rating:
+          type: string
+          example: A
+          description: 'Rating value - i.e. (A, B, C, D, etc.)'
+          maxLength: 2
+          pattern: '^[A-D]{1}\+?'
+          enum:
+            - A+
+            - A
+            - B
+            - C
+            - D
+        ratingDescription:
+          type: string
+          example: Very Good
+          description: Rating Description of the Rating Letter
+          pattern: ^\S*
+          maxLength: 20
+        score:
+          $ref: '#/components/schemas/score'
+        result:
+          type: array
+          maxItems: 5
+          description: Results of the validation for each module
+          items:
+            $ref: '#/components/schemas/moduleValidation'
+        validationResult:
+          type: string
+          maxLength: 32
+          pattern: '^\S*'
+          description: Returns OK or NOT OKAY if the validation is greater than B
+          example: 'NOT_OKAY'
+        hasErrors:
+          type: boolean
+          description: Indicates if there are errors in the validation
+          example: true
+    designValidation:
+      type: object
+      additionalProperties: false
+      title: Module Validation
+      description: Validation for each module
+      allOf:
+        - $ref: '#/components/schemas/moduleDescription'
+      properties:
+        spectralValidation:
+          $ref: '#/components/schemas/spectralValidation'
+        protolintValidation:
+          $ref: '#/components/schemas/protolintValidation'
+        
+
+    moduleValidation:
+      type: object
+      additionalProperties: false
+      title: Module Validation
+      description: Validation for each module
+      properties:
+        designValidation:
+          $ref: '#/components/schemas/designValidation'
+        documentationValidation:
+          $ref: '#/components/schemas/documentationValidation'
+        securityValidation:
+          $ref: '#/components/schemas/designValidation'
+
+    score:
+      type: number
+      format: float
+      minimum: 0
+      maximum: 100
+      example: 77
+      description: Score of the validation
+    errorObject:
+      title: errorObject
+      type: object
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          maxLength: 3
+          pattern: '^[1-5]{1}[0-9]{2}$'
+          description: Error code
+          example: '400'
+        description:
+          type: string
+          maxLength: 50
+          pattern: '^[a-zA-Z ]+$'
+          description: Error description
+          example: Bad Request
+        level:
+          type: string
+          description: Error level
+          example: ERROR
+          enum:
+            - INFO
+            - ERROR
+            - WARNING
+            - FATAL
+        message:
+          type: string
+          description: Error message (detailed description)
+          maxLength: 255
+          pattern: '^[a-zA-Z.,()/ ]+$'
+          example: 'Invalid Request. Please, check the data in the request (QueryString Parameters and/or Body).'
+      description: Error details
+      example:
+        code: '400'
+        description: Bad Request
+        level: ERROR
+        message: 'Invalid Request. Please, check the data in the request (QueryString Parameters and/or Body).'   
+    
+    400BadRequestError:
+      title: 400BadRequestError
+      type: object
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          description: Details of each of the errors
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/errorObject'
+      description: List of errors
+      example:
+        errors:
+          - code: '400'
+            description: Bad Request
+            level: ERROR
+            message: 'Invalid Request. Please, check the data in the request (QueryString Parameters and/or Body).'
+    401UnauthorizedError:
+      title: 401UnauthorizedError
+      type: object
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          description: Details of each of the errors
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/errorObject'
+      description: List of errors
+      example:
+        errors:
+          - code: '401'
+            description: Unauthorized Error
+            level: ERROR
+            message: Unauthorized Error. The API client is not allowed to consume this resource. Check the user credentials.
+    403ForbiddenError:
+      title: 403ForbiddenError
+      type: object
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          description: Details of each of the errors
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/errorObject'
+      description: List of errors
+      example:
+        errors:
+          - code: '403'
+            description: Forbidden Error
+            level: ERROR
+            message: Forbidden Error. The user is not allowed to executed this operation.
+    404NotFoundError:
+      title: 404NotFoundError
+      type: object
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          description: Details of each of the errors
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/errorObject'
+      description: List of errors
+      example:
+        errors:
+          - code: '404'
+            description: Resouce not found
+            level: ERROR
+            message: 'Resouce not found. Please, check the ResourceId specified.'
+    500InternalServerError:
+      title: 500InternalServerError
+      type: object
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          description: Details of each of the errors
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/errorObject'
+      description: List of errors
+      example:
+        errors:
+          - code: '500'
+            description: Internal Server Error
+            level: ERROR
+            message: Internal Server Error. The server encountered an unexpected condition that prevented it from fulfilling the request.
+    503ServiceUnavailableError:
+      title: 503ServiceUnavailableError
+      type: object
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          maxItems: 20
+          description: Details of each of the errors
+          items:
+            $ref: '#/components/schemas/errorObject'
+      description: List of errors
+      example:
+        errors:
+          - code: '503'
+            description: Service Unavailable Error
+            level: ERROR
+            message: Service Unavailable Error. The server is temporarily unable to handle a request.
+    504GatewayTimeOut:
+      title: 504GatewayTimeout
+      type: object
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          maxItems: 20
+          description: Details of each of the errors
+          items:
+            $ref: '#/components/schemas/errorObject'
+      description: List of errors
+      example:
+        errors:
+          - code: '504'
+            description: Gateway Time Out
+            level: ERROR
+            message: Gateway Time Out. The server did not receive a timely response.

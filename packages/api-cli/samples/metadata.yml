@@ -1,0 +1,17 @@
+apis:
+  - name: "REST Sample"
+    api-spec-type: rest
+    definition-path: myApis/rest
+    definition-file: contract/openapi-rest.yml
+  - name: "AsyncAPI PIPE Sample"
+    api-spec-type: event
+    definition-path: myApis/asyncapi-pipe
+    definition-file: asyncapi.yml
+  - name: "AsyncAPI JMS Sample"
+    api-spec-type: event
+    definition-path: myApis/asyncapi-jms
+    definition-file: asyncapi.yml
+  - name: "AsyncAPI Streams Sample"
+    api-spec-type: event
+    definition-path: myApis/asyncapi-streams
+    definition-file: asyncapi.yml

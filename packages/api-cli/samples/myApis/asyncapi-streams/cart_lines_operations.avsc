@@ -1,0 +1,46 @@
+[
+  {
+    "name": "cartLine",
+    "namespace": "com.sample.example.dtos",
+    "type": "record",
+    "doc": "Cart Line",
+    "fields": [
+      {
+        "name": "id",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "namespace": "com.sample.example.dtos",
+    "type": "record",
+    "name": "RemoveLine",
+    "doc": "This is the remove line message",
+    "fields": [
+      {
+        "name": "skus",
+        "type": {
+          "type": "array",
+          "items": "cartLine"
+        },
+        "doc": "Items to remove"
+      }
+    ]
+  },
+  {
+    "namespace": "com.sample.example.dtos",
+    "type": "record",
+    "name": "AddLine",
+    "doc": "This is the add line message",
+    "fields": [
+      {
+        "name": "skus",
+        "type": {
+          "type": "array",
+          "items": "cartLine"
+        },
+        "doc": "Items to add"
+      }
+    ]
+  }
+]

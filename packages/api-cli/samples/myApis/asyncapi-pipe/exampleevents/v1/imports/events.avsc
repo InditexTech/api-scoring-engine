@@ -1,0 +1,20 @@
+[
+  {
+    "type": "record",
+    "name": "ExampleEvent",
+    "doc": "Example Event",
+    "namespace": "com.sample.events.v2",
+    "fields": [
+      {
+        "name": "id",
+        "type": "string",
+        "doc": "Example id"
+      },
+      {
+        "name": "failures",
+        "type": "int",
+        "doc": "Number of failures to simulate while processing this event for the purpose of the blueprint"
+      }
+    ]
+  }
+]

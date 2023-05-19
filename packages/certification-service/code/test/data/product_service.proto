@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package samples.grpc;
+
+import "test/grpc/validation/validation.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_package = "com.example.grpc";
+/**
+* Product definition
+*/
+message Product{
+  string  product_id = 1 [(test.grpc.validation.min) = 1 , (test.grpc.validation.regex) = "^[A-Za-z0-9-]{0,20}$"];
+  
+  string  product_name = 2 [ (test.grpc.validation.mandatory) = true , (test.grpc.validation.min) = 1 ,
+    (test.grpc.validation.regex) = "^[A-Za-z0-9 .]{0,40}$"];
+  
+  string  description = 3 [(test.grpc.validation.regex) = "^[A-Za-z0-9 .]{0,100}$"];
+  string  brand = 4 [(test.grpc.validation.regex) = "^[A-Za-z0-9-]{0,20}$"];
+  
+  string  category = 5 [(test.grpc.validation.regex) = "^[A-Za-z0-9-]{0,30}$"];
+  
+  int64   ean = 6 [ (test.grpc.validation.mandatory) = true , (test.grpc.validation.min) = 1 ,
+    (test.grpc.validation.regex) = "^[A-Za-z0-9-]{0,13}$"];
+  Price   price = 7 [ (test.grpc.validation.mandatory) = true , (test.grpc.validation.min) = 1];
+  WarehouseLocation   warehouse_location = 8;  
+  string  production_date =9 [(test.grpc.validation.regex) =
+    "^([0-9]{4}-[0-1]{1}[0-9]{1}-[0-3]{1}[0-9]{1}T[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}Z)"];
+}
+
+/**
+* Product identification.
+*/
+message ProductId{
+  string product_id = 1;
+}
+/**
+* Delete product response
+*/
+message DeletedProductId{
+  string code = 1;
+  string description = 2;
+}
+
+/**
+* Pagination
+*/
+message Pagination{
+  //@exclude pagination support
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+/**
+* Every time that we use amounts we should retrieve a currency.
+*/
+message Price{
+  
+  float   amount = 1;
+  
+  string  currency = 2   [ (test.grpc.validation.regex) = "[A-Z]{3}$" ];
+}
+
+message WarehouseLocation{
+  double  latitude = 1;
+  double  longitude = 2;
+}
+
+
+message ListProductsFilterRequest{
+  
+  Brand brand = 1;
+}
+
+
+message ListProductsResponse{
+  repeated Product product_lists = 1;
+  string next_page_token = 2;  //@exclude pagination support
+  int32 page_Size = 3;
+  string page_token = 4;
+}
+
+
+enum Brand{
+  BRAND_UNSPECIFIED = 0;
+  ZARA = 1;
+  STRADIVARIUS = 2;
+  BERSHKA = 3;
+  MASSIMO_DUTTI = 4;
+  OYSHO = 5;
+}
+
+
+service ProductService{
+  rpc CreateProduct (Product) returns (Product) {};
+  rpc UpdateProduct (Product) returns (google.protobuf.Empty) {};
+  rpc FindProductsByFilter(ListProductsFilterRequest) returns (ListProductsResponse) {};
+  rpc DeleteProduct(ProductId) returns (DeletedProductId) {};
+  rpc FindProductById (ProductId) returns (Product) {};
+  rpc FindAllProducts(Pagination) returns (ListProductsResponse) {};
+}

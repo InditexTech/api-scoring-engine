@@ -1,0 +1,944 @@
+openapi: 3.0.2
+info:
+  title: Sample
+  contact:
+    name: API TEAM
+    email: lddapifirst@inditex.com
+  description: |-
+    This is an API Checklist Example of Products. Mandatory Headers and HTTP Status Codes are already added to the YAML file as well as a sample of
+    each of the operations than can be implemented. 
+  version: 1.2.1
+security:
+- {}
+servers:
+- url: https://myhost/v1
+tags:
+- name: Products
+
+paths:
+  /products:
+    get:
+      tags:
+      - Products
+      summary: Service to fetch the list of products.
+      description: |
+        This service fetches the list of the products. Some QueryString
+        Parameters can be added to filter the results. In the response there will
+        be a subset of the attributes of the Business Data Schema, a link to retrieve
+        the complete details of each of the products in the list and the pagination
+        links.
+
+        Send brand param with ERROR403, ERROR503, ERROR504 TO CHECK ERRORS.
+      operationId: findAllProducts
+      parameters:
+      - name: brand
+        in: query
+        description: The brand(s) associated with a product or service, or the brand(s) maintained by an organization or business person.
+        schema:
+          maxLength: 30
+          type: string
+          enum:
+            - ZARA
+            - STRADIVARIUS
+            - BERSHKA
+            - MASSIMO_DUTTI
+            - OYSHO
+            - ERROR403
+            - ERROR503
+            - ERROR504
+          pattern: ^[A-Za-z0-9-]{0,200}$
+        example: ZARA
+      - name: limit
+        in: query
+        description: It indicates the amount of elements so be retrieved by page.
+          It is an optional value, if it is not informed, the API will retrieve the
+          default amount of elements.
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 2147483647
+          default: 20
+        example: 15
+      - name: offset
+        in: query
+        description: It indicates the amount of elements so be skipped in the pagination.
+        schema:
+          type: integer
+          format: int32
+          default: 20
+          minimum: 0
+          maximum: 2147483647
+        example: 15
+      responses:
+        '200':
+          description: OK - The list of products was retrieved successfully and it
+            is included in the body of the response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productListEnquiryResponse'
+        '204':
+          description: No Content - The service was executed successfully but there
+            are no products to show - Empty Body
+        '400':
+          description: Bad Request - If the product is misspelled (badly constructed
+            URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client
+            does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user
+            did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors
+            that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the
+            server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/errorObject'
+                        
+    post:
+      tags:
+      - Products
+      summary: Service to create a new product in the collection.
+      description: This service creates a new product in the collection. The payload
+        in the request body must contain all the mandatory attributes defined for
+        the product object (Business Data Schema). The response will contain the
+        product identifier and the link to retrieve the complete details of the product.
+      operationId: createProduct
+      requestBody:
+        description: Payload of the Product that wants to be created (It must contain
+          all the mandatory attributes defined for the product object (Bussiness
+          Data Schema))
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/productObject'
+        required: true
+      responses:
+        '201':
+          description: Created OK - The product was created successfully and its identifier
+            and link to the details are included in the body of the response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productCreationResponse'
+        '400':
+          description: Bad Request - If the product is misspelled (badly constructed
+            URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client
+            does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user
+            did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+                
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors
+            that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the
+            server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/errorObject'
+
+  /products/{productId}:
+    get:
+      tags:
+      - Products
+      summary: Service to retrieve the details of a particular product.
+      description: This service retrieves the details of a particular product. The
+        payload in the response body must contain all the attributes defined for the
+        product object (Bussiness Data Schema).
+      operationId: findProductById
+      parameters:
+      - name: productId
+        in: path
+        description: Unique identifier of the product.
+        required: true
+        schema:
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9-]{0,20}$
+        example: 'r3s0urc31d01'
+      responses:
+        '200':
+          description: OK - The product details were retrieved successfully and they
+            are included in the body of the response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productObject'
+        '400':
+          description: Bad Request - If the product is misspelled (badly constructed
+            URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client
+            does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user
+            did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '404':
+          description: Not Found - If product ID not found or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors
+            that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the
+            server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/errorObject'
+                
+    put:
+      tags:
+      - Products
+      summary: Service to completely update an existing product or create a new one
+        (if the informed productId did not exist).
+      description: This service completely updates an existing product or creates
+        a new one (if the informed productId did not exist) in the collection. The
+        payload in the request body must contain all the mandatory attributes defined
+        for the product object (Bussiness Data Schema). If the informed productId
+        did not exist and it results in the creation of a new product, the response
+        will contain the product identifier and the link to retrieve the complete
+        details of the product.
+      operationId: modifyProduct
+      parameters:
+      - name: productId
+        in: path
+        description: Unique identifier of the product.
+        required: true
+        schema:
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9-]{0,20}$
+        example: 'r3s0urc31d01'
+      requestBody:
+        description: Payload of the product that wants to be completely updated or
+          created (if the informed productId did not exist). It must contain all
+          the mandatory attributes defined for the product object (Bussiness Data
+          Schema)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/productObject'
+        required: true
+      responses:
+        '200':
+          description: Update OK - The resource was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productCreationResponse'
+
+        '201':
+          description: Created OK - The informed productId did not exist, so the product
+            was created successfully and its identifier and link to the details are
+            included in the body of the response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productCreationResponse'
+        '204':
+          description: No Content - The product was successfully updated - Empty
+            Body
+        '400':
+          description: Bad Request - If the product is misspelled (badly constructed
+            URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client
+            does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user
+            did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors
+            that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the
+            server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/errorObject'
+                
+    delete:
+      tags:
+      - Products
+      summary: Service to delete an existing product.
+      description: |
+        This service deletes an existing product. The response will contain
+        any warning information regarding the deletion.
+
+        "DELETE" in productId param to check 409 ERROR.
+      operationId: deleteProduct
+      parameters:
+      - name: productId
+        in: path
+        description: Unique identifier of the product.
+        required: true
+        schema:
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9-]{0,20}$
+        example: 'r3s0urc31d01'
+      responses:
+        '200':
+          description: OK - The product was deleted successfully but there is adittional
+            information (WARNING) to show to the consumer through the body of the
+            response (For example, orphan products).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productDeleteResponse'
+        '204':
+          description: No Content - The product was successfully deleted - Empty
+            Body
+        '400':
+          description: Bad Request - If the product is misspelled (badly constructed
+            URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client
+            does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user
+            did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '404':
+          description: Not Found - If product ID not found or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '409':
+          description: Conflict - If there is a conflict why the product cannot be
+            deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors
+            that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the
+            server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/errorObject'
+    patch:
+      tags:
+      - Products
+      summary: Service to partially update an existing product.
+      description: This service partially updates an existing product. The payload
+        in the request body will only contain the attributes defined in the product
+        object (Bussiness Data Schema) that are requested to be updated.
+      operationId: modifyProductPartially
+      parameters:
+      - name: productId
+        in: path
+        description: Unique identifier of the product.
+        required: true
+        schema:
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9-]{0,20}$
+        example: 'r3s0urc31d01'
+      requestBody:
+        description: Payload of the product that wants to be updated. It will only
+          contain the attributes defined in the product object (Bussiness Data Schema)
+          that are requested to be updated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/productObject'
+        required: true
+      responses:
+        '204':
+          description: No Content - The product was successfully updated - Empty
+            Body
+        '400':
+          description: Bad Request - If the product is misspelled (badly constructed
+            URI) / If the data in the request is not correct.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '401':
+          description: Unauthorized - If the API requires subscription and the client
+            does not have it / If there is a problem with the User Credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '403':
+          description: Forbidden - If OAuth Access Token is invalid / If the user
+            did not pass the operational security.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '404':
+          description: Not Found - If product ID not found or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'                                            
+        '500':
+          description: Internal Server Error - Use it as a General System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '503':
+          description: Service Unavailable - Use it to report the Specific Errors
+            that the server suffers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        '504':
+          description: Gateway Timeout - Use it to report a Timeout occurred on the
+            server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorObject'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/errorObject'               
+
+components:
+  securitySchemes:
+    itxBasicAuth: # arbitrary name for security scheme
+      type: http
+      scheme: basic
+ 
+    itxBearerAuth: # arbitrary name for security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT # this is an arbitrary, and optional, free text
+ 
+    itxApiKeyAuth:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header      
+      name: accessToken  # name of the header
+
+  schemas:    
+    productListEnquiryResponse:
+      title: productListEnquiryResponse
+      type: object
+      additionalProperties: false
+      properties:
+        data:
+          type: array
+          maxItems: 100
+          description: Subset of attributes for each of the retrieved products.
+          items:
+              $ref: '#/components/schemas/extendedProductObject'
+        pagination:
+          $ref: '#/components/schemas/paginationLinksObject'
+      description: List of the retrieved products + Pagination information
+
+
+    productCreationResponse:
+      title: productCreationResponse
+      type: object
+      additionalProperties: false
+      properties:
+        productId:
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9-]{0,20}$
+          description: product identifier.
+          example: r3s0urc31d01
+        links:
+          $ref: '#/components/schemas/selfLinkObject'
+      description: product identifier and link to the details of the product that
+        has just been created.
+      example:
+        productId: r3s0urc31d01
+        links:
+          self:
+            href: /products/r3s0urc31d01
+
+
+    productDeleteResponse:
+      title: productDeleteResponse
+      type: object
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          maxLength: 6
+          pattern: ^[A-Za-z0-9-]{0,6}$
+          description: Additional Information code.
+          example: OR-001
+        description:
+          type: string
+          maxLength: 1000
+          pattern: ^[A-Za-z0-9- ,.]{0,1000}$
+          description: Description of the additional information.
+          example: Orphan products
+        level:
+          type: string
+          maxLength: 7
+          pattern: ^[A-Z]{0,7}$
+          description: Level of the additional information.
+          example: WARNING
+          enum:
+          - INFO
+          - WARNING
+        message:
+          type: string
+          maxLength: 1000
+          pattern: ^[A-Za-z0-9 .,-]{0,1000}$
+          description: Additional information.
+          example: The deleted products has left orphan products to be taken care
+            of.
+      description: Additional information regarding the deletion of a product.
+      example:
+        code: OR-001
+        description: Orphan products
+        level: WARNING
+        message: The deleted products has left orphan products to be taken care
+          of.
+
+    selfLinkObject:
+      title: selfLinkObject
+      type: object
+      additionalProperties: false
+      properties:
+        self:
+          type: object
+          additionalProperties: false
+          properties:
+            href:
+              type: string
+              maxLength: 2000
+              pattern: ^[A-Za-z0-9/+:.#?\-_&={}]{0,2000}$
+              description: Relative path of the URI of the operation productDetailsEnquiry
+                with the resurceId of the response.
+              example: /products/r3s0urc31d01
+          description: Link to the details of the product.
+      description: Link to the details of the product.
+      example:
+        self:
+          href: /products/r3s0urc31d01
+
+    paginationLinksObject:
+      title: paginationLinksObject
+      type: object
+      additionalProperties: false
+      properties:
+        limit:
+          type: integer
+          description: Number of items in the current page.
+          format: int32
+          example: 20
+          minimum: 1
+          maximum: 100
+        offset:
+          type: integer
+          description: Number of items in the current page.
+          format: int32
+          minimum: 0
+          maximum: 2147483647
+          example: 100
+        links:
+          type: object
+          additionalProperties: false
+          description: Relative path of the URI of first page of the operationproductListEnquiry based on the offset and limit sent in the request.
+          properties:
+            self:
+              type: string
+              maxLength: 2000
+              pattern: ^[A-Za-z0-9/+:.#?\-_&=]{0,2000}$
+              description: Relative path of the URI of previous page of the operation  productListEnquiry based on the offset and limit sent in the request.Link to the current page of the list of the products.
+              example: '/products/?offset=50&limit=50'
+            prev:
+              type: string
+              maxLength: 2000
+              pattern: ^[A-Za-z0-9/+:.#?\-_&=]{0,2000}$
+              description: Relative path of the URI of previous page of the operation
+                    productListEnquiry based on the offset and limit sent in the request.
+              example: '/products?limit=20&offset=20'
+            next:
+              type: string
+              maxLength: 2000
+              pattern: ^[A-Za-z0-9/+:.#?\-_&=]{0,2000}$
+              description: Relative path of the URI of next page of the operation
+                    productListEnquiry based on the offset and limit sent in the request.
+              example: '/products?limit=20&offset=60'
+            first:
+              type: string
+              maxLength: 2000
+              pattern: ^[A-Za-z0-9/+:.#?\-_&=]{0,2000}$
+              description: Link to the first page of the list of the respurces.
+              example: '/products?limit=20'
+
+    amountObject:
+      title: amountObject
+      type: object
+      additionalProperties: false
+      properties:
+        amount:
+          type: number
+          description: Amount.
+          format: float
+          example: 123.45
+          minimum: 0
+          maximum: 999
+          x-faker:
+            datatype.float:
+              # options:
+              min: 0
+              max: 999
+              precision: 0.01
+        currency:
+          type: string
+          maxLength: 3
+          pattern: ^[A-Z]{0,3}$
+          description: Currency of the Amount.
+          example: EUR
+          x-faker: finance.currencyCode
+      description: Standarised object for the amount (amount & currency)
+      example:
+        amount: 123.45
+        currency: EUR
+    
+    warehouseLocation:
+      title: warehouseLocation
+      type: object
+      additionalProperties: false
+      properties:
+        latitude:
+          type: number
+          format: double
+          description: Latitude
+          minimum: -90
+          maximum: 90
+          example: -75.78
+          x-faker:
+            datatype.float:
+              min: -90
+              max: 90
+              precision: 0.01
+        longitude:
+          type: number
+          format: double
+          description: Longitude
+          minimum: -90
+          maximum: 90
+          example: 20.4
+          x-faker:
+            datatype.float:
+              min: -90
+              max: 90
+              precision: 0.01
+    
+    tags:
+      title: productTags
+      type: array
+      maxItems: 5
+      description: Tags to identify products
+      example:
+      - Textil
+      - Zara
+      items:
+        type: string
+        maxLength: 30
+        pattern: ^[A-Za-z0-9]{0,30}$
+        description: Description of the attributeTnArray.
+        example: attributeTenValue
+        x-faker: company.bsBuzz
+  
+    productObject:
+      title: productObject
+      type: object
+      additionalProperties: false
+      properties:
+        productId:
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9-]{0,20}$
+          description: Product identifier.
+          example: r3s0urc31d01
+          x-faker: commerce.product
+        productName:
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9 .]{0,40}$
+          description: Product name.
+          example: Trousers
+          x-faker: commerce.productName
+        description:
+          type: string
+          maxLength: 100
+          pattern: ^[A-Za-z0-9 .]{0,100}$
+          description: Product description
+          example: Product example
+          x-faker: 
+            random.words: 4
+        brand:
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9-]{0,20}$
+          description: The brand(s) associated with a product or service, or the brand(s) maintained by an organization or business person..
+          example: Zara
+          x-faker: random.word
+        category: 
+          type: string
+          maxLength: 20
+          pattern: ^[A-Za-z0-9-]{0,30}$
+          description: A category for the item. Greater signs or slashes can be used to informally indicate a category hierarchy.
+          example: Textil
+          x-faker: commerce.productAdjective
+        ean:
+          type: number
+          format: int64
+          minimum: 0
+          maximum: 9999999999999
+          pattern: ^[A-Za-z0-9-]{0,13}$
+          description: Global Trade Item Number 
+          example: 9123456789041
+          x-faker:
+            datatype.number:
+              min: 1000000000000
+              max: 9999999999999
+          # x-faker: random.numeric
+        price:
+          $ref: '#/components/schemas/amountObject'
+        warehouseLocation:
+          $ref: '#/components/schemas/warehouseLocation'
+        tags:
+          $ref: '#/components/schemas/tags'
+        productionDate:
+          type: string
+          description: Reusable Date-Time type definition
+          format: "YYYY-MM-DDThh:mm:ssZ"
+          pattern: ^([0-9]{4}-[0-1]{1}[0-9]{1}-[0-3]{1}[0-9]{1}T[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}Z)
+          example: '2019-11-30T16:22:40Z'
+          maxLength: 20
+      required:
+        - productName
+        - ean
+        - price
+
+    extendedProductObject:
+      allOf:
+      - $ref: '#/components/schemas/productObject'
+      - type: object
+        additionalProperties: false
+        properties:
+          links:
+            $ref: '#/components/schemas/selfLinkObject'
+
+
+    errorObject:
+      title: errorObject
+      type: object
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          maxLength: 7
+          pattern: ^[a-z0-9]
+          description: Error code
+          example: "400"
+        title:
+          type: string
+          description: 'Error title'
+          example: 'Bad Request'
+          maxLength: 1000
+        description:
+          type: string
+          maxLength: 100
+          pattern: ^[A-Za-z0-9 .]
+          description: Error description
+          example: Bad Request
+        level:
+          type: string
+          maxLength: 7
+          pattern: ^[A-Z]
+          description: Error level
+          example: ERROR
+          enum:
+          - INFO
+          - ERROR
+          - WARNING
+          - FATAL
+        message:
+          type: string
+          maxLength: 1000
+          pattern: ^[A-Za-z0-9 .,\-()\/\n\t]
+          description: Error message (detailed description)
+          example: Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).
+        status:
+          type: integer
+          description: Error status
+          format: int32
+          maximum: 999
+          minimum: 100
+          example: 400
+        detail:
+          type: string
+          description: 'Error detail'
+          example: 'Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).'
+          maxLength: 5000

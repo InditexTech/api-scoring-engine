@@ -1,0 +1,23 @@
+# Editor
+.vscode
+.idea
+# Build
+code/dist
+# Local config
+.npmrc
+# Logs
+*.log
+*.heapsnapshot
+# Dependencies
+node_modules
+# Tests
+
+coverage
+test-report.json
+
+.DS_store
+nodejs_dc.log
+nodejs_restclient.log
+
+code/test/data/rules
+code/src/bin

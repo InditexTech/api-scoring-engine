@@ -1,0 +1,299 @@
+[
+  {
+    "name": "subLine",
+    "namespace": "com.sample.cart.v1",
+    "type": "record",
+    "doc": "subline",
+    "fields": [
+      {
+        "name": "ffm_id",
+        "type": ["null", "long"],
+        "default": null
+      },
+      {
+        "name": "ffm_operation_type_id",
+        "type": ["null", "long"],
+        "default": null
+      },
+      {
+        "name": "ffm_type_id",
+        "type": ["null", "long"],
+        "default": null
+      },
+      {
+        "name": "preference_customer",
+        "type": ["null", "boolean"],
+        "default": null
+      },
+      {
+        "name": "pre_sale_type",
+        "type": ["null", "int"],
+        "default": null
+      },
+      {
+        "name": "stock_source_code",
+        "type": ["null", "string"],
+        "default": null
+      }
+    ]
+  },
+  {
+    "name": "stock",
+    "namespace": "com.sample.cart.v1",
+    "doc": "This is a stock",
+    "type": "record",
+    "fields": [
+      {
+        "name": "sub_lines",
+        "type": {
+          "type": "array",
+          "items": "subLine"
+        }
+      }
+    ]
+  },
+  {
+    "name": "device",
+    "namespace": "com.sample.cart.v1",
+    "doc": "This is a device",
+    "type": "record",
+    "fields": [
+      {
+        "name": "channel",
+        "type": ["null", "string"],
+        "default": null
+      },
+      {
+        "name": "type",
+        "type": ["null", "string"],
+        "default": null
+      },
+      {
+        "name": "os",
+        "type": ["null", "string"],
+        "default": null
+      }
+    ]
+  },
+  {
+    "name": "origin",
+    "namespace": "com.sample.cart.v1",
+    "type": "record",
+    "doc": "origin",
+    "fields": [
+      {
+        "name": "category_id",
+        "type": ["null", "long"],
+        "default": null
+      },
+      {
+        "name": "parent_id",
+        "type": ["null", "long"],
+        "default": null
+      },
+      {
+        "name": "quantity",
+        "type": "long"
+      },
+      {
+        "name": "last_update",
+        "type": "string"
+      },
+      {
+        "name": "device",
+        "type": ["null", "device"],
+        "default": null
+      }
+    ]
+  },
+  {
+    "name": "reference",
+    "namespace": "com.sample.cart.v1",
+    "doc": "This is a reference",
+    "type": "record",
+    "fields": [
+      {
+        "name": "id",
+        "type": "long"
+      },
+      {
+        "name": "part_number",
+        "type": ["null", "string"],
+        "default": null
+      },
+      {
+        "name": "parent_id",
+        "type": "long"
+      }
+    ]
+  },
+  {
+    "name": "price",
+    "namespace": "com.sample.cart.v1",
+    "type": "record",
+    "doc": "This is a price",
+    "fields": [
+      {
+        "name": "amount",
+        "type": "long"
+      },
+      {
+        "name": "currency",
+        "type": "string"
+      },
+      {
+        "name": "exponent",
+        "type": ["null", "int"],
+        "default": null
+      }
+    ]
+  },
+  {
+    "name": "line",
+    "namespace": "com.sample.cart.v1",
+    "doc": "Line",
+    "type": "record",
+    "fields": [
+      {
+        "name": "wcs_item_id",
+        "doc": "wcs_item_id",
+        "type": "long"
+      },
+      {
+        "name": "quantity",
+        "doc": "quantity",
+        "type": "int"
+      },
+      {
+        "name": "type",
+        "doc": "type",
+        "type": "string"
+      },
+      {
+        "name": "brand_group_id",
+        "doc": "brand_group_id",
+        "type": ["null", "long"],
+        "default": null
+      },
+      {
+        "name": "extended_info",
+        "doc": "extended_info",
+        "type": ["null", "string"],
+        "default": null
+      },
+      {
+        "name": "creation_date_time",
+        "type": "string"
+      },
+      {
+        "name": "update_date_time",
+        "type": "string"
+      },
+      {
+        "name": "price",
+        "type": ["null", "price"],
+        "default": null
+      },
+      {
+        "name": "reference",
+        "type": ["null", "reference"],
+        "default": null
+      },
+      {
+        "name": "origins",
+        "type": {
+          "type": "array",
+          "items": "origin"
+        }
+      },
+      {
+        "name": "stock",
+        "type": ["null", "stock"],
+        "default": null
+      }
+    ]
+  },
+  {
+    "name": "cart",
+    "namespace": "com.sample.cart.v1",
+    "doc": "This is a cart",
+    "type": "record",
+    "fields": [
+      {
+        "name": "wcs_id",
+        "type": "long",
+        "doc": "wcs_id"
+      },
+      {
+        "name": "owner_id",
+        "type": "long",
+        "doc": "owner id"
+      },
+      {
+        "name": "wcs_store_id",
+        "type": "long",
+        "doc": "wcs_store_id"
+      },
+      {
+        "name": "lines",
+        "doc": "lines",
+        "type": {
+          "type": "array",
+          "items": "line"
+        }
+      },
+      {
+        "name": "created_at",
+        "type": "string",
+        "doc": "created_at"
+      },
+      {
+        "name": "last_updated_at",
+        "type": "string",
+        "doc": "last update"
+      }
+    ]
+  },
+  {
+    "name": "LinesRemovedEvent",
+    "namespace": "com.sample.cart.v1",
+    "type": "record",
+    "doc": "linesRemovedEvent",
+    "subject": "meccano.purchase.cart.v1-value",
+    "fields": [
+      {
+        "name": "lines",
+        "doc": "lines",
+        "type": {
+          "type": "array",
+          "items": "long"
+        }
+      },
+      {
+        "name": "cart",
+        "type": "cart"
+      }
+    ]
+  },
+  {
+    "name": "LinesAddedEvent",
+    "namespace": "com.sample.cart.v1",
+    "type": "record",
+    "doc": "linesAddedEvent",
+    "subject": "meccano.purchase.cart.v1-value",
+    "fields": [
+      {
+        "name": "lines",
+        "doc": "lines",
+        "type": {
+          "type": "array",
+          "items": "long"
+        }
+      },
+      {
+        "name": "cart",
+        "type": "cart"
+      }
+    ]
+  }
+]

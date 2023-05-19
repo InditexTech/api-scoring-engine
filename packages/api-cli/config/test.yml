@@ -1,0 +1,2 @@
+app:
+  certification-service-base-url: "http://localhost:8080/apifirst/"

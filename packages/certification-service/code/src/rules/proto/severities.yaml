@@ -1,0 +1,6 @@
+# global:
+#   rules:
+#     severities:
+#         - 
+#           id: SAMPLE_RULE_ID
+#           severity: 0
