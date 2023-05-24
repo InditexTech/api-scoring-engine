@@ -4,6 +4,17 @@
   "description": "API certification service",
   "author": "Inditex Open Source Team",
   "license": "UNLICENSED",
+  "files": [
+    "src/config",
+    "src/controllers",
+    "src/evaluate",
+    "src/format",
+    "src/log",
+    "src/scoring",
+    "src/usecase",
+    "src/utils",
+    "src/verify"
+  ],
   "scripts": {
     "build": "node ./scripts/buildApp",
     "postinstall": "node ./scripts/postInstall",
