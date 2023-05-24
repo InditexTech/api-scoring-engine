@@ -1,9 +1,5 @@
 const { Spectral, Document } = require("@stoplight/spectral-core");
 const Parsers = require("@stoplight/spectral-parsers");
-const { fetch } = require("@stoplight/spectral-runtime");
-const { bundleAndLoadRuleset } = require("@stoplight/spectral-ruleset-bundler/with-loader");
-const { builtins } = require("@stoplight/spectral-ruleset-bundler/plugins/builtins");
-const commonjs = require("@rollup/plugin-commonjs");
 const { INFO_SEVERITY } = require("./severity");
 const { getAppLogger } = require("../log");
 const fs = require("fs");

@@ -15,6 +15,7 @@ class LintRuleset {
   static AVRO_GENERAL = new LintRuleset(
     path.join(process.cwd(), configValue("cerws.lint.avro.general-default-ruleset")),
   );
+
   rulesetPath;
   numberOfRules;
 

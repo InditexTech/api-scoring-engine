@@ -1,5 +1,5 @@
 const { evaluate } = require("../../src/evaluate/spectralEvaluate");
-const { LintRulesets } = require("../../src/evaluate/lint/lintRulesets");
+const { LintRuleset } = require("../../src/evaluate/lint/lintRuleset");
 
 const path = require("path");
 
@@ -35,7 +35,7 @@ const resultsForCode = (results, code) => {
 
 describe("Tests Spectral Evaluation", () => {
   test("spectral REST evaluation on almost empty yaml must return results including info-contact result code", async () => {
-    const evaluationResult = await evaluate(LintRulesets.REST_GENERAL.rulesetPath, emptyOpenAPIFilePath);
+    const evaluationResult = await evaluate(LintRuleset.REST_GENERAL.rulesetPath, emptyOpenAPIFilePath);
 
     const result = resultsForCode(evaluationResult, "info-contact");
 
@@ -48,7 +48,7 @@ describe("Tests Spectral Evaluation", () => {
 
   test("spectral EVENT evaluation with http ref for our bitbucket should have invalid-ref due to certificate issues", async () => {
     const filePath = path.join(__dirname, "../data/asyncapi.yml");
-    const evaluationResult = await evaluate(LintRulesets.EVENT_GENERAL.rulesetPath, filePath);
+    const evaluationResult = await evaluate(LintRuleset.EVENT_GENERAL.rulesetPath, filePath);
 
     const result = resultsForCode(evaluationResult, "invalid-ref");
 
@@ -57,7 +57,7 @@ describe("Tests Spectral Evaluation", () => {
   });
 
   test("spectral REST evaluation with custom rules - Endpoint with no 400 response code defined, should have post-http-status-codes-collections", async () => {
-    const evaluationResult = await evaluate(LintRulesets.REST_GENERAL.rulesetPath, faultyOpenAPIFilePath);
+    const evaluationResult = await evaluate(LintRuleset.REST_GENERAL.rulesetPath, faultyOpenAPIFilePath);
 
     const result = resultsForCode(evaluationResult, "post-http-status-codes-collections");
 
@@ -66,7 +66,7 @@ describe("Tests Spectral Evaluation", () => {
   });
 
   test("spectral REST Security evaluation with custom rules - no security defined, so should have error saying so", async () => {
-    const evaluationResult = await evaluate(LintRulesets.REST_SECURITY.rulesetPath, faultyOpenAPIFilePath);
+    const evaluationResult = await evaluate(LintRuleset.REST_SECURITY.rulesetPath, faultyOpenAPIFilePath);
 
     const testObject = evaluationResult[0];
 

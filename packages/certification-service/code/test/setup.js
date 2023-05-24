@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 const Koa = require("koa");
+const { LintRuleset } = require("../src/evaluate/lint/lintRuleset");
+const { DocumentationRuleset } = require("../src/evaluate/documentation/documentationRuleset");
 
 const app = new Koa();
 
@@ -15,6 +17,10 @@ async function setUpHttpServer() {
     }
   });
   const server = app.listen(8080);
+
+  await LintRuleset.updateKnownRulesets();
+  DocumentationRuleset.updateKnownRulesets();
+
   return server;
 }
 
