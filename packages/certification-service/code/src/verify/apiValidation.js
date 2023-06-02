@@ -9,6 +9,7 @@ const {
   SCORES_WEIGHTS_BY_VALIDATION_TYPE,
   SCORES_WEIGHTS_BY_VALIDATION_TYPE_WITHOUT_SECURITY,
   API_PROTOCOL,
+  NUMBER_OF_GRPC_RULES,
 } = require("./types.js");
 const { calculateRating } = require("../scoring/grades");
 const {
@@ -146,7 +147,7 @@ function scoreLinterValidations(design, apiProtocol) {
   const spectralIssues = design.designValidation.spectralValidation.issues;
   const grpcIssues = design.designValidation.protolintValidation.issues;
 
-  return arrayIsNotEmpty(spectralIssues) ? scoreLinting(spectralIssues, numberOfRules) : scoreGRPCLinting(grpcIssues);
+  return arrayIsNotEmpty(spectralIssues) ? scoreLinting(spectralIssues, numberOfRules) : scoreGRPCLinting(grpcIssues, NUMBER_OF_GRPC_RULES);
 }
 
 function resolveNumberOfRulesByProtocol(protocol) {

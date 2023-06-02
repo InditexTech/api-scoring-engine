@@ -12,7 +12,7 @@ class EventLinter {
       if (!validationType || validationType === VALIDATION_TYPE_DESIGN) {
         const issues = await lintFileWithSpectral({
           file,
-          ruleset: LintRuleset.EVENT_GENERAL.rulesetPath,
+          ruleset: this.resolveEventGeneralRuleset().rulesetPath,
         });
         issues.forEach((issue) => {
           issue.message = issue.code == "invalid-ref" ? INVALID_REF_CUSTOMIZED : issue.message;
@@ -28,7 +28,7 @@ class EventLinter {
       for (const avroFile of avroFiles) {
         const issues = await lintFileWithSpectral({
           file: avroFile,
-          ruleset: LintRuleset.AVRO_GENERAL.rulesetPath,
+          ruleset: this.resolveAvroGeneralRuleset().rulesetPath,
         });
         issues.forEach((issue) => {
           issue.fileName = cleanFileName(avroFile, rootFolder);
@@ -38,6 +38,14 @@ class EventLinter {
         design.designValidation.spectralValidation.issues.push(...issues);
       }
     }
+  }
+
+  static resolveEventGeneralRuleset () {
+    return LintRuleset.EVENT_GENERAL;
+  }
+
+  static resolveAvroGeneralRuleset () {
+    return LintRuleset.AVRO_GENERAL;
   }
 }
 

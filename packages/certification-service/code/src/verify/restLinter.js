@@ -8,7 +8,7 @@ class RestLinter {
     if (!validationType || validationType === VALIDATION_TYPE_DESIGN) {
       const issues = await lintFileWithSpectral({
         file,
-        ruleset: LintRuleset.REST_GENERAL.rulesetPath,
+        ruleset: this.resolveGeneralRuleset().rulesetPath,
       });
       addFileNameToIssues(issues, fileName, rootFolder, tempFolder);
       apiValidation.hasErrors = checkForErrors(apiValidation, issues);
@@ -18,7 +18,7 @@ class RestLinter {
     if (!validationType || validationType === VALIDATION_TYPE_SECURITY) {
       const issues = await lintFileWithSpectral({
         file,
-        ruleset: LintRuleset.REST_SECURITY.rulesetPath,
+        ruleset: this.resolveSecurityRuleset().rulesetPath,
       });
 
       addFileNameToIssues(issues, fileName, rootFolder, tempFolder);
@@ -26,6 +26,14 @@ class RestLinter {
       issues.forEach((issue) => (issue.source = issue.fileName));
       security.securityValidation.spectralValidation.issues.push(...issues);
     }
+  }
+
+  static resolveGeneralRuleset() {
+    return LintRuleset.REST_GENERAL;
+  }
+
+  static resolveSecurityRuleset() {
+    return LintRuleset.REST_SECURITY;
   }
 }
 

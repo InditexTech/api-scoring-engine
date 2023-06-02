@@ -85,6 +85,7 @@ cerws:
     markdown-lint-api-custom-rules: "/src/rules/documentation/markdownlint/linting-rules/api-rules/apiRules.js"
     number-of-minimum-lines: 5
     number-of-minimum-line-size: 2
+    custom-rule-prefixes: ["custom"]
     scoring:
       rules-weights:
         base-rules: 0.3
