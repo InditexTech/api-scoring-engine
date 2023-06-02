@@ -20,9 +20,9 @@ const PROTOCOL_TYPES = Object.values(API_PROTOCOL);
 const isValidValidateRequest = ({ url, validationType }) => {
   isValidRepositoryUrl(url);
 
-  if (isNaN(validationType) || !VALIDATION_TYPES.includes(validationType)) {
+  if (validationType && !VALIDATION_TYPES.includes(validationType)) {
     throwAppError(
-      `Invalid validation type: ${validationType}. Supported values are 1 (DESIGN) | 2 (DOCUMENTATION) | 3 (SECURITY) | 4 (OVERALL_SCORE)`,
+      `Invalid validation type: ${validationType}. Supported values are DESIGN | DOCUMENTATION | SECURITY | OVERALL_SCORE`,
     );
   }
 };
@@ -49,10 +49,10 @@ const isValidValidateFileRequest = ({ url, apiProtocol }) => {
   }
 
   if (!apiProtocol) {
-    throwAppError("File validation requires the 'apiProtocol': possible values are 1 (REST) | 2 (EVENT) | 3 (GRPC)");
+    throwAppError("File validation requires the 'apiProtocol': possible values are REST | EVENT | GRPC");
   }
-  if (isNaN(apiProtocol) || !PROTOCOL_TYPES.includes(apiProtocol)) {
-    throwAppError("File validation requires the 'apiProtocol' to be a valid protocol: 1 (REST) | 2 (EVENT) | 3 (GRPC)");
+  if (!PROTOCOL_TYPES.includes(apiProtocol)) {
+    throwAppError("File validation requires the 'apiProtocol' to be a valid protocol: REST | EVENT | GRPC");
   }
 };
 

@@ -259,7 +259,7 @@ describe("Tests Validation Controller", () => {
       request: {
         body: {
           url: `http://localhost:${port}/data/openapi-rest2.yml`,
-          apiProtocol: 1,
+          apiProtocol: "REST",
         },
       },
       response: {},
@@ -284,7 +284,7 @@ describe("Tests Validation Controller", () => {
           },
         },
         body: {
-          apiProtocol: 1,
+          apiProtocol: "REST",
         },
       },
       response: {},
@@ -309,7 +309,7 @@ describe("Tests Validation Controller", () => {
           },
         },
         body: {
-          apiProtocol: 3,
+          apiProtocol: "GRPC",
         },
       },
       response: {},

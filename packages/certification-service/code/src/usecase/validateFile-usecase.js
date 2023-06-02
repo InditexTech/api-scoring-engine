@@ -5,6 +5,7 @@ const { downloadFile } = require("../utils/downloadUtils");
 const { lintFilesWithProtolint, lintFileWithSpectral, generateRandomFolder } = require("../verify/lint");
 const { checkForErrors } = require("../verify/utils");
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
+const { API_PROTOCOL } = require("../verify/types");
 
 const logger = getAppLogger();
 module.exports.execute = async (url, apiProtocol) => {
@@ -33,19 +34,19 @@ module.exports.execute = async (url, apiProtocol) => {
 
     let results;
     switch (apiProtocol) {
-      case 1:
+      case API_PROTOCOL.REST:
         results = await lintFileWithSpectral({
           file,
           ruleset: LintRuleset.REST_GENERAL.rulesetPath,
         });
         break;
-      case 2:
+      case API_PROTOCOL.EVENT:
         results = await lintFileWithSpectral({
           file,
           ruleset: LintRuleset.EVENT_GENERAL.rulesetPath,
         });
         break;
-      case 3:
+      case API_PROTOCOL.GRPC:
         const protolintResults = await lintFilesWithProtolint(file, new Map());
         results = formatProtolintIssues(protolintResults);
         break;

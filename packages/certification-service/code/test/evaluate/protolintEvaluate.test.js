@@ -33,7 +33,7 @@ describe("Tests Protolint Evaluation", () => {
 
     cp.exec.mockImplementation((command, callback) => callback(null, protolintSampleOutput));
 
-    const evaluationResult = await protolintEvaluate([filePath]);
+    const evaluationResult = await protolintEvaluate([filePath], new Map());
 
     expect(evaluationResult).toHaveLength(1);
     expect(evaluationResult).toBeDefined();
@@ -45,7 +45,7 @@ describe("Tests Protolint Evaluation", () => {
     cp.exec.mockImplementation((command, callback) =>
       callback(null, 'Protolint output failed client.Client(), err=exec: "sh": executable file not found in %PATH%'),
     );
-    const evaluationResult = await protolintEvaluate([filePath]);
+    const evaluationResult = await protolintEvaluate([filePath], new Map());
     expect(evaluationResult).toHaveLength(1);
     expect(evaluationResult[0].rule).toBe("PROTOLINT_FAILED");
   });

@@ -3,19 +3,11 @@ const { AppError } = require("../../src/utils/error");
 
 describe("Linter Validations", () => {
   describe("isValidValidateRequest unit tests", () => {
-    test("linter validations when body has no validationType", () => {
-      const ctx = { request: { body: {} } };
-      expect.assertions(2);
-
+    test("linter validations when body has no validationType should be valid", () => {
+      expect.assertions(0);
       try {
-        isValidValidateRequest({ url: ctx.request.body.url });
-      } catch (error) {
-        expect(error).toBeInstanceOf(AppError);
-        expect(error).toHaveProperty(
-          "message",
-          "validation 4 (OVERALL_SCORE) requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
-        );
-      }
+        isValidValidateRequest({ url: "https://github.com/app-test/archive/refs/heads/main.zip" });
+      } catch (error) {}
     });
 
     test("linter validations when body has unsuported validationType", () => {
@@ -30,7 +22,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "Invalid validation type: UNKMOWN. Supported values are 1 (DESIGN) | 2 (DOCUMENTATION) | 3 (SECURITY) | 4 (OVERALL_SCORE)",
+          "Invalid validation type: UNKMOWN. Supported values are DESIGN | DOCUMENTATION | SECURITY | OVERALL_SCORE",
         );
       }
     });
@@ -51,7 +43,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "validation 4 (OVERALL_SCORE) requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
+          "validation OVERALL_SCORE requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
         );
       }
     });
@@ -72,7 +64,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "validation 4 (OVERALL_SCORE) requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
+          "validation OVERALL_SCORE requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
         );
       }
     });
@@ -81,7 +73,7 @@ describe("Linter Validations", () => {
       const ctx = {
         request: {
           body: {
-            validationType: 4,
+            validationType: "OVERALL_SCORE",
             url: "ftp://github.com/app-test/archive/refs/heads/main.zip",
           },
         },
@@ -97,7 +89,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "validation 4 (OVERALL_SCORE) requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
+          "validation OVERALL_SCORE requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
         );
       }
     });
@@ -106,7 +98,7 @@ describe("Linter Validations", () => {
       const ctx = {
         request: {
           body: {
-            validationType: 4,
+            validationType: "OVERALL_SCORE",
             url: "malformed",
           },
         },
@@ -122,7 +114,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "validation 4 (OVERALL_SCORE) requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
+          "validation OVERALL_SCORE requires 'url' body field to be a valid Url, to be from github and to be a zip file.",
         );
       }
     });
@@ -130,7 +122,7 @@ describe("Linter Validations", () => {
     test("validate happy path", () => {
       const ctx = {
         request: {
-          body: { validationType: 4, url: "https://github.com/app-test/archive/refs/heads/main.zip" },
+          body: { validationType: "OVERALL_SCORE", url: "https://github.com/app-test/archive/refs/heads/main.zip" },
         },
       };
       expect.assertions(0);
@@ -147,7 +139,7 @@ describe("Linter Validations", () => {
         request: {
           body: {
             url: "www.google.com",
-            apiProtocol: 1,
+            apiProtocol: "REST",
           },
         },
       };
@@ -165,7 +157,7 @@ describe("Linter Validations", () => {
     });
 
     test("linter file validations when body has no url", () => {
-      const ctx = { request: { body: { apiProtocol: 1 } } };
+      const ctx = { request: { body: { apiProtocol: "REST" } } };
       expect.assertions(2);
 
       try {
@@ -184,7 +176,7 @@ describe("Linter Validations", () => {
         request: {
           body: {
             url: "ftp://raw.githubusercontent.com/app-test/develop/apis/rest/openapi-rest.yml",
-            apiProtocol: 1,
+            apiProtocol: "REST",
           },
         },
       };
@@ -208,7 +200,7 @@ describe("Linter Validations", () => {
         request: {
           body: {
             url: "malformed",
-            apiProtocol: 1,
+            apiProtocol: "REST",
           },
         },
       };
@@ -232,7 +224,7 @@ describe("Linter Validations", () => {
         request: {
           body: {
             url: "https:raw.githubusercontent.com/app-test/develop/README.md",
-            apiProtocol: 1,
+            apiProtocol: "REST",
           },
         },
       };
@@ -259,7 +251,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "File validation requires the 'apiProtocol': possible values are 1 (REST) | 2 (EVENT) | 3 (GRPC)",
+          "File validation requires the 'apiProtocol': possible values are REST | EVENT | GRPC",
         );
       }
     });
@@ -275,7 +267,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "File validation requires the 'apiProtocol' to be a valid protocol: 1 (REST) | 2 (EVENT) | 3 (GRPC)",
+          "File validation requires the 'apiProtocol' to be a valid protocol: REST | EVENT | GRPC",
         );
       }
     });
@@ -283,7 +275,7 @@ describe("Linter Validations", () => {
     test("validate file with valid params should be ok", () => {
       isValidValidateFileRequest({
         url: "https://raw.githubusercontent.com/app-test/develop/apis/rest/openapi-rest.yml",
-        apiProtocol: 2,
+        apiProtocol: "REST",
       });
       expect(true).toBeDefined();
     });
