@@ -5,7 +5,6 @@ const commandLineUsage = require("command-line-usage");
 
 const { verify } = require("./verify");
 const { verifyFile } = require("./verify-file");
-const { refreshRuleset } = require("./refresh-ruleset");
 
 const startCli = () => {
   let mainDefinitions = [{ name: constants.NAME_COMMAND, defaultOption: true }];
@@ -27,20 +26,14 @@ const startCli = () => {
     case constants.VERIFY_FILE_COMMAND:
       verifyFile({ argv });
       break;
-    case constants.REFRESH_RULESET_COMMAND:
-      refreshRuleset({ argv });
-      break;
     default:
-      const runOptions = commandLineArgs(
-        constants.MAIN_RUN_DEFINITIONS_COMMANDS,
-        {
-          argv,
-          stopAtFirstUnknown: true,
-        }
-      );
+      const runOptions = commandLineArgs(constants.MAIN_RUN_DEFINITIONS_COMMANDS, {
+        argv,
+        stopAtFirstUnknown: true,
+      });
       if (!runOptions.help) {
         console.error(
-          `${constants.UNRECOGNIZED_OPTION_PREFIX_MESSAGE}${mainCommand.name}${constants.UNRECOGNIZED_OPTION_SUFFIX_MESSAGE}`
+          `${constants.UNRECOGNIZED_OPTION_PREFIX_MESSAGE}${mainCommand.name}${constants.UNRECOGNIZED_OPTION_SUFFIX_MESSAGE}`,
         );
       }
       help();
