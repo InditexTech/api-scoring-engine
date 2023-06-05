@@ -39,7 +39,6 @@ cerws:
           auth-method: Basic
           username: ---
           password:
-          lint-repository-folder: "/src/rules"
 
   certification:
     scoring:
