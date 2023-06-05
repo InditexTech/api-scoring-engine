@@ -10,7 +10,7 @@ const logger = getAppLogger();
 
 module.exports.validate = async (ctx, next) => {
   const { isVerbose, validationType } = ctx.request.body;
-  const url = (ctx.request.files && ctx.request.files.url) || ctx.request.body.url;
+  const url = (ctx.request.files && ctx.request.files.file) || ctx.request.body.url;
 
   isValidValidateRequest({ url, validationType });
 
@@ -29,7 +29,7 @@ module.exports.validate = async (ctx, next) => {
 };
 
 module.exports.validateFile = async (ctx, next) => {
-  const url = (ctx.request.files && ctx.request.files.url) || ctx.request.body.url;
+  const url = (ctx.request.files && ctx.request.files.file) || ctx.request.body.url;
   const { apiProtocol } = ctx.request.body;
 
   isValidValidateFileRequest({ url, apiProtocol });
