@@ -4,19 +4,22 @@ const { AppError } = require("../utils/error");
 const { httpStatusCodes } = require("../utils/httpStatusCodes");
 const validateRepositoryUseCase = require("../usecase/validateRepository-usecase");
 const validateFileUseCase = require("../usecase/validateFile-usecase");
+const { VALIDATION_TYPE_OVERALL_SCORE } = require("../verify/types");
 
 const logger = getAppLogger();
 
 module.exports.validate = async (ctx, next) => {
   const { isVerbose, validationType } = ctx.request.body;
-  const url = (ctx.request.files && ctx.request.files.url) || ctx.request.body.url;
+  const url = (ctx.request.files && ctx.request.files.file) || ctx.request.body.url;
 
-  const validationTypeNumber = parseInt(validationType);
-
-  isValidValidateRequest({ url, validationType: validationTypeNumber });
+  isValidValidateRequest({ url, validationType });
 
   try {
-    const results = await validateRepositoryUseCase.execute(url, validationTypeNumber, isVerbose);
+    const results = await validateRepositoryUseCase.execute(
+      url,
+      validationType || VALIDATION_TYPE_OVERALL_SCORE,
+      isVerbose,
+    );
     ctx.body = results;
     ctx.status = httpStatusCodes.HTTP_OK;
   } catch (e) {
@@ -26,13 +29,12 @@ module.exports.validate = async (ctx, next) => {
 };
 
 module.exports.validateFile = async (ctx, next) => {
-  const url = (ctx.request.files && ctx.request.files.url) || ctx.request.body.url;
+  const url = (ctx.request.files && ctx.request.files.file) || ctx.request.body.url;
   const { apiProtocol } = ctx.request.body;
 
-  const apiProtocolNumber = parseInt(apiProtocol);
-  isValidValidateFileRequest({ url, apiProtocol: apiProtocolNumber });
+  isValidValidateFileRequest({ url, apiProtocol });
   try {
-    const result = await validateFileUseCase.execute(url, apiProtocolNumber);
+    const result = await validateFileUseCase.execute(url, apiProtocol);
     ctx.body = result;
     ctx.status = httpStatusCodes.HTTP_OK;
   } catch (e) {

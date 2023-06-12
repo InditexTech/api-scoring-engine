@@ -14,33 +14,35 @@ const CUSTOM_RULES_NAMES = {
 class DocumentationLinter {
   static async lintDocumentation(validationType, rootFolder, api, documentation) {
     if (!validationType || validationType === VALIDATION_TYPE_DOCUMENTATION) {
-      const readmeIssues = await this.validateReadme(rootFolder, api);
+      const apiReadmeFile = {
+        fullPath: path.join(rootFolder, api["definition-path"], "README.md"),
+        fileName: path.join(api["definition-path"], "README.md").replace(/\\/g, "/"),
+        type: "API README",
+        customRules: DocumentationRuleset.API.resolvedRuleset,
+      };
+
+      const readmeIssues = await this.validateReadme(apiReadmeFile);
+
       documentation.documentationValidation.issues.push(...readmeIssues);
     }
   }
 
-  static async validateReadme(rootFolder, api) {
-    const apiReadmeFile = {
-      fullPath: path.join(rootFolder, api["definition-path"], "README.md"),
-      fileName: path.join(api["definition-path"], "README.md").replace(/\\/g, "/"),
-      customRules: DocumentationRuleset.API.resolvedRuleset,
-    };
+  static async validateReadme(readmeFile) {
     const issues = [];
-    const readmePath = apiReadmeFile.fullPath;
-    const readmeFileType = "API README";
+    const readmePath = readmeFile.fullPath;
 
     if (fs.existsSync(readmePath)) {
-      if (checkMarkdownContent(readmePath)) {
-        issues.push(...(await lintFileWithMarkdownLint(readmePath, apiReadmeFile.customRules)));
-        issues.forEach((issue) => (issue.fileName = apiReadmeFile.fileName));
+      if (this.checkMarkdownContent(readmePath)) {
+        issues.push(...(await lintFileWithMarkdownLint(readmePath, readmeFile.customRules)));
+        issues.forEach((issue) => (issue.fileName = readmeFile.fileName));
       } else {
         issues.push({
           lineNumber: 1,
           ruleNames: [CUSTOM_RULES_NAMES.README_MUST_HAVE_CONTENT, "custom-readme-does-not-have-content"],
-          ruleDescription: `${readmeFileType} hasn't enough content`,
+          ruleDescription: `${readmeFile.type} hasn't enough content`,
           //ruleInformation: "TBD",
           errorDetail: null,
-          errorContext: `${readmeFileType} hasn't enough content`,
+          errorContext: `${readmeFile.type} hasn't enough content`,
           errorRange: null,
           severity: ERROR_SEVERITY,
         });
@@ -50,10 +52,10 @@ class DocumentationLinter {
       issues.push({
         lineNumber: 1,
         ruleNames: [CUSTOM_RULES_NAMES.README_MUST_EXISTS, "custom-readme-does-not-exist"],
-        ruleDescription: `${readmeFileType} file must exist`,
+        ruleDescription: `${readmeFile.type} file must exist`,
         //ruleInformation: "TBD",
         errorDetail: null,
-        errorContext: `${readmeFileType} file must exist`,
+        errorContext: `${readmeFile.type} file must exist`,
         errorRange: null,
         severity: ERROR_SEVERITY,
       });
@@ -61,17 +63,17 @@ class DocumentationLinter {
 
     return issues;
   }
-}
 
-const checkMarkdownContent = (filePath) => {
-  const data = fs.readFileSync(filePath, "utf8");
-  const nrValuableLines = data
-    .toString()
-    .split("\n")
-    .filter((x) => x.length > configValue("cerws.markdown.number-of-minimum-line-size")).length;
-  const nrMinimumValuableLines = configValue("cerws.markdown.number-of-minimum-lines");
-  return nrValuableLines > nrMinimumValuableLines;
-};
+  static checkMarkdownContent(filePath) {
+    const data = fs.readFileSync(filePath, "utf8");
+    const nrValuableLines = data
+      .toString()
+      .split("\n")
+      .filter((x) => x.length > configValue("cerws.markdown.number-of-minimum-line-size")).length;
+    const nrMinimumValuableLines = configValue("cerws.markdown.number-of-minimum-lines");
+    return nrValuableLines > nrMinimumValuableLines;
+  }
+}
 
 module.exports = {
   DocumentationLinter,

@@ -13,6 +13,3 @@ cerws:
           auth-method: Basic
           username: <GITHUB_USERNAME>
           password: <GITHUB_PASSWORD>
-          lint-repository-folder: "/test/data/rules"
-  lint:
-    linter-config-location-url: "http://localhost:8080/data/cac-apifirst-develop.zip"

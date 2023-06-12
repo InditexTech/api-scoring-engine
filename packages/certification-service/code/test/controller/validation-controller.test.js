@@ -107,7 +107,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "repo_example_2",
             mimetype: "application/zip",
@@ -133,7 +133,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "repo_example_1",
             mimetype: "application/zip",
@@ -159,7 +159,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "repo_example_3",
             mimetype: "application/zip",
@@ -185,7 +185,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "repo_example",
             mimetype: "application/zip",
@@ -209,7 +209,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "repo_event",
             mimetype: "application/zip",
@@ -234,7 +234,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "repogrpc",
             mimetype: "application/zip",
@@ -259,7 +259,7 @@ describe("Tests Validation Controller", () => {
       request: {
         body: {
           url: `http://localhost:${port}/data/openapi-rest2.yml`,
-          apiProtocol: 1,
+          apiProtocol: "REST",
         },
       },
       response: {},
@@ -277,14 +277,14 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "openapi-rest2.yml",
             mimetype: "text/yaml",
           },
         },
         body: {
-          apiProtocol: 1,
+          apiProtocol: "REST",
         },
       },
       response: {},
@@ -302,14 +302,14 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "product_service.proto",
             mimetype: "application/octet-stream",
           },
         },
         body: {
-          apiProtocol: 3,
+          apiProtocol: "GRPC",
         },
       },
       response: {},
@@ -327,7 +327,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "openapi-rest2.yml",
             mimetype: "text/yaml",
@@ -352,7 +352,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "openapi-rest2.yml",
             mimetype: "text/yaml",
@@ -379,7 +379,7 @@ describe("Tests Validation Controller", () => {
     const ctx = {
       request: {
         files: {
-          url: {
+          file: {
             filepath: tmpFile,
             originalFilename: "README.md",
             mimetype: "text/plain",

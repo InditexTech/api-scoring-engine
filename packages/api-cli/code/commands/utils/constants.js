@@ -19,10 +19,6 @@ const CLI_HELP_SECTIONS = [
         name: "verify-file",
         summary: "Verify REST API specification file content.",
       },
-      {
-        name: "refresh-ruleset",
-        summary: "Refresh the ruleset used to validate your API.",
-      },
     ],
   },
 ];
@@ -51,8 +47,7 @@ const VERIFY_HELP_SECTIONS = [
         name: "validationType",
         alias: "t",
         type: String,
-        description:
-          "(DESIGN|DOCUMENTATION|SECURITY|OVERALL_SCORE). Default value is OVERALL_SCORE.",
+        description: "(DESIGN|DOCUMENTATION|SECURITY|OVERALL_SCORE). Default value is OVERALL_SCORE.",
       },
       {
         name: "outputFile",
@@ -108,38 +103,13 @@ const VERIFY_FILE_HELP_SECTIONS = [
         name: "specificationFile",
         alias: "f",
         type: String,
-        description:
-          "REQUIRED API Specification file for which the content will be verified.",
+        description: "REQUIRED API Specification file for which the content will be verified.",
       },
       {
         name: "apiProtocol",
         alias: "t",
         type: String,
         description: "REQUIRED API Specification file protocol (REST|EVENT|GRPC).",
-      },
-    ],
-  },
-];
-const REFRESH_RULESET_HELP_SECTIONS = [
-  {
-    header: "apicli",
-    content: "CLI tool for the API-First Strategy - v" + packageJson.version,
-  },
-  {
-    header: "'refresh-ruleset' command help",
-    optionList: [
-      {
-        name: "help",
-        alias: "h",
-        type: Boolean,
-        description: "Display help information.",
-      },
-      {
-        name: "serviceUrl",
-        alias: "u",
-        type: String,
-        description:
-          "By default, the URL configured in the 'app.certification-service-base-url' property is used. Use it if you wish to override.",
       },
     ],
   },
@@ -154,10 +124,7 @@ const HELP_COMMAND = "help";
 const VERSION_COMMAND = "version";
 const VERIFY_COMMAND = "verify";
 const VERIFY_FILE_COMMAND = "verify-file";
-const REFRESH_RULESET_COMMAND = "refresh-ruleset";
-const MAIN_RUN_DEFINITIONS_COMMANDS = [
-  { name: "help", alias: "h", type: Boolean, defaultValue: false },
-];
+const MAIN_RUN_DEFINITIONS_COMMANDS = [{ name: "help", alias: "h", type: Boolean, defaultValue: false }];
 const VERIFY_NO_VERBOSE_OPTION = "no-verbose";
 const VERIFY_RUN_DEFINITIONS_COMMANDS = [
   { name: "help", alias: "h", type: Boolean, defaultValue: false },
@@ -181,10 +148,6 @@ const VERIFY_FILE_RUN_DEFINITIONS_COMMANDS = [
   { name: VERIFY_SPECIFICATIONFILE_OPTION, alias: "f", type: String },
   { name: VERIFY_API_PROTOCOL_OPTION, alias: "t", type: String },
 ];
-const REFRESH_RULESET_RUN_DEFINITIONS_COMMANDS = [
-  { name: "help", alias: "h", type: Boolean, defaultValue: false },
-  { name: "serviceUrl", alias: "u", type: String },
-];
 
 // Messages
 const VERSION_MESSAGE = `Version: ${packageJson.version}`;
@@ -193,30 +156,20 @@ const APICLI_VERSION_MESSAGE = `${APICLI_MESSAGE} v${packageJson.version}`;
 const UNRECOGNIZED_OPTION_PREFIX_MESSAGE = "Unrecognized option ";
 const UNRECOGNIZED_OPTION_SUFFIX_MESSAGE = ", see usage below:";
 const INVALID_NUMBER_ARGUMENTS_MESSAGE = "Invalid number of arguments.";
-const INVALID_VALIDATION_TYPE_MESSAGE =
-  "\nInvalid validation type. Try design|security|documentation|overall_score\n";
-const INVALID_API_PROTOCOL_MESSAGE =
-  "\nInvalid API specification protocol. Try rest|event\n";
+const INVALID_VALIDATION_TYPE_MESSAGE = "\nInvalid validation type. Try design|security|documentation|overall_score\n";
+const INVALID_API_PROTOCOL_MESSAGE = "\nInvalid API specification protocol. Try rest|event\n";
 const ERROR_REMOVING_REPO_ZIP_MESSAGE = "Error removing 'repo.zip' file";
-const ERROR_WRITING_JSON_TO_FILE_MESSAGE =
-  "An error occured while writing JSON Object to File.";
+const ERROR_WRITING_JSON_TO_FILE_MESSAGE = "An error occured while writing JSON Object to File.";
 const ERROR_REQUEST_CERTIFICATION_MESSAGE = "Failed to request certification: ";
 const ERROR_VERIFY_MESSAGE = "Failed to verify: ";
 const ERROR_VERIFY_FILE_MESSAGE = "Failed to verify file: ";
-const ERROR_REFRESH_RULESET_MESSAGE = "Failed to refresh ruleset: ";
 const ERROR_REQUIRED_OPTION_PREFIX_MESSAGE = "The required option '";
 const ERROR_REQUIRED_OPTION_SUFFIX_MESSAGE = "' must be set.";
 const ERROR_FILE_ACCESS_PREFIX_MESSAGE = "Failed to access '";
 const ERROR_FILE_ACCESS_SUFFIX_MESSAGE = "' file'";
 
 // Verify
-const UNWANTED_DIRECTORIES = [
-  ".github",
-  "node_modules",
-  ".git",
-  ".DS_Store",
-  "docs",
-];
+const UNWANTED_DIRECTORIES = [".github", "node_modules", ".git", ".DS_Store", "docs"];
 const VALIDATION_TYPE_DESIGN = "DESIGN";
 const VALIDATION_TYPE_DOCUMENTATION = "DOCUMENTATION";
 const VALIDATION_TYPE_SECURITY = "SECURITY";
@@ -237,12 +190,9 @@ const API_PROTOCOL_GRPC = "GRPC";
 const API_PROTOCOLS = [API_PROTOCOL_REST, API_PROTOCOL_EVENT, API_PROTOCOL_GRPC];
 
 // Common
-const CERTIFICATION_SERVICE_BASE_URL = config.get(
-  "app.certification-service-base-url"
-);
-const CERTIFICATION_SERVICE_VALIDATIONS_ENDPOINT = "v1/validations";
-const CERTIFICATION_SERVICE_RULESETS_REFRESH_ENDPOINT = "v1/rulesets/refresh";
-const CERTIFICATION_SERVICE_FILE_VERIFY_ENDPOINT = "v1/file-verify-protocol";
+const CERTIFICATION_SERVICE_BASE_URL = config.get("app.certification-service-base-url");
+const CERTIFICATION_SERVICE_VALIDATIONS_ENDPOINT = "v1/apis/verify";
+const CERTIFICATION_SERVICE_FILE_VERIFY_ENDPOINT = "v1/apis/validate";
 const HTTPS_AGENT = new https.Agent({
   rejectUnauthorized: false,
 });
@@ -256,7 +206,6 @@ const FALSE_AS_STRING = "false";
 module.exports = {
   VERIFY_HELP_SECTIONS,
   VERIFY_FILE_HELP_SECTIONS,
-  REFRESH_RULESET_HELP_SECTIONS,
   CLI_HELP_SECTIONS,
   FIGLET_HORIZONTAL_LAYOUT_FULL,
   NAME_COMMAND,
@@ -264,14 +213,12 @@ module.exports = {
   VERSION_COMMAND,
   VERIFY_COMMAND,
   VERIFY_FILE_COMMAND,
-  REFRESH_RULESET_COMMAND,
   MAIN_RUN_DEFINITIONS_COMMANDS,
   VERIFY_NO_VERBOSE_OPTION,
   VERIFY_RUN_DEFINITIONS_COMMANDS,
   VERIFY_SPECIFICATIONFILE_OPTION,
   VERIFY_API_PROTOCOL_OPTION,
   VERIFY_FILE_RUN_DEFINITIONS_COMMANDS,
-  REFRESH_RULESET_RUN_DEFINITIONS_COMMANDS,
   VERSION_MESSAGE,
   APICLI_MESSAGE,
   APICLI_VERSION_MESSAGE,
@@ -285,7 +232,6 @@ module.exports = {
   ERROR_REQUEST_CERTIFICATION_MESSAGE,
   ERROR_VERIFY_MESSAGE,
   ERROR_VERIFY_FILE_MESSAGE,
-  ERROR_REFRESH_RULESET_MESSAGE,
   ERROR_REQUIRED_OPTION_PREFIX_MESSAGE,
   ERROR_REQUIRED_OPTION_SUFFIX_MESSAGE,
   ERROR_FILE_ACCESS_PREFIX_MESSAGE,
@@ -306,7 +252,6 @@ module.exports = {
   API_PROTOCOLS,
   CERTIFICATION_SERVICE_BASE_URL,
   CERTIFICATION_SERVICE_VALIDATIONS_ENDPOINT,
-  CERTIFICATION_SERVICE_RULESETS_REFRESH_ENDPOINT,
   CERTIFICATION_SERVICE_FILE_VERIFY_ENDPOINT,
   HTTPS_AGENT,
   CONTENT_TYPE_MULTIPART_FORM_DATA_HEADER,

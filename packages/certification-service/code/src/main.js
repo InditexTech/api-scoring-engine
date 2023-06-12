@@ -8,13 +8,11 @@ const { router } = require("./routes/router");
 const { bodyParser } = require("./middleware/bodyParser");
 const http = require("http");
 const { LintRuleset } = require("./evaluate/lint/lintRuleset");
-const { DocumentationRuleset } = require("./evaluate/documentation/documentationRuleset");
 
 const init = async () => {
   const logger = getAppLogger();
 
   await LintRuleset.updateKnownRulesets();
-  DocumentationRuleset.updateKnownRulesets();
 
   const app = new Koa();
   const server = http.createServer(app.callback());

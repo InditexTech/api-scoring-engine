@@ -1,13 +1,13 @@
-const { CUSTOM_RULESET_PREFIX, NUMBER_OF_BASE_RULES } = require("../evaluate/documentation/documentationRuleset");
+const { NUMBER_OF_BASE_RULES } = require("../evaluate/documentation/documentationRuleset");
 const { ERROR_SEVERITY, INFO_SEVERITY } = require("../evaluate/severity");
 const { configValue } = require("../config/config");
 const { getAppLogger } = require("../log");
 const { CUSTOM_RULES_NAMES } = require("../verify/documentationLinter");
 
-const NUMBER_OF_GRPC_RULES = configValue("cerws.lint.grpc.number-of-base-rules");
 const MARKDOWN_BASE_RULES = "MARKDOWN_BASE_RULES";
 const MARKDOWN_CUSTOM_RULES = "MARKDOWN_CUSTOM_RULES";
 const ERROR_COEFFICIENT_PROPORTION = configValue("cerws.certification.scoring.error-coefficient-weight");
+const CUSTOM_RULE_PREFIXES = configValue("cerws.markdown.custom-rule-prefixes");
 
 const logger = getAppLogger();
 
@@ -19,7 +19,7 @@ const scoreLinting = (evaluationData, numberOfRules) => {
   return calculateScore(numberOfFailedRules, numberOfRules, numberOfFailedErrorRules);
 };
 
-const scoreGRPCLinting = (evaluationData) => {
+const scoreGRPCLinting = (evaluationData, numberOfRules) => {
   if (evaluationData.find((issue) => issue.rule === "PROTOLINT_FAILED")) {
     return 0;
   }
@@ -27,7 +27,6 @@ const scoreGRPCLinting = (evaluationData) => {
   const numberOfFailedErrorRules = filterErrorRules(uniqueFailedRules).length;
 
   const numberOfFailedRules = uniqueFailedRules.length;
-  const numberOfRules = NUMBER_OF_GRPC_RULES;
 
   return calculateScore(numberOfFailedRules, numberOfRules, numberOfFailedErrorRules);
 };
@@ -146,7 +145,7 @@ const filterCustomMarkdownRules = (evaluationData) => {
 };
 
 const isCustomRule = (ruleName) => {
-  return ruleName.startsWith(CUSTOM_RULESET_PREFIX);
+  return CUSTOM_RULE_PREFIXES.some((prefix) => ruleName.startsWith(prefix));
 };
 
 const arrayIsNotEmpty = (array) => {

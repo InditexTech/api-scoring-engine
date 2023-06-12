@@ -2,7 +2,7 @@ openapi: 3.0.2
 info:
   title: API Certification
   description: |-
-    This is Certification & Scoring API 
+    This is Certification & Scoring API: This open-source API-First-based Scoring service evaluates your APIs according to a set of rules that the user can customize.
 
     ```json
     [{
@@ -29,35 +29,55 @@ info:
     ]
     }]
     ```
-  version: 2.0.0
+  version: 1.0.0
+  contact:
+    name: Inditex
+    email: api360@inditex.com
+  license:
+    name: Apache Inditex
+    url: www.inditext.com
 servers:
   - url: 'http://localhost:8080/apifirst/v1'
     description: Local environment
-
 tags:
   - name: Validations
-  - name: Ruleset
+    description: All associated services to validate the specification API.
 security:
-  - basicAuth: []
-  - bearerAuth: []
-  - apiKeyAuth: []
+  - {}
 paths:
-  /rulesets/refresh:
+  /apis/verify:
     post:
       tags:
-        - Ruleset
-      summary: 'Service to perform a non CRUD action, it is only for refresh the rulesets'
-      description: This service will perform a non CRUD action on an existing collection
-      operationId: refreshRuleset
+        - Validations
+      summary: Service to verify the specification file content.
+      description: This service verifies the file content following the protocol type. The payload in the request body must contain all the attributes defined for the Resource object (Bussiness Data Schema).
+      operationId: fileVerifyProtocol
+      requestBody:
+        description: 'The definition of the input structure depends on how you want to run, either a URL repository or passing a specification API (file yaml/yml/proto).'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/validationRequestFileURL'
+            examples:
+              Example URL:
+                value:
+                  url: 'https://raw.githubusercontent.com/InditexTech/api-scoring-engine/main/packages/api-cli/samples/myApis/rest/contract/openapi-rest.yml'
+                  apiProtocol: REST
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/validationRequestFileForm'
+            examples:
+              Example openapi file:
+                value:
+                  file: {}
+                  apiProtocol: REST
       responses:
         '200':
-          description: Success
+          description: OK - The resource details were retrieved successfully and they are included in the body of the response.
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                maxLength: 10
-                pattern: '^[a-zA-Z0-9 ]+$'
+                $ref: '#/components/schemas/fileVerifyProtocolResponse'
         '400':
           description: Bad Request - If the resource is misspelled (badly constructed URI) / If the data in the request is not correct.
           content:
@@ -76,6 +96,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/403ForbiddenError'
+        '404':
+          description: Not Found - If Resource ID not found or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404NotFoundError'
         '500':
           description: Internal Server Error - Use it as a General System Error.
           content:
@@ -94,21 +120,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/504GatewayTimeOut'
-        default:
-          description: Default Code Description
-          content:
-            text/plain:
-              schema:
-                type: string
-                maxLength: 10
-                pattern: '^[a-zA-Z0-9 ]+$'
-  /validations:
+  /apis/validate:
     post:
       tags:
         - Validations
-      summary: Create a validation result from a a zip file (which should contain a repository) or from an repository URL.
-      description: |
-        Parse and validate an API Contract from url - zip file or url from a zipped repository.
+      summary: 'Service that obtains the qualifications of the API specifications (Rest, gRPC, AsyncAPI, GraphQL).'
+      description: Service that parses and validates an API specification contract for a score from a zip file or compressed repository URL.
       operationId: validate
       requestBody:
         content:
@@ -118,6 +135,20 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/validationRequestForm'
+        description: |-
+          Definitions of the input structure that allows the resource to obtain a qualification. There are two ways: the first option is passing a compressed file from our local and the second is passing the url of a compressed zip repository.
+
+          Example of zip repository:
+          ```text
+            ├── metadata.yml
+            └── myApis
+                ├── asyncapi-streams
+                │   ├── asyncapi.yml
+                │   ├── cart_lines_operations.avsc
+                │   └── lines_operations_event.avsc
+                └── rest
+                    └── openapi-rest.yml
+            ```
       responses:
         '200':
           description: validations
@@ -169,70 +200,6 @@ paths:
                 type: string
                 maxLength: 10
                 pattern: '^[a-zA-Z0-9 ]+$'
-  '/file-verify-protocol':
-    post:
-      tags:
-        - Validations
-      summary: Service to verify the file content.
-      description: This service verifies the file content. The payload in the request body must contain all the attributes defined for the Resource object (Bussiness Data Schema).
-      operationId: fileVerifyProtocol
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/validationRequestFileURL'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/validationRequestFileForm'
-      responses:
-        '200':
-          description: OK - The resource details were retrieved successfully and they are included in the body of the response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/fileVerifyProtocolResponse'
-        '400':
-          description: Bad Request - If the resource is misspelled (badly constructed URI) / If the data in the request is not correct.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/400BadRequestError'
-        '401':
-          description: Unauthorized - If the API requires subscription and the client does not have it / If there is a problem with the User Credentials.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/401UnauthorizedError'
-        '403':
-          description: Forbidden - If OAuth Access Token is invalid / If the user did not pass the operational security.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/403ForbiddenError'
-        '404':
-          description: Not Found - If Resource ID not found or invalid.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/404NotFoundError'
-        '500':
-          description: Internal Server Error - Use it as a General System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/500InternalServerError'
-        '503':
-          description: Service Unavailable - Use it to report the Specific Errors that the server suffers.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/503ServiceUnavailableError'
-        '504':
-          description: Gateway Timeout - Use it to report a Timeout occurred on the server.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/504GatewayTimeOut'
 components:
   securitySchemes:
     basicAuth:
@@ -248,28 +215,23 @@ components:
       name: accessToken
   schemas:
     apiProtocols:
-      type: integer
-      description: "API protocol: 1: REST, 2: EVENT, 3: GRPC"
-      example: 1
-      format: int32
-      maximum: 3
-      minimum: 1
+      type: string
+      description: API protocol that uses to validate the contract specification.
       enum:
-        - 1
-        - 2
-        - 3      
+        - REST
+        - EVENT
+        - GRPC
+      example: REST
     validationTypes:
-      type: integer
-      description: "Validation type: 1: DESIGN, 2: DOCUMENTATION, 3: SECURITY, 4: OVERALL_SCORE"
-      example: 1
-      format: int32
-      maximum: 4
-      minimum: 1
+      type: string
+      description: Type of validations (design/security/documentation/all) that the microservice validates.
       enum:
-        - 1
-        - 2
-        - 3
-        - 4
+        - DESIGN
+        - DOCUMENTATION
+        - SECURITY
+        - OVERALL_SCORE
+      default: OVERALL_SCORE
+      example: DESIGN
     apiIdentifier:
       properties:
         apiName:
@@ -288,17 +250,17 @@ components:
           type: string
           pattern: '^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$'
           maxLength: 255
-          description: Repository to be certified
-          example: 'https://github.com/inditex/app-apiraptor/archive/refs/heads/main.zip'
+          description: URL zip repository to be certified
+          example: 'https://raw.githubusercontent.com/InditexTech/api-scoring-engine/main/packages/api-cli/samples/main.zip'
         isVerbose:
           type: boolean
           example: false
           description: If all the rules brokens should come in the response. Defaults to false
+          default: false
         validationType:
           $ref: '#/components/schemas/validationTypes'
       required:
         - url
-        - validationType
     validationRequestFileURL:
       type: object
       additionalProperties: false
@@ -307,8 +269,8 @@ components:
           type: string
           pattern: '^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$'
           maxLength: 255
-          description: Repository to be certified
-          example: 'https://github.com/inditex/mic-apicertification/blob/develop/apigateway/INTERNAL-APICERTIFICATION/apigateway.yml'
+          description: URL of an API Specificaction Repository to be certified.
+          example: 'https://raw.githubusercontent.com/InditexTech/api-scoring-engine/main/packages/api-cli/samples/myApis/rest/contract/openapi-rest.yml'
         apiProtocol:
           $ref: '#/components/schemas/apiProtocols'
       required:
@@ -318,33 +280,33 @@ components:
       type: object
       additionalProperties: false
       properties:
-        url:
+        file:
           type: object
           additionalProperties: false
           format: binary
-          description: zip to be validated        
+          description: 'File zip to be validated with the following mandatory structure:'
         isVerbose:
           type: boolean
           description: If all the rules brokens should come in the response. Defaults to false
-          example: false        
+          example: false
+          default: false
         validationType:
-          $ref: '#/components/schemas/validationTypes'        
+          $ref: '#/components/schemas/validationTypes'
       required:
-        - url
-        - validationType
+        - file
     validationRequestFileForm:
       type: object
       additionalProperties: false
       properties:
-        url:
+        file:
           type: object
           additionalProperties: false
           format: binary
-          description: yaml file to be validated
+          description: Specificaction file to be validated.
         apiProtocol:
-          $ref: '#/components/schemas/apiProtocols'          
+          $ref: '#/components/schemas/apiProtocols'
       required:
-        - url
+        - file
         - apiProtocol
     arrayOfValidationResponse:
       type: array
@@ -364,7 +326,6 @@ components:
           items:
             $ref: '#/components/schemas/spectralRule'
       additionalProperties: false
-
     moduleDescription:
       additionalProperties: false
       type: object
@@ -444,7 +405,6 @@ components:
             description: Path of the error
             pattern: '^[a-zA-Z0-9]+$'
             maxLength: 300
-    
     range:
       type: object
       description: Range of the error
@@ -454,7 +414,6 @@ components:
           $ref: '#/components/schemas/position'
         end:
           $ref: '#/components/schemas/position'
-
     position:
       type: object
       additionalProperties: false
@@ -474,7 +433,6 @@ components:
           format: int32
           maximum: 10000
           minimum: 1
-            
     spectralValidation:
       type: object
       additionalProperties: false
@@ -485,7 +443,6 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/spectralRule'
-
     documentationRule:
       type: object
       additionalProperties: false
@@ -544,7 +501,6 @@ components:
             - 2
             - 3
             - 4
-
     documentationValidation:
       type: object
       nullable: true
@@ -557,7 +513,6 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/documentationRule'
-
     protolintRule:
       type: object
       additionalProperties: false
@@ -590,7 +545,7 @@ components:
           maxLength: 100
         rule:
           type: string
-          example: 'ENUMS_HAVE_INDITEX_COMMENT'
+          example: ENUMS_HAVE_INDITEX_COMMENT
           description: Rule's unique ID
           pattern: ^\S*
           maxLength: 100
@@ -607,7 +562,6 @@ components:
             - 2
             - 3
             - 4
-
     protolintValidation:
       type: object
       nullable: true
@@ -618,7 +572,6 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/protolintRule'
-
     validationResponse:
       allOf:
         - $ref: '#/components/schemas/apiIdentifier'
@@ -659,9 +612,9 @@ components:
         validationResult:
           type: string
           maxLength: 32
-          pattern: '^\S*'
+          pattern: ^\S*
           description: Returns OK or NOT OKAY if the validation is greater than B
-          example: 'NOT_OKAY'
+          example: NOT_OKAY
         hasErrors:
           type: boolean
           description: Indicates if there are errors in the validation
@@ -678,8 +631,6 @@ components:
           $ref: '#/components/schemas/spectralValidation'
         protolintValidation:
           $ref: '#/components/schemas/protolintValidation'
-        
-
     moduleValidation:
       type: object
       additionalProperties: false
@@ -692,7 +643,6 @@ components:
           $ref: '#/components/schemas/documentationValidation'
         securityValidation:
           $ref: '#/components/schemas/designValidation'
-
     score:
       type: number
       format: float
@@ -737,8 +687,7 @@ components:
         code: '400'
         description: Bad Request
         level: ERROR
-        message: 'Invalid Request. Please, check the data in the request (QueryString Parameters and/or Body).'   
-    
+        message: 'Invalid Request. Please, check the data in the request (QueryString Parameters and/or Body).'
     400BadRequestError:
       title: 400BadRequestError
       type: object

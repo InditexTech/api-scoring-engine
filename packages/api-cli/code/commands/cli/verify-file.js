@@ -38,7 +38,7 @@ const verifyFile = ({ argv }) => {
     let formData = new Object();
 
     formData.apiProtocol = validateApiProtocol(apiProtocol);
-    formData.url = getFileStream(specificationFile);
+    formData.file = getFileStream(specificationFile);
 
     postFileVerify(formData, outputFile, serviceUrl);
   } catch (error) {

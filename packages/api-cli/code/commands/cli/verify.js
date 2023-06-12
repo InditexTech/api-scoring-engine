@@ -31,7 +31,7 @@ const verify = ({ argv }) => {
 
     formData.validationType = validateValidationType(validationType);
 
-    formData.url = createZipWithValueDirectories(workingDir);
+    formData.file = createZipWithValueDirectories(workingDir);
 
     formData.isVerbose = noVerbose
       ? constants.FALSE_AS_STRING

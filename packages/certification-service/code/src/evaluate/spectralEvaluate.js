@@ -18,8 +18,12 @@ const retrieveNumberOfRules = async (ruleset) => {
 
   try {
     logger.debug(`Retrieving number of rules for ruleset ${ruleset}...`);
-    spectral.setRuleset(require(ruleset));
-
+    const fileExtension = path.extname(ruleset);
+    if ([".yaml", ".yml"].includes(fileExtension)) {
+      spectral.setRuleset(await bundleAndLoadRuleset(ruleset, { fs, fetch }, [builtins(), commonjs()]));
+    } else {
+      spectral.setRuleset(require(ruleset));
+    }
     // Exclude rules with 'info' severity
     logger.debug(`Original number of rules is ${Object.keys(spectral.ruleset.rules).length}`);
     const rulesetFiltered = Object.entries(spectral.ruleset.rules).filter(
@@ -49,7 +53,13 @@ const retrieveDocument = (filePath) => {
 const evaluate = async (ruleset, apiSpecificationPath) => {
   const spectral = new Spectral();
 
-  spectral.setRuleset(require(ruleset));
+  const fileExtension = path.extname(ruleset);
+
+  if ([".yaml", ".yml"].includes(fileExtension)) {
+    spectral.setRuleset(await bundleAndLoadRuleset(ruleset, { fs, fetch }, [builtins(), commonjs()]));
+  } else {
+    spectral.setRuleset(require(ruleset));
+  }
 
   return spectral.run(retrieveDocument(apiSpecificationPath)).then((result) => result);
 };
