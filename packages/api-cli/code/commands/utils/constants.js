@@ -191,8 +191,8 @@ const API_PROTOCOLS = [API_PROTOCOL_REST, API_PROTOCOL_EVENT, API_PROTOCOL_GRPC]
 
 // Common
 const CERTIFICATION_SERVICE_BASE_URL = config.get("app.certification-service-base-url");
-const CERTIFICATION_SERVICE_VALIDATIONS_ENDPOINT = "v1/apis/verify";
-const CERTIFICATION_SERVICE_FILE_VERIFY_ENDPOINT = "v1/apis/validate";
+const CERTIFICATION_SERVICE_VALIDATIONS_ENDPOINT = "v1/apis/validate";
+const CERTIFICATION_SERVICE_FILE_VERIFY_ENDPOINT = "v1/apis/verify";
 const HTTPS_AGENT = new https.Agent({
   rejectUnauthorized: false,
 });
