@@ -9,16 +9,12 @@ module.exports = {
         function: functions.assertHttpCodesForOperation,
         functionOptions: {
             wellUnderstood: {
-                "200": [
-                    "PUT",
-                    "GET",
-                    "POST",
-                    "DELETE"
-                ],
+                "200": ["ALL"],
                 "201": [
                     "POST",
                     "PUT"
                 ],
+                "202": ["ALL"],
                 "204": [
                     "ALL"
                 ],
