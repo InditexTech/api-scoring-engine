@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 class Grade {
   static A_PLUS = new Grade("A+", "Excellent");
   static A = new Grade("A", "Very Good");

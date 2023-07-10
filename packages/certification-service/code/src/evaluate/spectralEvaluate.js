@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { Spectral, Document } = require("@stoplight/spectral-core");
 const Parsers = require("@stoplight/spectral-parsers");
 const { fetch } = require("@stoplight/spectral-runtime");

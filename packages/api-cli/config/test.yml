@@ -1,2 +1,6 @@
+# SPDX-FileCopyrightText: 2023 Inditex
+#
+# SPDX-License-Identifier: Apache-2.0
+
 app:
   certification-service-base-url: "http://localhost:8080/apifirst/"

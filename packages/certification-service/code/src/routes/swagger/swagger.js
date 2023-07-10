@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const path = require("path");
 const { koaSwagger } = require("koa2-swagger-ui");
 const { parseYaml } = require("../../utils/yamlUtils");

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const verifyFile = require("../../commands/cli/verify-file");
 const constants = require("../../commands/utils/constants");
 

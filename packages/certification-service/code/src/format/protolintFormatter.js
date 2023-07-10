@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { configValue } = require("../config/config");
 const { AppError } = require("../utils/error");
 const { httpStatusCodes } = require("../utils/httpStatusCodes");

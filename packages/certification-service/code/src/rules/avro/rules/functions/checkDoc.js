@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 module.exports = (targetVal) => {
   function isObject(value) {
     return value && typeof value === "object" && value.constructor === Object;

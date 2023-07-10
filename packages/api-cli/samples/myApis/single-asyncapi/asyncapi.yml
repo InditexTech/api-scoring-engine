@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023 Inditex
+#
+# SPDX-License-Identifier: Apache-2.0
+
 asyncapi: 2.0.0
 info:
   title: Email Service

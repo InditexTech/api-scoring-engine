@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
 const { lintFileWithSpectral } = require("./lint");
 const { VALIDATION_TYPE_DESIGN, VALIDATION_TYPE_SECURITY } = require("./types");

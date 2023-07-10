@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { Logger } = require("../../src/log/logger");
 const { logRequest } = require("../../src/middleware/logRequest");
 const { AppError } = require("../../src/utils/error");

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * OAuth2 security requirement requires a scope not declared in the referenced security scheme
  */

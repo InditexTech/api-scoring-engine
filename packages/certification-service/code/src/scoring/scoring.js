@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { NUMBER_OF_BASE_RULES } = require("../evaluate/documentation/documentationRuleset");
 const { ERROR_SEVERITY, INFO_SEVERITY } = require("../evaluate/severity");
 const { configValue } = require("../config/config");

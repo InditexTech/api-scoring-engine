@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const yaml = require("js-yaml");
 const fs = require("fs");
 const { getAppLogger } = require("../log");
