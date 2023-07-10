@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { koaBody } = require("koa-body");
 const { configValue } = require("../config/config");
 const { AppError } = require("../utils/error");

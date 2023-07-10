@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const path = require("path");
 const fs = require("fs-extra");
 const spawn = require("cross-spawn");

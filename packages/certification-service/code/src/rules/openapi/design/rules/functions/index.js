@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 module.exports ={ 
     assertHttpCodesForOperation : require('./assert-http-codes-for-operation'),
     ensureBasepathVersion : require('./ensure-basepath-version'),

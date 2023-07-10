@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const markdownlint = require("markdownlint");
 const { WARN_SEVERITY } = require("./severity");
 const { configValue } = require("../config/config");

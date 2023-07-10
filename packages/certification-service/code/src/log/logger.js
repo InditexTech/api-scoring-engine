@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { createLogger, format, transports } = require("winston");
 
 const logFormat = (pkg) =>

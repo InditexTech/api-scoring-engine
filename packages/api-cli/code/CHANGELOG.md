@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2023 Inditex
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

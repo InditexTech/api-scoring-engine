@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const constants = require("../utils/constants");
 const { validateValidationType } = require("../utils/validation-utils");
 const { createZipWithValueDirectories } = require("../utils/zip-utils");

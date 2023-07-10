@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { evaluate } = require("../evaluate/spectralEvaluate");
 const evaluateProtolint = require("../evaluate/protolintEvaluate");
 const { markdownEvaluate } = require("../evaluate/markdownEvaluate");

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const Koa = require("koa");
 const koaCompose = require("koa-compose");
 const { logRequest } = require("./middleware/logRequest");

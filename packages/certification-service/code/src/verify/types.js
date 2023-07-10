@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const { configValue } = require("../config/config");
 
 const VALIDATION_TYPE_DESIGN = "DESIGN";

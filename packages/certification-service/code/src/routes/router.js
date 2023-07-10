@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Inditex
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const Router = require("@koa/router");
 const { healthCheckRoutes } = require("./health/healthcheck");
 const { swaggerDocs } = require("./swagger/swagger");

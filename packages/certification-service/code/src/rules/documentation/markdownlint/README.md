@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2023 Inditex
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Documentation Linting
 
 ## About
