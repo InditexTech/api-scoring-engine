@@ -697,6 +697,24 @@ components:
       type: object
       additionalProperties: false
       properties:
+        status:
+          type: integer
+          description: Error status
+          format: int32
+          maximum: 999
+          minimum: 100
+          example: 400
+        title:
+          type: string
+          description: 'Error title'
+          example: 'Bad Request'
+          maxLength: 1000
+        detail:
+          type: string
+          description: 'Error detail'
+          example: 'Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).'
+          maxLength: 5000
         errors:
           type: array
           description: Details of each of the errors
@@ -705,6 +723,9 @@ components:
             $ref: '#/components/schemas/errorObject'
       description: List of errors
       example:
+        status: 400
+        title: Bad Request
+        detail: 'Invalid Request. Please, check the data in the request (QueryString Parameters and/or Body).'
         errors:
           - code: '400'
             description: Bad Request
@@ -715,6 +736,24 @@ components:
       type: object
       additionalProperties: false
       properties:
+        status:
+          type: integer
+          description: Error status
+          format: int32
+          maximum: 999
+          minimum: 100
+          example: 400
+        title:
+          type: string
+          description: 'Error title'
+          example: 'Bad Request'
+          maxLength: 1000
+        detail:
+          type: string
+          description: 'Error detail'
+          example: 'Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).'
+          maxLength: 5000
         errors:
           type: array
           description: Details of each of the errors
@@ -723,6 +762,9 @@ components:
             $ref: '#/components/schemas/errorObject'
       description: List of errors
       example:
+        status: 401
+        title: Unauthorized Error
+        detail: 'Unauthorized Error. The API client is not allowed to consume this resource. Check the user credentials.'
         errors:
           - code: '401'
             description: Unauthorized Error
@@ -733,6 +775,24 @@ components:
       type: object
       additionalProperties: false
       properties:
+        status:
+          type: integer
+          description: Error status
+          format: int32
+          maximum: 999
+          minimum: 100
+          example: 400
+        title:
+          type: string
+          description: 'Error title'
+          example: 'Bad Request'
+          maxLength: 1000
+        detail:
+          type: string
+          description: 'Error detail'
+          example: 'Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).'
+          maxLength: 5000
         errors:
           type: array
           description: Details of each of the errors
@@ -741,6 +801,9 @@ components:
             $ref: '#/components/schemas/errorObject'
       description: List of errors
       example:
+        status: 403
+        title: Forbidden error
+        detail: Forbidden Error. The user is not allowed to executed this operation.
         errors:
           - code: '403'
             description: Forbidden Error
@@ -751,6 +814,24 @@ components:
       type: object
       additionalProperties: false
       properties:
+        status:
+          type: integer
+          description: Error status
+          format: int32
+          maximum: 999
+          minimum: 100
+          example: 400
+        title:
+          type: string
+          description: 'Error title'
+          example: 'Bad Request'
+          maxLength: 1000
+        detail:
+          type: string
+          description: 'Error detail'
+          example: 'Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).'
+          maxLength: 5000
         errors:
           type: array
           description: Details of each of the errors
@@ -759,6 +840,9 @@ components:
             $ref: '#/components/schemas/errorObject'
       description: List of errors
       example:
+        status: 404
+        title: Resouce not found
+        detail: 'Resouce not found. Please, check the ResourceId specified.'
         errors:
           - code: '404'
             description: Resouce not found
@@ -769,6 +853,24 @@ components:
       type: object
       additionalProperties: false
       properties:
+        status:
+          type: integer
+          description: Error status
+          format: int32
+          maximum: 999
+          minimum: 100
+          example: 400
+        title:
+          type: string
+          description: 'Error title'
+          example: 'Bad Request'
+          maxLength: 1000
+        detail:
+          type: string
+          description: 'Error detail'
+          example: 'Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).'
+          maxLength: 5000
         errors:
           type: array
           description: Details of each of the errors
@@ -777,6 +879,9 @@ components:
             $ref: '#/components/schemas/errorObject'
       description: List of errors
       example:
+        status: 500
+        title: Internal Server Error
+        detail: Internal Server Error. The server encountered an unexpected condition that prevented it from fulfilling the request.
         errors:
           - code: '500'
             description: Internal Server Error
@@ -787,6 +892,24 @@ components:
       type: object
       additionalProperties: false
       properties:
+        status:
+          type: integer
+          description: Error status
+          format: int32
+          maximum: 999
+          minimum: 100
+          example: 400
+        title:
+          type: string
+          description: 'Error title'
+          example: 'Bad Request'
+          maxLength: 1000
+        detail:
+          type: string
+          description: 'Error detail'
+          example: 'Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).'
+          maxLength: 5000
         errors:
           type: array
           maxItems: 20
@@ -795,6 +918,9 @@ components:
             $ref: '#/components/schemas/errorObject'
       description: List of errors
       example:
+        status: 503
+        title: Service Unavailable Error
+        detail: Service Unavailable Error. The server is temporarily unable to handle a request.
         errors:
           - code: '503'
             description: Service Unavailable Error
@@ -805,6 +931,24 @@ components:
       type: object
       additionalProperties: false
       properties:
+        status:
+          type: integer
+          description: Error status
+          format: int32
+          maximum: 999
+          minimum: 100
+          example: 400
+        title:
+          type: string
+          description: 'Error title'
+          example: 'Bad Request'
+          maxLength: 1000
+        detail:
+          type: string
+          description: 'Error detail'
+          example: 'Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).'
+          maxLength: 5000
         errors:
           type: array
           maxItems: 20
@@ -813,6 +957,9 @@ components:
             $ref: '#/components/schemas/errorObject'
       description: List of errors
       example:
+        status: 504
+        title: Gateway Time Out
+        detail: Gateway Time Out. The server did not receive a timely response.
         errors:
           - code: '504'
             description: Gateway Time Out

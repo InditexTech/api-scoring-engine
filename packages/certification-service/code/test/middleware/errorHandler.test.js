@@ -11,11 +11,11 @@ describe("Error handler middleware test", () => {
     const next = jest.fn();
     await errorHandler(ctx, next);
     expect(ctx.status).toBe(404);
-    expect(ctx.body).toMatchObject({
-      code: 404,
-      description: "Resource not found",
-      level: "ERROR",
-      message: "Resource not found [404]",
+    expect(ctx.body).toStrictEqual({
+      status: 404,
+      title: "Resource not found",
+      detail: "Resource not found [404]",
+      errors: undefined,
     });
   });
 
@@ -24,11 +24,11 @@ describe("Error handler middleware test", () => {
     const next = jest.fn().mockRejectedValue(new AppError({ code: 502, message: "Error", status: 502 }));
     await errorHandler(ctx, next);
     expect(ctx.status).toBe(502);
-    expect(ctx.body).toMatchObject({
-      code: 502,
-      description: "Bad gateway",
-      level: "ERROR",
-      message: "Error [502]",
+    expect(ctx.body).toStrictEqual({
+      status: 502,
+      title: "Bad gateway",
+      detail: "Error [502]",
+      errors: undefined,
     });
   });
 
@@ -37,11 +37,18 @@ describe("Error handler middleware test", () => {
     const next = jest.fn().mockRejectedValue(new Error("Error"));
     await errorHandler(ctx, next);
     expect(ctx.status).toBe(500);
-    expect(ctx.body).toMatchObject({
-      code: 500,
-      description: "Internal Server Error",
-      level: "ERROR",
-      message: "Error [500]",
+    expect(ctx.body).toStrictEqual({
+      status: 500,
+      title: "Internal Server Error",
+      detail: "Error [500]",
+      errors: [
+        {
+          code: 500,
+          description: "Error",
+          level: "ERROR",
+          message: "Error",
+        },
+      ],
     });
   });
 });

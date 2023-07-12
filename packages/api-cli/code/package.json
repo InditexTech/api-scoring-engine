@@ -46,7 +46,7 @@
       "node_modules/figlet/**/*"
     ]
   },
-  "publishConfig": {
-    "registry": "https://inditex.jfrog.io/inditex/api/npm/node-snapshot-local/"
+  "overrides": {
+    "semver": "7.5.2"
   }
 }
