@@ -21,24 +21,21 @@ module.exports.errorHandler = async (ctx, next) => {
   } catch (e) {
     const status = e.status || httpStatusCodes.HTTP_INTERNAL_SERVER_ERROR;
     const error = {
-      code: status,
-      description: httpStatusCodes.reason(status),
-      level: "ERROR",
-      message: `${e.message} [${status}]`,
+      status: status,
+      title: httpStatusCodes.reason(status),
+      detail: `${e.message} [${status}]`,
     };
     if (e instanceof AppError) {
-      error.error = {
-        message: e.message,
-        type: "AppError",
-        code: e.code,
-        ...(e.errors && { errors: e.errors }),
-      };
+      error.errors = e.errors;
     } else {
-      error.error = {
-        message: e.message,
-        type: e.name,
-        code: "UNKNOWN_ERROR",
-      };
+      error.errors = [
+        {
+          code: httpStatusCodes.HTTP_INTERNAL_SERVER_ERROR,
+          description: e.name,
+          level: "ERROR",
+          message: e.message,
+        },
+      ];
     }
     if (e.stack) {
       logger.error(e.stack.split("\n"));
