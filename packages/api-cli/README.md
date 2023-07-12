@@ -33,7 +33,7 @@ Once you install this CLI, you will be able to:
 
 * [x] Verify if an API is well-designed.
 * [x] Verify an API contract specification (OpenAPI, AsyncAPI, Avro, Protobuf Buffer) or the respective documentation files (Markdown).
-* [x] Update the rulesets used to linter your certification files in the certification service.
+
 
 <br>
 
@@ -42,7 +42,7 @@ Once you install this CLI, you will be able to:
 1. You can start by cloning this repository: 
 
 ```bash
-git clone git@github.com:inditex/mic-openapicertification.git
+ git clone git@github.com:InditexTech/api-scoring-engine.git
 ```
 
 2. Install the downloaded code dependencies:  
@@ -61,8 +61,6 @@ npm link
 
 Then, you can use any of these commands: 
 
-- `refresh-ruleset`, which will update the rules used to validate your API in the certification service. 
-
 - `verify`, with which you can obtain the certification of the API, all along with some helpful information like version numbers or protocol. 
 
 - `verify-file`, verifies an OpenAPI specification file.
@@ -70,4 +68,4 @@ Then, you can use any of these commands:
 
 <br>
 
-> Find more information and output examples in our [documentation](https://albalro.github.io/certification-system/cli/)!
+> Find more information and output examples in our [documentation](https://urban-adventure-29rymqv.pages.github.io/scoring-system/cli/)!

@@ -21,23 +21,21 @@ This folder contains the **API Certification microservice** and its API. The str
 └─ certification-service/
     └─ code/
     	└─ config/
-	└─ protolint_custom_rules/ # These rules are only available via API Hub extension. Here lay our custom rules in a binary format for every major platform/architecture.
-	└─ scripts/
-        └─ src/
-            └─ api/
-            └─ config/
-	    └─ controllers/
-	    └─ evaluate/ # A representation of the available rulesets and code to call each utility.
-	    └─ format/
-	    └─ log/
-	    └─ middleware/
-	    └─ routes/
-	    └─ rules/ # Rules and configuration files for all the utilities (Spectral, markdownlint, and protolint) that the microservice leverages to certificate.
-	    └─ scoring/
-	    └─ usecase/
-	    └─ utils/
-	    └─ verify/
-	    └─ main.js
+		└─ protolint_custom_rules/ # These rules are only available via API Hub extension. Here lay our custom rules in a binary format for every major platform/architecture.
+		└─ scripts/
+		└─ src/
+			└─ controllers/
+			└─ evaluate/ # A representation of the available rulesets and code to call each utility.
+			└─ format/
+			└─ log/
+			└─ middleware/
+			└─ routes/
+			└─ rules/ # Rules and configuration files for all the utilities (Spectral, markdownlint, and protolint) that the microservice leverages to certificate.
+			└─ scoring/
+			└─ usecase/
+		└─ utils/
+		└─ verify/
+		└─ main.js
 	    
 ```
 
@@ -47,13 +45,13 @@ This folder contains the **API Certification microservice** and its API. The str
 1. Clone the repository:
 
 	```
-	git clone git@github.com:inditex/mic-openapicertification.git
+	 git clone git@github.com:InditexTech/api-scoring-engine.git
 	```
 
 2. Place yourself in the correct package:
 
 	```
-	cd packages/certification-service/code/
+	 cd packages/certification-service/code/
 	```
 
 3. Install the dependencies:
@@ -90,5 +88,5 @@ This folder contains the **API Certification microservice** and its API. The str
 
 ## Usage
 
-[View the documentation](https://albalro.github.io/certification-system/microservice/) for usage information.
+[View the documentation](https://urban-adventure-29rymqv.pages.github.io/scoring-system/microservice/) for usage information.
 
