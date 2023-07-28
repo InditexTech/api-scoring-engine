@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const inflection = require("inflection");
 
 const VERBS = ["allow", "make", "open", "begin", "write", "convert", "set", "read", "fetch", "take", "give", "find"];

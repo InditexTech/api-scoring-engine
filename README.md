@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 <p align="right">
     <a href="CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Code of conduct"></a>
 </p>

@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+// SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+//
+// SPDX-License-Identifier: Apache-2.0
+
 process.env["NODE_CONFIG_DIR"] = __dirname + "/../config/";
 
 const constants = require("./commands/utils/constants");
