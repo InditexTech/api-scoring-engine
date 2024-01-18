@@ -2,7 +2,7 @@
   "name": "@inditextech/apicli",
   "version": "1.0.0",
   "description": "Command line application to execute API Certification Service.",
-  "author": "Inditex Open Source Team",
+  "author": "InditexTech Open Source Office",
   "contributors": [],
   "license": "Apache-2.0",
   "main": "index.js",

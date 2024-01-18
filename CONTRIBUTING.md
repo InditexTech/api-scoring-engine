@@ -4,45 +4,25 @@ SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
 SPDX-License-Identifier: Apache-2.0
 -->
 
-## Contributing
+# Contributing
 
-[fork]: todo
-[pr]: todo
-[style]: https://standardjs.com/
-[code-of-conduct]: /CODE_OF_CONDUCT.md
+Thank you for your interest in contributing to this project! We value and appreciate any contributions you can make.
+To maintain a collaborative and respectful environment, please consider the following guidelines when contributing to
+this project.
 
+## Prerequisites
 
-Hi there! We're thrilled that you'd like to contribute to this project. Your help is essential for keeping it great.
+- Before starting to contribute to the code, you must first sign the
+[Contributor License Agreement (CLA)](https://forms.office.com/pages/responsepage.aspx?id=tr3oyHyO1UG8QTf_88M7dUcieUMXXWlMt4DQ48jCBMZUM1FCMUFZNFRPWVpSV1hUREIzVzlSN0E4Qy4u).
 
-Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
+## Contribute Guidelines
 
-## Issues and PRs
+- Please follow the contribution guidelines defined [here](https://albalro.github.io/CONTRIBUTING/)
 
-If you have suggestions for how this project could be improved, or want to report a bug, open an issue! We'd love all and any contributions. If you have questions, too, we'd love to hear them.
+## Helpful Resources
 
-We'd also love PRs. If you're thinking of a large PR, we advise opening up an issue first to talk about it, though! Look at the links below if you're not sure how to open a PR.
+- [Certification suite](https://albalro.github.io/): Learn about all components that make up the Certification suite.
+- [Issues](../../issues): Check open issues and look for opportunities to contribute. Make sure to open an issue before
+starting work on a new feature or fix.
 
-## Submitting a pull request
-
-1. [Fork][fork] and clone the repository.
-1. Configure and install the dependencies: `Dependencies installation command`.
-1. Make sure the tests pass on your machine: `Test command`, `Add some more information about tests here`
-1. Create a new branch: `git checkout -b my-branch-name`.
-1. Make your change, add tests, and make sure the tests still pass.
-1. Push to your fork and [submit a pull request][pr].
-1. Pat your self on the back and wait for your pull request to be reviewed and merged.
-
-Here are a few things you can do that will increase the likelihood of your pull request being accepted:
-
-- Follow the [style guide][style] which is using standard. Any linting errors should be shown when running `Linting test command`.
-- Write and update tests.
-- Keep your changes as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
-- Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
-
-Work in Progress pull requests are also welcome to get feedback early on, or if there is something blocked you.
-
-## Resources
-
-- [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
-- [Using Pull Requests](https://help.github.com/articles/about-pull-requests/)
-- [GitHub Help](https://help.github.com)
+Thank you for your time and contribution! Your work helps to grow and improve this project. If you have any questions, feel free to reach out to us.

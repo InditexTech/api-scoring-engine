@@ -2,7 +2,7 @@
   "name": "@inditextech/apicertification",
   "version": "1.0.0",
   "description": "API certification service",
-  "author": "Inditex Open Source Team",
+  "author": "InditexTech Open Source Office",
   "license": "Apache-2.0",
   "files": [
     "src/config",
