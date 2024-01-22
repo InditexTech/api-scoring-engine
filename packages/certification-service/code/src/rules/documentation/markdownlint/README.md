@@ -8,7 +8,7 @@ SPDX-License-Identifier: Apache-2.0
 
 ## About
 
-In this sub-directory you will find the custom rules to be used on the API Certification.
+In this sub-directory you will find the custom rules to be used on the API Scoring.
 These are to be used by [markdownlint](https://github.com/DavidAnson/markdownlint)
 to evaluate the documentation of Inditex's APIs. This API should be present on
 the CI process for all APIs across inditex, as well to be used from local environments
