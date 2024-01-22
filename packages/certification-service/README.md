@@ -15,7 +15,7 @@ SPDX-License-Identifier: Apache-2.0
     <br>
 </p>
 
-This folder contains the **API Certification microservice** and its API. The structure is the following:
+This folder contains the **API Scoring microservice** and its API. The structure is the following:
 
 ```bash
 └─ certification-service/
@@ -36,7 +36,7 @@ This folder contains the **API Certification microservice** and its API. The str
 		└─ utils/
 		└─ verify/
 		└─ main.js
-	    
+
 ```
 
 
@@ -72,7 +72,7 @@ This folder contains the **API Certification microservice** and its API. The str
       cerws:
         common:
           rest:
-            client:        
+            client:
               github-rest-client:
                 username: <GITHUB_USERNAME>
                 password: <GITHUB_PERSONAL_ACCESS_TOKEN>
@@ -89,4 +89,3 @@ This folder contains the **API Certification microservice** and its API. The str
 ## Usage
 
 [View the documentation](https://urban-adventure-29rymqv.pages.github.io/scoring-system/microservice/) for usage information.
-
