@@ -4,7 +4,7 @@
 
 openapi: 3.0.2
 info:
-  title: API Certification
+  title: API Scoring
   description: |-
     This is Certification & Scoring API: This open-source API-First-based Scoring service evaluates your APIs according to a set of rules that the user can customize.
 
