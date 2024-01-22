@@ -17,7 +17,7 @@ this project.
 
 ## Contribute Guidelines
 
-- Please follow the contribution guidelines defined [here](https://albalro.github.io/CONTRIBUTING/)
+- Please follow the contribution guidelines defined [here](https://albalro.github.io/CONTRIBUTING/).
 
 ## Helpful Resources
 
