@@ -1,7 +1,7 @@
 {
   "name": "@inditextech/apicli",
   "version": "1.0.0",
-  "description": "Command line application to execute API Certification Service.",
+  "description": "Command line application to execute API Scoring Service.",
   "author": "InditexTech Open Source Office",
   "contributors": [],
   "license": "Apache-2.0",

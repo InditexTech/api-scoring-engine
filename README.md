@@ -9,15 +9,15 @@ SPDX-License-Identifier: Apache-2.0
 </p>
 
 <p align="center">
-    <h1 align="center">API Certification System</h1>
+    <h1 align="center">API Scoring System</h1>
     <p align="center">A microservice, its API, and a CLI.<br>Reaching the API Design efficiency never was that easy.</p>
-    <p align="center"><strong><a href="https://albalro.github.io">Check our doc!</a></strong></p>
+    <p align="center"><strong><a href="https://inditextech.github.io/api-scoring-doc/">Check our doc!</a></strong></p>
     <br>
 </p>
 
-This repository contains the Certification Service along with its API, responsible for getting a grade for APIs, and a CLI tool called `apicli`, which makes requests to the certification system to get your API a score.
+This repository contains the Scoring Service along with its API, responsible for getting a grade for APIs, and a CLI tool called `apicli`, which makes requests to the scoring system to get your API a score.
 
-> You can find further information regarding the **API Certification Suite** in our [documentation site](https://albalro.github.io)!
+> You can find further information regarding the **API Scoring Suite** in our [documentation site](https://inditextech.github.io/api-scoring-doc/)!
 
 <br>
 
@@ -31,7 +31,7 @@ To proceed with their installation, please, place yourself in their path and fol
 
 ## Usage
 
-[View the documentation](https://albalro.github.io) for usage information.
+[View the documentation](https://inditextech.github.io/api-scoring-doc/) for usage information.
 
 <br>
 

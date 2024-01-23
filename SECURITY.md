@@ -1,17 +1,20 @@
-# Security Policy
+# Security
 
-## Supported Versions
+We at Inditex believe that responsible disclosure of security vulnerabilities helps us ensure the security and privacy of all opensource community.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
+If you believe you have found a security vulnerability in any Inditex repository that meets Inditex definition of a security vulnerability, please report it to us as described below. We appreciate the hard work maintainers put into fixing vulnerabilities and understand that sometimes more time is required to properly address an issue.
 
-## Reporting a Vulnerability
+## Reporting Security issues
 
-InditexTech Open Source Office take security bugs seriously. We appreciate your efforts to responsibly disclose your findings, and will make every effort to acknowledge your contributions.
+> IMPORTANT: Do not file public issues on GitHub for security vulnerabilities
 
-To report a security issue, please use the GitHub Security Advisory "Report a Vulnerability" tab.
+* Let us know by submitting the finding through our [disclosure submission program](https://inditex.responsibledisclosure.com/) as soon as possible, upon discovery of a potential security issue.
+* Once we've assessed your report, we will create a GitHub "security advisory", which will allow the reporter and Inditex team to work on the issue in a confidential manner. We will invite you as a collaborator to the advisory and any needed trusted persons.
+* That "security advisory" will also allow us to have a temporary private fork, to work on the fix in confidentiality.
+* Once a fix is ready, we will include the fix in our next release and mark that release as a security release.
+* Details on the issue will be embargoed for 30 days to give users an oppurtunity to upgrade, after which we will coordinate disclosure with the researcher(s).
+* If you've contributed the fix, you will be credited for it.
 
-The InditexTech team will send a response indicating the next steps in handling your report. After the initial reply to your report, the security team will keep you informed of the progress towards a fix and full announcement, and may ask for additional information or guidance.
+## Policy
 
-Report security bugs in third-party modules to the person or team maintaining the module. You can also report a vulnerability through the npm contact form by selecting "I'm reporting a security vulnerability".
+Find out more about our [responsible disclosure policy](https://inditex.responsibledisclosure.com/hc/en-us#vdp_policy)

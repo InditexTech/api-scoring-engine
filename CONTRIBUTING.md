@@ -17,11 +17,11 @@ this project.
 
 ## Contribute Guidelines
 
-- Please follow the contribution guidelines defined [here](https://albalro.github.io/CONTRIBUTING/)
+- Please follow the contribution guidelines defined [here](https://inditextech.github.io/api-scoring-doc/CONTRIBUTING/).
 
 ## Helpful Resources
 
-- [Certification suite](https://albalro.github.io/): Learn about all components that make up the Certification suite.
+- [API Scoring Suite](https://inditextech.github.io/api-scoring-doc/): Learn about all components that make up the API Scoring suite.
 - [Issues](../../issues): Check open issues and look for opportunities to contribute. Make sure to open an issue before
 starting work on a new feature or fix.
 
