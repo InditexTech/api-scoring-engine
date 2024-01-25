@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+#
+# SPDX-License-Identifier: Apache-2.0
+
+asyncapi: '2.0.0'
+info:
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: JMS Sample
+  version: '2.1.1'
+  description:
+    Async API JMS Example
+  contact:
+    name: Api team
+    email: exemple@exemple.com
+
+defaultContentType: application/json
+servers:
+  production:
+    url: broker.mycompany.com
+    protocol: amqp
+    description: This is "My Company" broker.
+
+tags:
+  - name: transport
+
+channels:
+  transportNotificationBatch:
+    subscribe:
+      description: Subscribe example
+      operationId: onTransportNotificationBatch
+      x-transactional: true
+      tags:
+        - name: transport
+      message:
+        name: TransportNotificationEventBatchMessage
+        headers:
+          $ref: '#/components/schemas/logistica.wmq.header.v1'
+        schemaFormat: 'application/schema+json;version=draft-07'
+        payload:
+          $ref: 'transport-notification-batch-message-envelop.schema'
+  transportNotification:
+    publish:
+      description: Publish example
+      operationId: onTransportNotificationEvent
+      tags:
+        - name: transport
+      message:
+        name:  TransportNotificationEventMessage
+        headers:
+          $ref: '#/components/schemas/logistica.wmq.header.v1'
+        schemaFormat: 'application/schema+json;version=draft-07'
+        payload:
+          $ref: 'transport-notification-message-envelop.schema'
+  transportNotificationEventSubscriptions:
+    subscribe:
+      operationId: onNotificationEventSubscriptions
+      description: Subscribe example
+      message:
+        name: NotificationEventSubscriptionsMessage
+        tags:
+          - name: transport
+        headers:
+          $ref: '#/components/schemas/logistica.wmq.header.v1'
+        schemaFormat: 'application/schema+json;version=draft-07'
+        payload:
+          $ref: 'transport-notification-batch-message-envelop.schema'
+components:
+  schemas:
+    logistica.wmq.header.v1:
+      type: object
+      required:
+        - fileName
+        - messageVersion
+      properties:
+        fileName:
+          type: string
+        messageVersion:
+          type: string
+        source:
+          type: string

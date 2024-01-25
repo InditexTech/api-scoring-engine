@@ -1,0 +1,35 @@
+// SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+//
+// SPDX-License-Identifier: Apache-2.0
+
+package what;
+
+option java_package = "com.test.api.grpc.test.v1";
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  // Sends another greeting
+  rpc SayHelloAgain (HelloRequest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+
+  enum Corpus {
+    FIRST = 1;
+    SECOND = 2;
+  };
+
+  enum Other {
+    FIRST = 0;
+    SECOND = 1;
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "name": "@inditextech/apicli",
+  "version": "1.0.0",
+  "description": "Command line application to execute API Scoring Service.",
+  "author": "InditexTech Open Source Office",
+  "contributors": [],
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "bin": {
+    "apicli": "./index.js"
+  },
+  "scripts": {
+    "test": "cross-env NODE_CONFIG_DIR='../config' jest",
+    "myTest": "cross-env NODE_CONFIG_DIR='../config' jest ./test/cli/verify-file.spec.js",
+    "pkg": "pkg package.json -t node16-linux-x64",
+    "verify": "npm ci && npm run test",
+    "bump:snapshot": "npm version $npm_package_version.$(date \"+%s\")",
+    "package": "npm pack",
+    "publish": "npm publish ./*.tgz --verbose --registry $NPM_PUBLISHING_REGISTRY --unsafe-perm",
+    "publish:snapshot": "npm publish ./*.tgz --verbose --registry $NPM_PUBLISHING_REGISTRY --unsafe-perm",
+    "version:release": "npm version $RELEASE_VERSION -m \"[npm-scripts] prepare release $RELEASE_VERSION\" --tag-version-prefix \"\"",
+    "release:prepare": "npm run verify && npm run package",
+    "release:perform": "npm run publish",
+    "version:development": "npm version $(npm version minor)-SNAPSHOT",
+    "release:patch": "npm version patch -a -m \"Releasing patch version %s\"",
+    "release:minor": "npm version minor -a -m \"Releasing minor version %s\"",
+    "release:major": "npm version major -a -m \"Releasing major version %s\""
+  },
+  "jest": {
+    "collectCoverage": true
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.10",
+    "axios": "^1.6.5",
+    "chalk": "^4.1.2",
+    "command-line-args": "^5.2.1",
+    "command-line-usage": "^7.0.1",
+    "config": "^3.3.10",
+    "cross-env": "^7.0.3",
+    "figlet": "^1.7.0",
+    "jest": "^29.7.0"
+  },
+  "pkg": {
+    "scripts": [],
+    "assets": [
+      "node_modules/figlet/**/*"
+    ]
+  },
+  "overrides": {
+    "semver": "7.5.2"
+  }
+}

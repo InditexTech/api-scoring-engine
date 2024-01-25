@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+#
+# SPDX-License-Identifier: Apache-2.0
+
+definition:
+  workspace: INTERNAL
+  service:
+    name: 'api_certification'
+    path: '{{api.target_path}}'
+    auth_type: itx-user-auth
+    connect_timeout: 5000
+    read_timeout: 10000
+    write_timeout: 10000
+    match:
+      routes:
+        - operationId: refreshRuleset
+        - operationId: validate
+        - operationId: getValidationResults
+        - operationId: linterDetailsEnquiry
+        - operationId: linterDetailsLatest
+    tags:
+      - 'api_certification'
+      - apicerws

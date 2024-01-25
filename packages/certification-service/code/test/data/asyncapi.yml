@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+#
+# SPDX-License-Identifier: Apache-2.0
+
+asyncapi: 2.0.0
+info:
+  title: Event API
+  version: '4.11'
+  description: |
+    Notifications sent through PIPE
+  contact:
+    name: Exemple
+    email: exemple@exemple.com
+
+defaultContentType: application/*+avro
+
+channels:
+  example.publish.event.v4:
+    description: The topic on which publishes domain events.
+    parameters:
+    publish:
+      summary: Publish information about event.
+      operationId: onConfirmed
+      bindings:
+        kafka:
+          bindingVersion: 'latest'
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ExampleV4'
+
+components:
+  messages:
+    ExampleV4:
+      name: Example
+      title: Example
+      summary: Contains the event details
+      contentType: application/*+avro
+      schemaFormat: application/vnd.apache.avro+json;version=1.8.2
+      traits:
+        - $ref: '#/components/messageTraits/EnvelopeV4'
+        - $ref: '#/components/messageTraits/CommonHeaders'
+      headers:
+        type: object
+        properties:
+          broker_type:
+            description: The broker where the notification has been invoked (MQ, PIPE, ALL)
+            string: string
+          example_id:
+            description: The example id
+            string: string
+          trigger_type:
+            description: The type of trigger that invokes the notification sending (ON_CONFIRM, ON_REQUESTED or ON_SCHEDULED)
+            string: string
+
+  messageTraits:
+    EnvelopeV4:
+      x-itx-metadata-version: v1
+      x-itx-envelop-namespace: com.exemple.event.v4
+      x-itx-envelop-name: Envelope
+    CommonHeaders:
+      headers:
+        type: object
+        properties:
+          envelope_id:
+            type: string
+          message_id:
+            type: string
+          topic:
+            type: string

@@ -1,0 +1,115 @@
+// SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+//
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package samples.grpc;
+
+import "sample/validation.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_package = "com.sample.example.grpc";
+/**
+* Product definition
+*/
+message Product{
+  string  product_id = 1 [(sample.validation.min) = 1 , (sample.validation.regex) = "^[A-Za-z0-9-]{0,20}$"];
+  //@Example(value="Trousers")
+  string  product_name = 2 [ (sample.validation.mandatory) = true , (sample.validation.min) = 1 ,
+    (sample.validation.regex) = "^[A-Za-z0-9 .]{0,40}$"];
+  //@Example(value="Product description")
+  string  description = 3 [(sample.validation.regex) = "^[A-Za-z0-9 .]{0,100}$"];
+  string  brand = 4 [(sample.validation.regex) = "^[A-Za-z0-9-]{0,20}$"];
+  //@Example(value="Textil")
+  string  category = 5 [(sample.validation.regex) = "^[A-Za-z0-9-]{0,30}$"];
+  //@Example(value="9123456789041")
+  int64   ean = 6 [ (sample.validation.mandatory) = true , (sample.validation.min) = 1 ,
+    (sample.validation.regex) = "^[A-Za-z0-9-]{0,13}$"];
+  Price   price = 7 [ (sample.validation.mandatory) = true , (sample.validation.min) = 1];
+  WarehouseLocation   warehouse_location = 8;
+  //@Example(value="2019-11-30T16:22:40Z")
+  string  production_date =9 [(sample.validation.regex) =
+    "^([0-9]{4}-[0-1]{1}[0-9]{1}-[0-3]{1}[0-9]{1}T[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}:[0-5]{1}[0-9]{1}Z)"];
+}
+
+/**
+* Product identification.
+*/
+message ProductId{
+  string product_id = 1;
+}
+/**
+* Delete product response
+*/
+message DeletedProductId{
+  string code = 1;
+  string description = 2;
+}
+
+/**
+* Pagination
+*/
+message Pagination{
+  //@exclude pagination support
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+/**
+* Every time that we use amounts we should retrieve a currency.
+*/
+message Price{
+  //@Example(value="r3s0urc31d01")
+  float   amount = 1;
+  //@Example(value="EUR")
+  string  currency = 2   [ (sample.validation.regex) = "[A-Z]{3}$" ];
+}
+
+message WarehouseLocation{
+  double  latitude = 1;
+  double  longitude = 2;
+}
+
+/**
+* Define filter to find product by Brand.
+*/
+message ListProductsFilterRequest{
+  /** The Brand definition
+    * @Enum(id="0", name="UNKNOWN_BRAND", description="UNKNOWN_VALUE")
+    * @Enum(id="1", name="SAMPLE", description="SAMPLE")
+  */
+  Brand brand = 1;
+}
+
+
+message ListProductsResponse{
+  repeated Product product_lists = 1;
+  string next_page_token = 2;  //@exclude pagination support
+  int32 page_size = 3;
+  string page_token = 4;
+}
+
+/**
+  * @Enum(id="0", name="UNKNOWN_BRAND", description="UNKNOWN_VALUE")
+  * @Enum(id="1", name="SAMPLE", description="SAMPLE")
+*/
+enum Brand{
+  BRAND_UNSPECIFIED = 0;
+  SAMPLE = 1;
+}
+
+
+/**
+  * @Error(code="1", name="NOT_FOUND", status="NOT_FOUND", effect="", description="No se encuentra el producto")
+  * @Error(code="2", name="UNHANDLED_ERROR", status="INVALID_ARGUMENT", description="Unhandled error")
+  */
+service ProductService{
+  rpc CreateProduct (Product) returns (Product) {};
+  rpc UpdateProduct (Product) returns (google.protobuf.Empty) {};
+  rpc FindProductsByFilter(ListProductsFilterRequest) returns (ListProductsResponse) {};
+  rpc DeleteProduct(ProductId) returns (DeletedProductId) {};
+  rpc FindProductById (ProductId) returns (Product) {};
+  rpc FindAllProducts(Pagination) returns (ListProductsResponse) {};
+}

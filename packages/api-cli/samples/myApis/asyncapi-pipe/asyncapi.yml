@@ -1,0 +1,117 @@
+# SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+#
+# SPDX-License-Identifier: Apache-2.0
+
+asyncapi: 2.0.0
+info:
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: PIPE Sample
+  version: '2.1.5'
+  description:
+    Notifications sent by app to other services through PIPE
+  contact:
+    name: Api team
+    email: exemple@exemple.com
+
+tags:
+  - name: pipe
+
+defaultContentType: application/*+avro
+servers:
+  development:
+    url: broker.example.com:{port}
+    protocol: PIPE
+    description: develop environment url
+    variables:
+      port:
+        default: '1883'
+        enum:
+          - '1883'
+          - '8883'
+
+channels:
+  meccano.${tenant}.${environment}.blueprints.dlqs.example-event.public.v2:
+    description: The topic on which the app publishes product events
+    parameters:
+      tenant:
+        $ref: '#/components/parameters/tenant'
+      environment:
+        $ref: '#/components/parameters/environment'
+    publish:
+      description: Publish example information in the shape of events
+      summary: Publish example information in the shape of events
+      operationId: onExampleEvent
+      tags:
+        - name: pipe
+      bindings:
+        kafka:
+          bindingVersion: 'latest'
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ExampleEvent'
+      x-sample-metadata-version: v3
+      x-sample-envelop-namespace: com.sample.events.v2
+      x-sample-envelop-name: ExampleEventEnvelope
+
+components:
+  messages:
+    ExampleEvent:
+      name: ExampleEvent
+      title: Example Event
+      summary: Contains the event type some data
+      contentType: application/*+avro
+      schemaFormat: 'application/vnd.apache.avro+json;version=1.9.0'
+      traits:
+        - $ref: '#/components/messageTraits/CommonHeaders'
+      payload:
+        $ref: 'exampleevents/v1/imports/events.avsc#/0'
+      headers:
+        type: object
+        properties:
+          broker_type:
+            description: The broker where the notification has been invoked (MQ, PIPE, ALL)
+            type: string
+            example: "PIPE"
+          event_id:
+            description: Who requested the service, ID format
+            type: string
+            pattern: "AV-[0-9]{0,10}"
+            example: "AV-20030444"
+          trigger_type:
+            type: string
+            description: The type of trigger that invokes the notification sending
+            enum:
+              - ON_CONFIRM
+              - ON_REQUESTED
+              - ON_SCHEDULED
+            example: ON_CONFIRM
+  messageTraits:
+    CommonHeaders:
+      headers:
+        type: object
+        properties:
+          amiga-metadata-session:
+            type: string
+          sample_envelope_id:
+            type: string
+          sample_message_id:
+            type: string
+          sample_topic:
+            type: string
+  parameters:
+    tenant:
+      description: The tenant identifier.
+      schema:
+        type: string
+        enum:
+          - sample          
+    environment:
+      description: The environment
+      schema:
+        type: string
+        enum:
+          - dev
+          - pre
+          - pro

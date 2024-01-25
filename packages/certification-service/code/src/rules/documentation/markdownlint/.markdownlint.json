@@ -1,0 +1,11 @@
+{
+    "default": true,
+    "extends": null,
+    "MD013": false,
+    "severities":[
+        {
+            "id" : "MD025",
+            "severity" : 1
+        }
+    ]
+}

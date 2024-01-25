@@ -1,0 +1,121 @@
+# SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Configuración para todos los entornos
+node:
+  env: production
+
+app:
+  name: API Certification
+  version: 1.0.0
+  namespace: com.inditextech.apicertification
+
+service:
+  port: 8080  
+  # Body parser options
+  bodyParser:
+    # Enable the parser for the whole service. `false` disables the parser
+    enabled: true
+    # Form body size limit (in bytes)
+    formLimit: 57344
+    # Text body size limit (in bytes)
+    textLimit: 57344
+    # JSON body size limit (in bytes)
+    jsonLimit: 1048576
+    # Limit the amount of memory the body fiels can reserve (not including
+    # files)
+    maxFieldsSize: 2097152
+    # Limits the size of a field file (in bytes)
+    maxFileSize: 20971520
+    # Path to store temporarily the files extracted from multipart bodies.
+    # By default: os.tmpdir()
+    # uploadDir:
+
+cerws:  
+  log:    
+    level: warn  
+  common:
+    rest:
+      client:
+        github-rest-client:
+          base-url: https://github.com
+          auth-method: Basic
+          username: ---
+          password:
+
+  certification:
+    scoring:
+      error-coefficient-weight: 5
+      modules-weights:
+        design: 0.4
+        documentation: 0.15
+        security: 0.45
+      modules-weights-without-security:
+        design: 0.85
+        documentation: 0.15
+
+    protocol:
+      REST:
+        available-modules: DESIGN,DOCUMENTATION,SECURITY
+      EVENT:
+        available-modules: DESIGN,DOCUMENTATION
+      GRAPHQL:
+        available-modules: DOCUMENTATION
+      GRPC:
+        available-modules: DESIGN,DOCUMENTATION
+
+    ruleset:
+      rootDirectory: "/src"
+      directory: "/src/rules"
+  lint:
+    rest:
+      general-default-ruleset: /src/rules/openapi/design/index.js
+      security-default-ruleset: /src/rules/openapi/security/index.js
+    event:
+      general-default-ruleset: /src/rules/asyncapi/index.js
+    avro:
+      general-default-ruleset: /src/rules/avro/index.js
+    grpc:
+      number-of-base-rules: 30
+      configuration-directory: "/src/rules/proto/"
+      severities-file: /src/rules/proto/severities.yaml
+      protolint-bin-path: /src/bin/protolint
+      protolint-custom-rules-bin-path: /src/bin/protolint_custom_rules
+  markdown:
+    number-of-base-rules: 47
+    markdown-lint-config: "/src/rules/documentation/markdownlint/.markdownlint.json"    
+    markdown-lint-api-custom-rules: "/src/rules/documentation/markdownlint/linting-rules/api-rules/apiRules.js"
+    number-of-minimum-lines: 5
+    number-of-minimum-line-size: 2
+    custom-rule-prefixes: ["custom"]
+    scoring:
+      rules-weights:
+        base-rules: 0.3
+        custom-rules: 0.7
+  validation:
+    module:
+      url:
+        message: "Module validation requires the 'url' to be a valid Url, to be from github and must not be a zip file"
+    lint:
+      message: "validationTypes DESIGN and SECURITY requires the 'url' body fields"
+
+    documentation:
+      message: "validationType DOCUMENTATION requires the 'url' body fields"
+
+    repository:
+      parameters:
+        message: "validationType OVERALL_SCORE requires the 'url' body field with the repository URL or 'file' body field with the file/zip needed."
+      url:
+        message: "validation OVERALL_SCORE requires 'url' body field to be a valid Url, to be from github and to be a zip file."
+
+    ruleset:
+      url:
+        message: "Module validation requires the 'ruleset' to be a valid Url, to be from github and must be a yaml/yml file"
+
+    full:
+      message: "A 'validationType' needs to be provided."
+
+    file:
+      url:
+        message: "File validation requires the 'url' to be a valid Url, to be from github and must be a yaml/yml file"

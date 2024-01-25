@@ -1,0 +1,105 @@
+# SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+#
+# SPDX-License-Identifier: Apache-2.0
+
+asyncapi: 2.0.0
+info:
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Streams Sample
+  version: 2.1.2
+  description: |
+    Cart Async Api Example
+  contact:
+     name: Api team
+     email: exemple@exemple.com
+
+tags:
+  - name: cart
+  - name: stock
+
+servers:
+  default:
+    url: 'events.asyncapi.org:{port}'
+    description: Event bus
+    variables:
+      port:
+        enum:
+          - '9090'
+          - '9091'
+        default: '9090'
+    protocol: kafka
+
+channels:
+  checkout/cart/lines:
+    x-event-type:
+      - action
+    publish:
+      description: Add or remove cart line
+      operationId: onAddOrRemovecartLines
+      message:
+        oneOf:
+          - $ref: '#/components/messages/cart.lines.add'
+          - $ref: '#/components/messages/cart.lines.remove'
+    subscribe:
+      description: Subscribe oncartLineAdded
+      operationId: oncartLineAdded
+      message:
+        $ref: '#/components/messages/cart.lines.add'
+
+components:
+  messages:
+    cart.lines.add:
+      name: CartLinesAdd
+      title: CartLinesAdd
+      summary: Add lines to a cart
+      description: |
+        Message sent when adding lines to a cart
+      tags:
+        - name: cart
+        - name: stock
+      headers:
+        $ref: '#/components/schemas/cart.header.v1'
+      schemaFormat: 'application/vnd.apache.avro;version=1.9.0'
+      payload:
+        $ref: 'cart_lines_operations.avsc'
+    cart.lines.remove:
+      name: CartLinesRemove
+      title: CartLinesRemove
+      summary: Remove lines from a cart
+      description: |
+        Message sent when removing lines from a cart
+      tags:
+        - name: cart
+        - name: stock
+      headers:
+        $ref: '#/components/schemas/cart.header.v1'
+      schemaFormat: 'application/vnd.apache.avro;version=1.9.0'
+      payload:
+        $ref: 'cart_lines_operations.avsc'
+  schemas:
+    cart.header.v1:
+      type: object
+      required:
+        - eventName
+        - messageId
+        - timestamp
+      properties:
+        eventName:
+          type: string
+          description: 'Fully Qualified Name of the Event, e.g. checkout.cart.lines.v1'
+        messageId:
+          type: string
+          description: Unique Universal IDentifier of this instance of the event
+        timestamp:
+          type: string
+          description: Publication timestamp of this instance of the event
+        deprecationDate:
+          type: string
+          default: <no-value>
+          description: >-
+            Last valid date for this version of the event schema. Before this
+            day clients should be compatible with the last version of the event
+            schema. Required if and only if this version of the schema is
+            deprecated

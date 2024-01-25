@@ -1,0 +1,19 @@
+{
+  "namespace": "com.sample.events.v2",
+  "type": "record",
+  "name": "ExampleEventEnvelope",
+  "subject": "sample.example.v3",
+  "doc": "Message enclosing an Example Event",
+  "fields": [
+    {
+      "doc": "PIPE metadata",
+      "name": "metadata",
+      "type": "com.sample.Metadata"
+    },
+    {
+      "doc": "Message payload",
+      "name": "payload",
+      "type": "ExampleEvent"
+    }
+  ]
+}

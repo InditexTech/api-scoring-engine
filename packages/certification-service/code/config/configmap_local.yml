@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023 Industria de Diseño Textil S.A. INDITEX
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Configuración para desarrollo local
+node:
+  env: development
+cerws:
+  log:    
+    level: debug
+  common:
+    rest:
+      client:        
+        github-rest-client:
+          base-url: https://github.com
+          auth-method: Basic
+          # username: PUT-YOUR-USERNAME-HERE
+          # password PUT-YOUR-PASSWORD-HERE
