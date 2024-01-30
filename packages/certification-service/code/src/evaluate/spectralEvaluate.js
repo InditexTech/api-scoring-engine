@@ -12,6 +12,7 @@ const { INFO_SEVERITY } = require("./severity");
 const { getAppLogger } = require("../log");
 const fs = require("fs");
 const path = require("path");
+const { createResolver } = require("./spectralExternalUrlResolver");
 
 const logger = getAppLogger();
 
@@ -55,7 +56,7 @@ const retrieveDocument = (filePath) => {
 };
 
 const evaluate = async (ruleset, apiSpecificationPath) => {
-  const spectral = new Spectral();
+  const spectral = new Spectral({ resolver: createResolver() });
 
   const fileExtension = path.extname(ruleset);
 

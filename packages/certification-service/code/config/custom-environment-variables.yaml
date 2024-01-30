@@ -9,3 +9,6 @@ cerws:
         github-rest-client:
           username: CERWS_GH_USERNAME
           password: CERWS_GH_PASSWORD
+  spectral:
+    external-ref-resolver:
+      authorization-header: CERWS_RESOLVER_AUTH_HEADER
