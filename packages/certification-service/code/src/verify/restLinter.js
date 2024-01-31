@@ -44,17 +44,15 @@ class RestLinter {
 const addFileNameToIssues = (issues, fileName, rootFolder, tempFolder) => {
   const TEMP_STRING = "temp";
   issues.forEach((issue) => {
-    if (issue.source && issue.source.startsWith("http")) {
-      issue.fileName = issue.source;
+    let sourceaux = issue.source;
+    issue.source = fileName;
+    if (sourceaux?.startsWith("http")) {
+      issue.fileName = sourceaux;
+    } else if (tempFolder) {
+      sourceaux = sourceaux ? sourceaux : tempFolder;
+      issue.fileName = sourceaux.substring(tempFolder.indexOf(TEMP_STRING) + TEMP_STRING.length);
     } else {
-      let sourceaux = issue.source;
-      issue.source = fileName;
-      if (tempFolder) {
-        sourceaux = sourceaux ? sourceaux : tempFolder;
-        issue.fileName = sourceaux.substring(tempFolder.indexOf(TEMP_STRING) + TEMP_STRING.length);
-      } else {
-        issue.fileName = cleanFileName(sourceaux, rootFolder);
-      }
+      issue.fileName = cleanFileName(sourceaux, rootFolder);
     }
   });
 };
