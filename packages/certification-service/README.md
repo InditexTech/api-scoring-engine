@@ -77,7 +77,13 @@ This folder contains the **API Scoring microservice** and its API. The structure
                 password: <GITHUB_PERSONAL_ACCESS_TOKEN>
       ```
 
-4. Once the process finishes, start the service:
+5.  Optionally, if you want to use references to external schemas with secured urls you can configure the authentication header:
+
+    - as environment variable:
+
+          CERWS_RESOLVER_AUTH_HEADER: Bearer your_token
+
+6. Once the process finishes, start the service:
 
  ```
  npm run start

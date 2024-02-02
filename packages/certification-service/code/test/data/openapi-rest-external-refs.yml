@@ -1,0 +1,251 @@
+# SPDX-FileCopyrightText: 2024 Industria de Diseño Textil S.A. INDITEX
+#
+# SPDX-License-Identifier: Apache-2.0
+
+openapi: 3.0.0
+info:
+  title: API Example
+  version: "1.0.0"
+  contact:
+    name: Fake team
+    email: contact@email.fake
+  description: Sample description
+security:
+  - {}
+servers:
+  - url: https://myhost/v1
+tags:
+  - name: example
+paths:
+  /exampleendpoint:
+    get:
+      tags:
+        - example
+      summary: Example summary
+      description: Example description
+      operationId: exampleendpoint
+      responses:
+        "200":
+          description: Get example -
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sample"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+        "504":
+          $ref: "#/components/responses/GatewayTimeout"
+components:
+  schemas:
+    Sample:
+      $ref: "https://shared-schemas/apis/common/sample/rest/sample.yml#/Sample"
+
+    ErrorDetail:
+      title: ErrorDetail
+      description: Error details
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: integer
+          description: HTTP status
+          format: int32
+          minimum: 100
+          maximum: 511
+          example: 400
+        title:
+          type: string
+          description: HTTP status text
+          example: "Bad request"
+          maxLength: 100
+        detail:
+          type: string
+          description: HTTP status detail
+          example: "Some field is not valid"
+          maxLength: 1000
+        code:
+          type: string
+          maxLength: 100
+          description: Error code
+          example: "INVALID_NAME"
+        description:
+          type: string
+          maxLength: 1000
+          description: Error description
+          example: Bad Request
+        level:
+          type: string
+          maxLength: 7
+          description: Error level
+          example: ERROR
+          enum:
+            - INFO
+            - ERROR
+            - WARNING
+            - FATAL
+        message:
+          type: string
+          maxLength: 10000
+          description: Error message (detailed description)
+          example:
+            Invalid Request. Please, check the data in the request (QueryString
+            Parameters and/or Body).
+      example:
+        code: "400"
+        description: Bad Request
+        level: ERROR
+        message:
+          Invalid Request. Please, check the data in the request (QueryString
+          Parameters and/or Body).
+
+    ErrorResponseBody:
+      title: ErrorResponseBody
+      description: Base model for error response body
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: integer
+          description: HTTP status
+          format: int32
+          minimum: 100
+          maximum: 511
+          example: 400
+        title:
+          type: string
+          description: HTTP status text
+          example: "Bad request"
+          maxLength: 100
+        detail:
+          type: string
+          description: HTTP status detail
+          example: "Some field is not valid"
+          maxLength: 1000
+        errors:
+          type: array
+          maxItems: 100
+          description: Details of each of the errors
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseBody"
+          example:
+            status: 400
+            title: Bad request
+            detail: Bad request
+            errors:
+              - code: "BAD_REQUEST"
+                description: Bad request
+                level: ERROR
+                message: Bad request, please check data sent in the request.
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseBody"
+          example:
+            status: 401
+            title: Unauthorized
+            detail: Invalid credentials
+            errors:
+              - code: "UNAUTHORIZED"
+                description: Invalid credentials
+                level: ERROR
+                message: Invalid credentials provided
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseBody"
+          example:
+            status: 403
+            title: Forbidden
+            detail: You have not access to this resource
+            errors:
+              - code: "FORBIDDEN"
+                description: Forbidden
+                level: ERROR
+                message: You have not access to this resource
+
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseBody"
+          example:
+            status: 404
+            title: Not found
+            detail: The requested resource was not found
+            errors:
+              - code: "NOT_FOUND"
+                description: Not found
+                level: ERROR
+                message: The requested resource was not found
+
+    InternalError:
+      description: Internal error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseBody"
+          example:
+            status: 500
+            title: Internal error
+            detail: There was a problem processing your request
+            errors:
+              - code: "INTERNAL_ERROR"
+                description: Internal error
+                level: ERROR
+                message: There was a problem processing your request
+
+    ServiceUnavailable:
+      description: Service Unavailable - Use it to report the Specific Errors
+        that the server suffers.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseBody"
+          example:
+            status: 503
+            title: Service Unavailable
+            detail: Service Unavailable
+            errors:
+              - code: "SERVICE_UNAVAILABLE"
+                description: Service Unavailable
+                level: ERROR
+                message: There was a problem processing your request
+    GatewayTimeout:
+      description: Gateway Timeout
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseBody"
+          example:
+            status: 504
+            title: Gateway Timeout
+            detail: Gateway Timeout
+            errors:
+              - code: "GATEWAY_TIMEOUT"
+                description: Gateway Timeout
+                level: ERROR
+                message: There was a problem processing your request
