@@ -8,5 +8,6 @@ module.exports ={
     ensureParameteresExamples : require('./ensure-parameters-examples'),
     ensurePluralNouns : require('./ensure-plural-nouns'),
     ensureProblemStructureRfc7807 : require('./ensure-problem-structure-rfc7807'),
-    ensurePropertiesExamples : require('./ensure-properties-examples'),
+    ensurePropertiesExamples: require('./ensure-properties-examples'),
+    ensureErrorResponseDefinition: require('./ensure-error-response-definition'),
 }
