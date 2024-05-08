@@ -46,7 +46,9 @@ const addFileNameToIssues = (issues, fileName, rootFolder, tempFolder) => {
   issues.forEach((issue) => {
     let sourceaux = issue.source;
     issue.source = fileName;
-    if (tempFolder) {
+    if (sourceaux?.startsWith("http")) {
+      issue.fileName = sourceaux;
+    } else if (tempFolder) {
       sourceaux = sourceaux ? sourceaux : tempFolder;
       issue.fileName = sourceaux.substring(tempFolder.indexOf(TEMP_STRING) + TEMP_STRING.length);
     } else {

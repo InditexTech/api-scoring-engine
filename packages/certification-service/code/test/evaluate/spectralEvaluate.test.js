@@ -4,8 +4,10 @@
 
 const { evaluate } = require("../../src/evaluate/spectralEvaluate");
 const { LintRuleset } = require("../../src/evaluate/lint/lintRuleset");
-
+const nock = require("nock");
 const path = require("path");
+const config = require("../../src/config/config");
+const yaml = require("js-yaml");
 
 const emptyOpenAPIFilePath = fixFilename4Windows(path.join(__dirname, "../data/openapi-rest.yml"));
 const faultyOpenAPIFilePath = fixFilename4Windows(path.join(__dirname, "../data/openapi-rest2.yml"));
@@ -15,13 +17,24 @@ function fixFilename4Windows(filename) {
   return filename.charAt(0).toLowerCase() + filename.slice(1);
 }
 
+jest.mock("../../src/config/config", () => {
+  const originalModule = jest.requireActual("../../src/config/config");
+  return {
+    __esModule: true,
+    ...originalModule,
+    configValue: jest.fn().mockImplementation((property, defaultValue) => {
+      return originalModule.configValue(property, defaultValue);
+    }),
+  };
+});
+
 const expectedRESTResult = {
   code: "info-contact",
   message: 'Info object must have "contact" object.',
   path: [],
   severity: 1,
   source: emptyOpenAPIFilePath,
-  range: { start: { character: 0, line: 0 }, end: { character: 14, line: 0 } },
+  range: { start: { character: 0, line: 4 }, end: { character: 14, line: 4 } },
 };
 
 const expectedRESTSecurityResult = {
@@ -30,7 +43,7 @@ const expectedRESTSecurityResult = {
   path: [],
   severity: 0,
   source: faultyOpenAPIFilePath,
-  range: { start: { character: 0, line: 0 }, end: { character: 40, line: 22 } },
+  range: { start: { character: 0, line: 4 }, end: { character: 40, line: 26 } },
 };
 
 const resultsForCode = (results, code) => {
@@ -76,5 +89,93 @@ describe("Tests Spectral Evaluation", () => {
 
     expect(evaluationResult.length).toBeGreaterThanOrEqual(1);
     expect(testObject).toStrictEqual(expectedRESTSecurityResult);
+  });
+
+  describe("Test secured external refs", () => {
+    test("Should resolve secured external refs", async () => {
+      const authHeader = "Bearer a_token";
+      jest.spyOn(config, "configValue").mockReturnValue(authHeader);
+      nock("https://shared-schemas", {
+        reqheaders: { Authorization: authHeader },
+      })
+        .get("/apis/common/sample/rest/sample.yml")
+        .reply(
+          200,
+          yaml.dump({
+            Sample: {
+              title: "Sample",
+              description: "Sample entity",
+              additionalProperties: false,
+              properties: {
+                code: {
+                  type: "string",
+                },
+                name: {
+                  type: "string",
+                },
+              },
+              required: ["code", "name"],
+            },
+          }),
+        );
+
+      const issues = await evaluate(
+        LintRuleset.REST_GENERAL.rulesetPath,
+        fixFilename4Windows(path.join(__dirname, "../data/openapi-rest-external-refs.yml")),
+      );
+
+      expect(issues).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            code: "ensure-properties-examples",
+            message: "code doesn't have an example",
+            path: ["Sample", "properties", "code"],
+            severity: expect.any(Number),
+            source: "https://shared-schemas/apis/common/sample/rest/sample.yml",
+            range: expect.objectContaining({
+              start: expect.objectContaining({ line: expect.any(Number), character: expect.any(Number) }),
+              end: expect.objectContaining({ line: expect.any(Number), character: expect.any(Number) }),
+            }),
+          }),
+          expect.objectContaining({
+            code: "ensure-properties-examples",
+            message: "name doesn't have an example",
+            path: ["Sample", "properties", "name"],
+            severity: expect.any(Number),
+            source: "https://shared-schemas/apis/common/sample/rest/sample.yml",
+            range: expect.objectContaining({
+              start: expect.objectContaining({ line: expect.any(Number), character: expect.any(Number) }),
+              end: expect.objectContaining({ line: expect.any(Number), character: expect.any(Number) }),
+            }),
+          }),
+        ]),
+      );
+    });
+
+    test("Should not resolve secured external refs", async () => {
+      jest.spyOn(config, "configValue").mockReturnValue(undefined);
+      nock("https://shared-schemas").get("/apis/common/sample/rest/sample.yml").reply(401);
+
+      const issues = await evaluate(
+        LintRuleset.REST_GENERAL.rulesetPath,
+        fixFilename4Windows(path.join(__dirname, "../data/openapi-rest-external-refs.yml")),
+      );
+
+      expect(issues).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            code: "invalid-ref",
+            path: ["components", "schemas", "Sample", "$ref"],
+            message: "ReadError: 401 Unauthorized",
+            severity: expect.any(Number),
+            source: expect.any(String),
+            range: expect.objectContaining({
+              start: expect.objectContaining({ line: expect.any(Number), character: expect.any(Number) }),
+              end: expect.objectContaining({ line: expect.any(Number), character: expect.any(Number) }),
+            }),
+          }),
+        ]),
+      );
+    });
   });
 });
