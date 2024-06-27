@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { configValue } = require("../../src/config/config");
-const { createResolver } = require("../../src/evaluate/spectralExternalUrlResolver");
+const { createResolver } = require("../../src/evaluate/spectralCustomResolver");
 jest.mock("../../src/config/config", () => {
   const originalModule = jest.requireActual("../../src/config/config");
   return {
@@ -18,7 +18,7 @@ describe("Spectral external url resolver", () => {
     jest.clearAllMocks();
   });
 
-  test("Should create resolver", () => {
+  test("Should create resolver with custom http resolver", () => {
     configValue.mockReturnValue("Basic dXNlcjpwYXNz");
 
     const resolver = createResolver();
@@ -35,12 +35,20 @@ describe("Spectral external url resolver", () => {
     );
   });
 
-  test("Create resolver should return undefined when no config", () => {
+  test("Create resolver should return custom resolver when no config for custom http resolver", () => {
     configValue.mockReturnValue(undefined);
 
     const resolver = createResolver();
 
     expect(configValue).toHaveBeenCalledWith("cerws.spectral.external-ref-resolver.authorization-header");
-    expect(resolver).toBeUndefined();
+    expect(Object.keys(resolver.resolvers)).toHaveLength(3);
+    console.log(resolver.resolvers.http);
+    expect(resolver.resolvers).toStrictEqual(
+      expect.objectContaining({
+        https: { resolve: expect.any(Function) },
+        http: { resolve: expect.any(Function) },
+        file: { resolve: expect.any(Function) },
+      }),
+    );
   });
 });
