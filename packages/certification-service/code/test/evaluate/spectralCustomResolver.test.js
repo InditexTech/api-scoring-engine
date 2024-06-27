@@ -42,7 +42,6 @@ describe("Spectral external url resolver", () => {
 
     expect(configValue).toHaveBeenCalledWith("cerws.spectral.external-ref-resolver.authorization-header");
     expect(Object.keys(resolver.resolvers)).toHaveLength(3);
-    console.log(resolver.resolvers.http);
     expect(resolver.resolvers).toStrictEqual(
       expect.objectContaining({
         https: { resolve: expect.any(Function) },
