@@ -12,7 +12,7 @@ const { INFO_SEVERITY } = require("./severity");
 const { getAppLogger } = require("../log");
 const fs = require("fs");
 const path = require("path");
-const { createResolver } = require("./spectralExternalUrlResolver");
+const { createResolver } = require("./spectralCustomResolver");
 
 const logger = getAppLogger();
 
