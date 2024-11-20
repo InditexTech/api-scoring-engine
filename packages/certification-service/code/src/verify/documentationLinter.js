@@ -16,7 +16,7 @@ const CUSTOM_RULES_NAMES = {
 };
 
 class DocumentationLinter {
-  static async lintDocumentation(validationType, rootFolder, api, documentation) {
+  static async lintDocumentation(validationType, rootFolder, api, documentation, customConfig) {
     if (!validationType || validationType === VALIDATION_TYPE_DOCUMENTATION) {
       const apiReadmeFile = {
         fullPath: path.join(rootFolder, api["definition-path"], "README.md"),
@@ -25,19 +25,19 @@ class DocumentationLinter {
         customRules: DocumentationRuleset.API.resolvedRuleset,
       };
 
-      const readmeIssues = await this.validateReadme(apiReadmeFile);
+      const readmeIssues = await this.validateReadme(apiReadmeFile, customConfig);
 
       documentation.documentationValidation.issues.push(...readmeIssues);
     }
   }
 
-  static async validateReadme(readmeFile) {
+  static async validateReadme(readmeFile, customConfig) {
     const issues = [];
     const readmePath = readmeFile.fullPath;
 
     if (fs.existsSync(readmePath)) {
       if (this.checkMarkdownContent(readmePath)) {
-        issues.push(...(await lintFileWithMarkdownLint(readmePath, readmeFile.customRules)));
+        issues.push(...(await lintFileWithMarkdownLint(readmePath, readmeFile.customRules, customConfig)));
         issues.forEach((issue) => (issue.fileName = readmeFile.fileName));
       } else {
         issues.push({
