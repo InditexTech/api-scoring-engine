@@ -24,9 +24,9 @@ const lintFilesWithProtolint = async (files, customFlags) => {
   return evaluateProtolint(files, customFlags);
 };
 
-const lintFileWithMarkdownLint = async (file, ruleset) => {
+const lintFileWithMarkdownLint = async (file, ruleset, customConfig) => {
   logger.info(`Linting md file ${file} with ruleset ${ruleset}`);
-  return Object.values(await markdownEvaluate(file, ruleset))[0];
+  return Object.values(await markdownEvaluate(file, ruleset, customConfig))[0];
 };
 
 const generateRandomFolder = () => {

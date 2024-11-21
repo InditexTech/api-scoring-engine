@@ -7,10 +7,11 @@ const { WARN_SEVERITY } = require("./severity");
 const { configValue } = require("../config/config");
 const path = require("path");
 
-const markdownEvaluate = async (filepath, ruleset) => {
+const markdownEvaluate = async (filepath, ruleset, customConfig) => {
+  const defaultConfig = configValue("cerws.markdown.markdown-lint-config");
   const options = {
     files: [filepath],
-    config: markdownlint.readConfigSync(path.join(process.cwd(), configValue("cerws.markdown.markdown-lint-config"))),
+    config: customConfig ? customConfig : markdownlint.readConfigSync(path.join(process.cwd(), defaultConfig)),
     customRules: ruleset.all,
   };
 
