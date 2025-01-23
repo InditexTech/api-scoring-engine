@@ -6,7 +6,12 @@ const fs = require("fs");
 const path = require("path");
 const { getAppLogger } = require("../log");
 const { downloadFile } = require("../utils/downloadUtils");
-const { lintFilesWithProtolint, lintFileWithSpectral, generateRandomFolder } = require("../verify/lint");
+const {
+  lintFilesWithProtolint,
+  lintFileWithSpectral,
+  generateRandomFolder,
+  lintGraphqlFile,
+} = require("../verify/lint");
 const { checkForErrors } = require("../verify/utils");
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
 const { API_PROTOCOL } = require("../verify/types");
@@ -22,7 +27,8 @@ module.exports.execute = async (url, apiProtocol) => {
       url &&
       (url.mimetype === "text/yaml" ||
         url.mimetype === "application/json" ||
-        (url.originalFilename && url.originalFilename.endsWith(".proto")))
+        url.originalFilename?.endsWith(".proto") ||
+        url.originalFilename?.endsWith(".graphql"))
     ) {
       fs.copyFileSync(url.filepath, `${url.filepath}_${url.originalFilename}`);
       logger.info(`Received file ${url.originalFilename}`);
@@ -54,6 +60,30 @@ module.exports.execute = async (url, apiProtocol) => {
         const protolintResults = await lintFilesWithProtolint(file, new Map());
         results = formatProtolintIssues(protolintResults);
         break;
+      case API_PROTOCOL.GRAPHQL:
+        const result = await lintGraphqlFile(file);
+        let issues = [];
+        result.forEach((element) => {
+          element.messages.forEach((message) =>
+            issues.push({
+              fileName: fileName,
+              code: message.messageId || message.ruleId, // message.ruleId
+              message: message.message,
+              severity: message.severity,
+              range: {
+                start: {
+                  line: message.line - 1,
+                  character: message.column - 1,
+                },
+
+                end: { line: message.endLine - 1, character: message.endColumn - 1 },
+              },
+              path: [],
+            }),
+          );
+        });
+        results = issues;
+        break;
       default:
         break;
     }
@@ -71,13 +101,13 @@ module.exports.execute = async (url, apiProtocol) => {
     return result;
   } finally {
     if (file) {
-      fs.unlink(file, (err) => err && logger.error(err.message));
+      fs.unlink(file, (err) => err && logger.error(err.message, `FILE ${file}`));
     }
     if (auxFile) {
-      fs.unlink(auxFile, (err) => err && logger.error(err.message));
+      fs.unlink(auxFile, (err) => err && logger.error(err.message, `AUXFILE ${auxFile}`));
     }
     if (folderPath) {
-      fs.rmdir(folderPath, (err) => err && logger.error(err.message));
+      fs.rm(folderPath, { recursive: true }, (err) => err && logger.error(err.message, `FOLDER ${folderPath}`));
     }
   }
 };

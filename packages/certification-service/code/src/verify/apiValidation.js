@@ -4,7 +4,7 @@
 
 const path = require("path");
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
-const { REST, EVENT, GRPC } = require("../evaluate/lint/protocols");
+const { REST, EVENT, GRPC, GRAPHQL } = require("../evaluate/lint/protocols");
 const {
   VALIDATION_TYPE_DESIGN,
   VALIDATION_TYPE_DOCUMENTATION,
@@ -29,20 +29,15 @@ const { EventLinter } = require("./eventLinter");
 const { gRPCLinter } = require("./grpcLinter");
 const { DocumentationLinter } = require("./documentationLinter");
 const { DocumentationRuleset } = require("../evaluate/documentation/documentationRuleset");
+const { GraphqlLinter } = require("./graphqlLinter.js");
 
 const logger = getAppLogger();
 
-const validateApi = async (rootFolder, api, validationType, isVerbose, tempFolder) => {
+const validateApi = async (apiDir, tempDir, api, validationType) => {
   const apiProtocol = api["api-spec-type"].toUpperCase();
   logger.info(`Validating API '${api.name}/${apiProtocol}'`);
   const fileName = path.join(api["definition-path"], getApiFile(api, apiProtocol)).replace(/\\/g, "/");
-  let file;
-  if (tempFolder) {
-    file = path.join(tempFolder, getApiFile(api, apiProtocol));
-    tempFolder = file;
-  } else {
-    file = path.join(rootFolder, api["definition-path"], getApiFile(api, apiProtocol));
-  }
+  const file = path.join(apiDir, getApiFile(api, apiProtocol));
 
   validationType = validationType === VALIDATION_TYPE_OVERALL_SCORE ? null : validationType;
 
@@ -61,6 +56,7 @@ const validateApi = async (rootFolder, api, validationType, isVerbose, tempFolde
   const design = {
     designValidation: {
       validationType: VALIDATION_TYPE_DESIGN,
+      issues: [],
       spectralValidation: { issues: [] },
       protolintValidation: { issues: [] },
     },
@@ -79,19 +75,24 @@ const validateApi = async (rootFolder, api, validationType, isVerbose, tempFolde
       validationType,
       file,
       fileName,
-      rootFolder,
       apiValidation,
       design,
       security,
-      tempFolder,
+      tempDir,
     });
   } else if (apiProtocol === EVENT) {
-    await EventLinter.lintEvent({ file, validationType, fileName, rootFolder, apiValidation, design, api });
+    await EventLinter.lintEvent({ file, validationType, fileName, apiDir, tempDir, apiValidation, design });
   } else if (apiProtocol === GRPC) {
-    await gRPCLinter.lintgRPC(validationType, rootFolder, api, design, new Map());
+    await gRPCLinter.lintgRPC(validationType, apiDir, tempDir, design, new Map());
+  } else if (apiProtocol === GRAPHQL) {
+    await GraphqlLinter.lintGrapql(validationType, apiDir, tempDir, design);
+    design.designValidation.spectralValidation.issues = design.designValidation.issues.map((i) => {
+      i.source = i.fileName;
+      return i;
+    });
   }
 
-  await DocumentationLinter.lintDocumentation(validationType, rootFolder, api, documentation);
+  await DocumentationLinter.lintDocumentation(validationType, apiDir, api, documentation);
 
   // Modules Scoring and Rating
   design.designValidation.score = scoreLinterValidations(design, apiProtocol);
@@ -109,7 +110,7 @@ const validateApi = async (rootFolder, api, validationType, isVerbose, tempFolde
   Object.assign(security.securityValidation, calculateRating(security.securityValidation.score));
   Object.assign(documentation.documentationValidation, calculateRating(documentation.documentationValidation.score));
 
-  if (apiProtocol === EVENT || apiProtocol === GRPC) {
+  if (apiProtocol === EVENT || apiProtocol === GRPC || apiProtocol === GRAPHQL) {
     apiValidation.result = [design, documentation];
   } else {
     apiValidation.result = [design, security, documentation];
@@ -151,7 +152,9 @@ function scoreLinterValidations(design, apiProtocol) {
   const spectralIssues = design.designValidation.spectralValidation.issues;
   const grpcIssues = design.designValidation.protolintValidation.issues;
 
-  return arrayIsNotEmpty(spectralIssues) ? scoreLinting(spectralIssues, numberOfRules) : scoreGRPCLinting(grpcIssues, NUMBER_OF_GRPC_RULES);
+  return arrayIsNotEmpty(spectralIssues)
+    ? scoreLinting(spectralIssues, numberOfRules)
+    : scoreGRPCLinting(grpcIssues, NUMBER_OF_GRPC_RULES);
 }
 
 function resolveNumberOfRulesByProtocol(protocol) {

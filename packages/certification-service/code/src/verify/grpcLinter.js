@@ -9,10 +9,9 @@ const { cleanFileName } = require("./utils");
 const { lintFilesWithProtolint } = require("./lint");
 
 class gRPCLinter {
-  static async lintgRPC(validationType, rootFolder, api, design, customFlags) {
+  static async lintgRPC(validationType, apiDir, tempDir, design, customFlags) {
     if (!validationType || validationType === VALIDATION_TYPE_DESIGN) {
-      const apiFolder = path.join(rootFolder, api["definition-path"]);
-      const pathFolders = fs.readdirSync(apiFolder);
+      const pathFolders = fs.readdirSync(apiDir);
 
       let folderFiles = pathFolders.filter(
           (item) =>
@@ -23,11 +22,11 @@ class gRPCLinter {
               !item.includes("stubs"),
       );
       const issues = await lintFilesWithProtolint(
-          path.join(apiFolder + "/" + (folderFiles.length > 1 ? "" : folderFiles)),
-          customFlags
+        path.join(apiDir + "/" + (folderFiles.length > 1 ? "" : folderFiles)),
+        customFlags,
       );
 
-      issues.forEach((issue) => (issue.fileName = cleanFileName(issue.fileName, rootFolder)));
+      issues.forEach((issue) => (issue.fileName = cleanFileName(issue.fileName, tempDir)));
       design.designValidation.protolintValidation.issues.push(...issues);
     }
   }

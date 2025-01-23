@@ -42,7 +42,6 @@ module.exports.execute = async (url, validationType, isVerbose) => {
     let results = await validateParsedRepository({
       parsedRepository,
       validationType,
-      isVerbose,
     });
 
     if (!validationType || validationType === VALIDATION_TYPE_OVERALL_SCORE) {
@@ -61,20 +60,20 @@ module.exports.execute = async (url, validationType, isVerbose) => {
   }
 };
 
-const validateParsedRepository = async ({ parsedRepository, validationType, isVerbose }) => {
+const validateParsedRepository = async ({ parsedRepository, validationType }) => {
   let results = [];
   for (const api of parsedRepository.apis) {
-    const tempFolder = path.join(parsedRepository.rootFolder, "../");
-    const fullPathTemp = path.join(tempFolder, "temp", api["definition-path"]);
+    const tempFolder = generateRandomFolder();
+    const apiDir = path.join(tempFolder, api["definition-path"]);
 
-    if (fs.existsSync(fullPathTemp)) {
-      fs.rmdirSync(fullPathTemp, { recursive: true });
+    try {
+      fs.mkdirSync(apiDir, { recursive: true });
+      fse.copySync(path.join(parsedRepository.rootFolder, api["definition-path"]), apiDir, { overwrite: true });
+      const singleResult = await validateApi(apiDir, tempFolder, api, validationType);
+      results.push(singleResult);
+    } finally {
+      fs.rmSync(tempFolder, { recursive: true });
     }
-    fs.mkdirSync(fullPathTemp, { recursive: true });
-    fse.copySync(path.join(parsedRepository.rootFolder, api["definition-path"]), fullPathTemp, { overwrite: true });
-
-    const singleResult = await validateApi(parsedRepository.rootFolder, api, validationType, isVerbose, fullPathTemp);
-    results.push(singleResult);
   }
 
   return results;
@@ -114,7 +113,7 @@ const cleanTempFiles = (zipFile, folderPath) => {
     fs.unlink(zipFile, (err) => err && logger.error(err.message));
   }
   if (folderPath) {
-    fs.rmdirSync(folderPath, { recursive: true });
+    fs.rmSync(folderPath, { recursive: true });
   }
 };
 

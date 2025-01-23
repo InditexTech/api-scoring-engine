@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { configValue } = require("../config/config");
+const { GRAPHQL } = require("../evaluate/lint/protocols");
 
 const VALIDATION_TYPE_DESIGN = "DESIGN";
 const VALIDATION_TYPE_DOCUMENTATION = "DOCUMENTATION";
@@ -15,6 +16,7 @@ const API_PROTOCOL = {
   REST: "REST",
   EVENT: "EVENT",
   GRPC: "GRPC",
+  GRAPHQL: "GRAPHQL",
 };
 
 const INVALID_REF_CUSTOMIZED = "References to schemas outside of the API directory are not allowed";

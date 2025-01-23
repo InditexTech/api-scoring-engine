@@ -47,7 +47,7 @@ const isValidValidateFileRequest = ({ url, apiProtocol }) => {
   } else if (
     url.mimetype !== "application/json" &&
     url.mimetype !== "text/yaml" &&
-    !url.originalFilename.endsWith(".proto")
+    !(url.originalFilename.endsWith(".proto") || url.originalFilename.endsWith(".graphql"))
   ) {
     throwAppError("Not a valid multipart file");
   }

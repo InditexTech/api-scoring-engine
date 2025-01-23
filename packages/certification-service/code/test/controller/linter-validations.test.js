@@ -265,7 +265,7 @@ describe("Linter Validations", () => {
       try {
         isValidValidateFileRequest({
           url: "https://raw.githubusercontent.com/app-test/develop/apis/rest/openapi-rest.yml",
-          apiProtocol: "GRAPHQL",
+          apiProtocol: "UNKNOWN",
         });
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
