@@ -30,14 +30,14 @@ const lintFileWithMarkdownLint = async (file, ruleset) => {
   return Object.values(await markdownEvaluate(file, ruleset))[0];
 };
 
-const lintGraphql = async (rootFolder) => {
-  logger.info(`Linting grapql file ${rootFolder}`);
-  return await evaluateGraphqlRepo(rootFolder);
-}
+const lintGraphql = async (rootFolder, config = {}) => {
+  logger.info(`Linting graphql folder ${rootFolder}`);
+  return await evaluateGraphqlRepo(rootFolder, config);
+};
 
-const lintGraphqlFile = async (file) => {
-  logger.info(`Linting grapql file ${file}`);
-  return await evaluateGraphqlFile(file);
+const lintGraphqlFile = async (file, config = {}) => {
+  logger.info(`Linting graphql file ${file}`);
+  return await evaluateGraphqlFile(file, config);
 };
 
 const generateRandomFolder = () => {

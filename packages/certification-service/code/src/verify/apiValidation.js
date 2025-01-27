@@ -70,6 +70,7 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
   };
   const documentation = { documentationValidation: { validationType: VALIDATION_TYPE_DOCUMENTATION, issues: [] } };
 
+  const graphqlLinter = new GraphqlLinter();
   if (apiProtocol === REST) {
     await RestLinter.lintRest({
       validationType,
@@ -85,14 +86,14 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
   } else if (apiProtocol === GRPC) {
     await gRPCLinter.lintgRPC(validationType, apiDir, tempDir, design, new Map());
   } else if (apiProtocol === GRAPHQL) {
-    await GraphqlLinter.lintGrapql(validationType, apiDir, tempDir, design);
+    await graphqlLinter.lint(validationType, apiDir, tempDir, design);
     design.designValidation.spectralValidation.issues = design.designValidation.issues.map((i) => {
       i.source = i.fileName;
       return i;
     });
   }
 
-  await DocumentationLinter.lintDocumentation(validationType, apiDir, api, documentation);
+  await DocumentationLinter.lintDocumentation(validationType, tempDir, api, documentation);
 
   // Modules Scoring and Rating
   design.designValidation.score = scoreLinterValidations(design, apiProtocol);

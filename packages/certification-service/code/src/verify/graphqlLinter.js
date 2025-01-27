@@ -5,11 +5,26 @@
 const { VALIDATION_TYPE_DESIGN } = require("./types");
 const { cleanFileName } = require("./utils");
 const { lintGraphql } = require("./lint");
+const graphqlLinterDefaultConfig = require("../rules/grpahql");
 
 class GraphqlLinter {
-  static async lintGrapql(validationType, rootFolder, tempDir, design) {
+  constructor(config = {}) {
+    this.configuration = graphqlLinterDefaultConfig;
+
+    if (config?.rulesConfig?.rules) {
+      this.configuration.rulesConfig.rules = config.rulesConfig.rules;
+    }
+    if (config?.rulesConfig?.severities) {
+      this.configuration.rulesConfig.severities = config.rulesConfig.severities;
+    }
+    if (config?.plugins) {
+      this.configuration.plugins = config.plugins;
+    }
+  }
+
+  async lint(validationType, rootFolder, tempDir, design) {
     if (!validationType || validationType === VALIDATION_TYPE_DESIGN) {
-      const result = await lintGraphql(rootFolder);
+      const result = await lintGraphql(rootFolder, this.configuration);
       let issues = [];
       result.forEach((element) => {
         element.messages.forEach((message) =>
