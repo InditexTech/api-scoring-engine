@@ -7,6 +7,12 @@ const graphqlPlugin = require("@graphql-eslint/eslint-plugin");
 const path = require("path");
 const { WARN_SEVERITY, ERROR_SEVERITY } = require("./severity");
 const { getAppLogger } = require("../log");
+const { configValue } = require("../config/config");
+const GRAPHQL_FILE_EXTENSIONS = configValue("cerws.certification.protocol.GRAPHQL.file-extensions", [
+  "graphql",
+  "graphqls",
+  "gql",
+]);
 
 const log = getAppLogger();
 
@@ -14,13 +20,12 @@ const evaluateGraphqlRepo = async (rootFolder, config) => {
   return await runEslint(
     rootFolder,
     {
-      graphQLConfig: { schema: `${rootFolder}/**/*.{graphql,graphqls,gql}` },
+      graphQLConfig: { schema: `${rootFolder}/**/*.{${GRAPHQL_FILE_EXTENSIONS.join(",")}}` },
       graphqlCustomConfig: config,
     },
-    [`${rootFolder}/**/*.graphql`, `${rootFolder}/**/*.graphqls`, `${rootFolder}/**/*.gql`],
+    GRAPHQL_FILE_EXTENSIONS.map((ext) => `${rootFolder}/**/*.${ext}`),
   );
 };
-
 
 const evaluateGraphqlFile = async (file, config) => {
   return await runEslint(
@@ -52,7 +57,7 @@ const runEslint = async (cwd, config, files) => {
     errorOnUnmatchedPattern: false,
     cwd,
     baseConfig: {
-      files: ["**/*.graphql", "**/*.graphqls", "**/*.gql"],
+      files: GRAPHQL_FILE_EXTENSIONS.map((ext) => `**/*.${ext}`),
       languageOptions: {
         parser: graphqlPlugin.parser,
         parserOptions: {
