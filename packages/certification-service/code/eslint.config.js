@@ -12,8 +12,12 @@ const compat = new FlatCompat({
 });
 
 module.exports = [
+  {
+     ignores: ["src/rules/**/*.*"],
+  },
   ...compat.extends("unobtrusive", "prettier"),
   {
+   
     plugins: {
       prettier,
       jest,
@@ -76,7 +80,7 @@ module.exports = [
       "jest/no-export": "error",
       "jest/no-focused-tests": "error",
       "jest/no-identical-title": "error",
-     
+
       "jest/no-interpolation-in-snapshots": "error",
       "jest/no-jasmine-globals": "error",
       "jest/no-standalone-expect": "error",
