@@ -50,7 +50,7 @@ class GraphqlLinter {
     }
   }
 
-  get numberOfRulesExclidingInfoSeverity() {
+  get numberOfRulesExcludingInfoSeverity() {
     return Object.entries(this.configuration.rulesConfig.rules)
       .filter(([, value]) => {
         if (Array.isArray(value)) {
