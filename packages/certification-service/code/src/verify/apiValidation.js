@@ -101,7 +101,7 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
   }
 
   await DocumentationLinter.lintDocumentation(validationType, tempDir, api, documentation);
-  
+
   apiValidation.hasErrors = checkForErrors(apiValidation, [
     ...design.designValidation.validationIssues,
     ...security.securityValidation.validationIssues,

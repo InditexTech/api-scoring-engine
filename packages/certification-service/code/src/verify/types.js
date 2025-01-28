@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { configValue } = require("../config/config");
-const { GRAPHQL } = require("../evaluate/lint/protocols");
 
 const VALIDATION_TYPE_DESIGN = "DESIGN";
 const VALIDATION_TYPE_DOCUMENTATION = "DOCUMENTATION";

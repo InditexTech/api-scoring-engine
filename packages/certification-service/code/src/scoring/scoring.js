@@ -26,7 +26,6 @@ const scoreLinting = (evaluationData, numberOfRules) => {
   return calculateScore(numberOfFailedRules, numberOfRules, numberOfFailedErrorRules);
 };
 
-
 const scoreMarkdown = (markdownEvaluationData, numberOfAllCustomRules) => {
   if (missinOrInvalidReadmeError(markdownEvaluationData)) {
     return 0;

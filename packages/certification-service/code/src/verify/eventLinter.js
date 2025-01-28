@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { glob } = require("glob");
-const path = require("path");
 const fs = require("fs");
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
 const { lintFileWithSpectral } = require("./lint");

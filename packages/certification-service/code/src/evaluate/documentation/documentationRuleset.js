@@ -24,7 +24,6 @@ class DocumentationRuleset {
   constructor(rulesetPath) {
     logger.debug(`New DocumentationRuleset with rulesetPath: ${rulesetPath}`);
     this.rulesetPath = rulesetPath;
-    // eslint-disable-next-line node/global-require
     this.resolvedRuleset = require(rulesetPath);
     this.updateNumberOfRules();
     logger.debug(`Resolved Ruleset on New DocumentationRuleset: ${JSON.stringify(this.resolvedRuleset)}`);
