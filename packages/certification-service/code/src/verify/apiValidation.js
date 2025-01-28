@@ -97,7 +97,7 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
         source: i.fileName,
       };
     });
-    numberOfDesignRules = graphqlLinter.numberOfRulesExclidingInfoSeverity;
+    numberOfDesignRules = graphqlLinter.numberOfRulesExcludingInfoSeverity;
   }
 
   await DocumentationLinter.lintDocumentation(validationType, tempDir, api, documentation);

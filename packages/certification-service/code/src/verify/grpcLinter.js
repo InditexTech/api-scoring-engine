@@ -5,8 +5,8 @@
 const path = require("path");
 const fs = require("fs");
 const { VALIDATION_TYPE_DESIGN } = require("./types");
-const { cleanFileName } = require("./utils");
 const { lintFilesWithProtolint } = require("./lint");
+const { fromProtlintIssue } = require("../format/issue");
 
 class gRPCLinter {
   static async lintgRPC(validationType, apiDir, tempDir, design, customFlags) {
@@ -26,27 +26,13 @@ class gRPCLinter {
         customFlags,
       );
 
-      issues.forEach((issue) => (issue.fileName = cleanFileName(issue.fileName, tempDir)));
+      issues.forEach(
+        (issue) => (issue.fileName = issue.fileName.substring(issue.fileName.indexOf(tempDir) + tempDir.length + 1)),
+      );
       design.designValidation.protolintValidation.issues.push(...issues);
-      design.designValidation.validationIssues = issues.map((issue) => {
-        return {
-          fileName: issue.fileName,
-          code: issue.rule,
-          message: issue.message,
-          severity: issue.severity,
-          range: {
-            start: {
-              line: issue.line,
-              character: issue.column,
-            },
-            end: {
-              line: issue.line,
-              character: issue.column,
-            },
-          },
-          path: [],
-        };
-      });
+      design.designValidation.validationIssues = issues.map((issue) =>
+        fromProtlintIssue(issue, issue.fileName, tempDir),
+      );
     }
   }
 }

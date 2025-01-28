@@ -8,6 +8,7 @@ const { LintRuleset } = require("../evaluate/lint/lintRuleset");
 const { lintFileWithSpectral } = require("./lint");
 const { VALIDATION_TYPE_DESIGN, INVALID_REF_CUSTOMIZED } = require("./types");
 const { cleanFileName, checkForErrors } = require("./utils");
+const { fromSpectralIssue } = require("../format/issue");
 
 class EventLinter {
   static async lintEvent({ file, validationType, fileName, apiDir, apiValidation, design, tempDir }) {
@@ -25,25 +26,7 @@ class EventLinter {
         apiValidation.hasErrors = checkForErrors(apiValidation, issues);
         design.designValidation.spectralValidation.issues.push(...issues);
         design.designValidation.validationIssues.push(
-          ...issues.map((issue) => {
-            return {
-              fileName: issue.fileName,
-              code: issue.code,
-              message: issue.message,
-              severity: issue.severity,
-              range: {
-                start: {
-                  line: issue.range?.start?.line,
-                  character: issue.range?.start?.character,
-                },
-                end: {
-                  line: issue.range?.end?.line,
-                  character: issue.range?.end?.character,
-                },
-              },
-              path: issue.path,
-            };
-          }),
+          ...issues.map((issue) => fromSpectralIssue(issue, issue.fileName, tempDir)),
         );
       }
     }
@@ -61,25 +44,7 @@ class EventLinter {
         apiValidation.hasErrors = checkForErrors(apiValidation, issues);
         design.designValidation.spectralValidation.issues.push(...issues);
         design.designValidation.validationIssues.push(
-          ...issues.map((issue) => {
-            return {
-              fileName: issue.fileName,
-              code: issue.code,
-              message: issue.message,
-              severity: issue.severity,
-              range: {
-                start: {
-                  line: issue.range?.start?.line,
-                  character: issue.range?.start?.character,
-                },
-                end: {
-                  line: issue.range?.end?.line,
-                  character: issue.range?.end?.character,
-                },
-              },
-              path: issue.path,
-            };
-          }),
+          ...issues.map((issue) => fromSpectralIssue(issue, issue.fileName, tempDir)),
         );
       }
     }

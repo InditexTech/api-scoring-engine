@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { VALIDATION_TYPE_DESIGN } = require("./types");
-const { cleanFileName } = require("./utils");
 const { lintGraphql } = require("./lint");
 const graphqlLinterDefaultConfig = require("../rules/grpahql");
 const { INFO_SEVERITY } = require("../evaluate/severity");
+const { fromEslintIssue } = require("../format/issue");
 
 class GraphqlLinter {
   constructor(config = {}) {
@@ -28,23 +28,7 @@ class GraphqlLinter {
       const result = await lintGraphql(rootFolder, this.configuration);
       let issues = [];
       result.forEach((element) => {
-        element.messages.forEach((message) =>
-          issues.push({
-            fileName: cleanFileName(element.filePath, tempDir),
-            code: message.messageId || message.ruleId, // message.ruleId
-            message: message.message,
-            severity: message.severity,
-            range: {
-              start: {
-                line: message.line,
-                character: message.column,
-              },
-
-              end: { line: message.endLine, character: message.endColumn },
-            },
-            path: [],
-          }),
-        );
+        element.messages.forEach((message) => issues.push(fromEslintIssue(message, element.filePath, tempDir)));
       });
       design.designValidation.validationIssues = issues;
     }

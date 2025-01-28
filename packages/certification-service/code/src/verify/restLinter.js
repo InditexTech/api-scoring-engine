@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
+const { fromSpectralIssue } = require("../format/issue");
 const { lintFileWithSpectral } = require("./lint");
 const { VALIDATION_TYPE_DESIGN, VALIDATION_TYPE_SECURITY } = require("./types");
 const { checkForErrors, cleanFileName } = require("./utils");
@@ -18,25 +19,9 @@ class RestLinter {
       apiValidation.hasErrors = checkForErrors(apiValidation, issues);
       issues.forEach((issue) => (issue.source = issue.fileName));
       design.designValidation.spectralValidation.issues.push(...issues);
-      design.designValidation.validationIssues = issues.map((issue) => {
-        return {
-          fileName: issue.fileName,
-          code: issue.code,
-          message: issue.message,
-          severity: issue.severity,
-          range: {
-            start: {
-              line: issue.range?.start?.line,
-              character: issue.range?.start?.character,
-            },
-            end: {
-              line: issue.range?.end?.line,
-              character: issue.range?.end?.character,
-            },
-          },
-          path: issue.path,
-        };
-      });
+      design.designValidation.validationIssues = issues.map((issue) =>
+        fromSpectralIssue(issue, issue.fileName, tempDir),
+      );
     }
     if (!validationType || validationType === VALIDATION_TYPE_SECURITY) {
       const issues = await lintFileWithSpectral({
@@ -48,25 +33,9 @@ class RestLinter {
       apiValidation.hasErrors = checkForErrors(apiValidation, issues);
       issues.forEach((issue) => (issue.source = issue.fileName));
       security.securityValidation.spectralValidation.issues.push(...issues);
-      security.securityValidation.validationIssues = issues.map((issue) => {
-        return {
-          fileName: issue.fileName,
-          code: issue.code,
-          message: issue.message,
-          severity: issue.severity,
-          range: {
-            start: {
-              line: issue.range?.start?.line,
-              character: issue.range?.start?.character,
-            },
-            end: {
-              line: issue.range?.end?.line,
-              character: issue.range?.end?.character,
-            },
-          },
-          path: issue.path,
-        };
-      });
+      security.securityValidation.validationIssues = issues.map((issue) =>
+        fromSpectralIssue(issue, issue.fileName, tempDir),
+      );
     }
   }
 
