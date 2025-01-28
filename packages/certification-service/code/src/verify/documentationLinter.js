@@ -28,6 +28,26 @@ class DocumentationLinter {
       const readmeIssues = await this.validateReadme(apiReadmeFile);
 
       documentation.documentationValidation.issues.push(...readmeIssues);
+      documentation.documentationValidation.validationIssues = readmeIssues.map((issue) => {
+        return {
+          fileName: issue.fileName,
+          code: issue.ruleNames.join(", "),
+          message: issue.ruleDescription,
+          severity: issue.severity,
+          range: {
+            start: {
+              line: issue.lineNumber,
+              character: 1,
+            },
+            end: {
+              line: issue.lineNumber,
+              character: 1,
+            },
+          },
+          path: [],
+          ruleInformation: issue.ruleInformation,
+        };
+      });
     }
   }
 

@@ -6,6 +6,7 @@ const { VALIDATION_TYPE_DESIGN } = require("./types");
 const { cleanFileName } = require("./utils");
 const { lintGraphql } = require("./lint");
 const graphqlLinterDefaultConfig = require("../rules/grpahql");
+const { INFO_SEVERITY } = require("../evaluate/severity");
 
 class GraphqlLinter {
   constructor(config = {}) {
@@ -45,8 +46,20 @@ class GraphqlLinter {
           }),
         );
       });
-      design.designValidation.issues = issues;
+      design.designValidation.validationIssues = issues;
     }
+  }
+
+  get numberOfRulesExclidingInfoSeverity() {
+    return Object.entries(this.configuration.rulesConfig.rules)
+      .filter(([, value]) => {
+        if (Array.isArray(value)) {
+          return !value.includes("off");
+        }
+        return value !== "off";
+      })
+      .map(([ruleId]) => ruleId)
+      .filter((ruleId) => this.configuration.rulesConfig.severities[ruleId] !== INFO_SEVERITY).length;
   }
 }
 

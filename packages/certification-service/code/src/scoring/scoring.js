@@ -16,6 +16,9 @@ const CUSTOM_RULE_PREFIXES = configValue("cerws.markdown.custom-rule-prefixes");
 const logger = getAppLogger();
 
 const scoreLinting = (evaluationData, numberOfRules) => {
+  if (evaluationData.find((issue) => issue.code === "PROTOLINT_FAILED")) {
+    return 0;
+  }
   const uniqueFailedRules = filterRepeatedAndSuggestionInfractions(evaluationData, "code");
   const numberOfFailedErrorRules = filterErrorRules(uniqueFailedRules).length;
   const numberOfFailedRules = uniqueFailedRules.length;
@@ -23,23 +26,12 @@ const scoreLinting = (evaluationData, numberOfRules) => {
   return calculateScore(numberOfFailedRules, numberOfRules, numberOfFailedErrorRules);
 };
 
-const scoreGRPCLinting = (evaluationData, numberOfRules) => {
-  if (evaluationData.find((issue) => issue.rule === "PROTOLINT_FAILED")) {
-    return 0;
-  }
-  const uniqueFailedRules = filterRepeatedAndSuggestionInfractions(evaluationData, "rule");
-  const numberOfFailedErrorRules = filterErrorRules(uniqueFailedRules).length;
-
-  const numberOfFailedRules = uniqueFailedRules.length;
-
-  return calculateScore(numberOfFailedRules, numberOfRules, numberOfFailedErrorRules);
-};
 
 const scoreMarkdown = (markdownEvaluationData, numberOfAllCustomRules) => {
   if (missinOrInvalidReadmeError(markdownEvaluationData)) {
     return 0;
   }
-  const uniqueInfractions = filterRepeatedAndSuggestionInfractions(markdownEvaluationData, "ruleNames");
+  const uniqueInfractions = filterRepeatedAndSuggestionInfractions(markdownEvaluationData, "code");
   const { customRulesFailed, baseRulesFailed } = filterCustomMarkdownRules(uniqueInfractions);
   const numberOfCustomRulesFailed = customRulesFailed.length;
   const numberOfCustomRulesErrorsFailed = filterErrorRules(customRulesFailed).length;
@@ -64,8 +56,8 @@ const scoreMarkdown = (markdownEvaluationData, numberOfAllCustomRules) => {
 const missinOrInvalidReadmeError = (markdownEvaluationData) => {
   return markdownEvaluationData.find(
     (o) =>
-      o.ruleNames.includes(CUSTOM_RULES_NAMES.README_MUST_EXISTS) ||
-      o.ruleNames.includes(CUSTOM_RULES_NAMES.README_MUST_HAVE_CONTENT),
+      o.code.includes(CUSTOM_RULES_NAMES.README_MUST_EXISTS) ||
+      o.code.includes(CUSTOM_RULES_NAMES.README_MUST_HAVE_CONTENT),
   );
 };
 
@@ -135,7 +127,7 @@ const filterCustomMarkdownRules = (evaluationData) => {
   let items = evaluationData;
 
   items.forEach((item) => {
-    let ruleName = item["ruleNames"][1];
+    let ruleName = item.code;
     if (isCustomRule(ruleName)) {
       customRulesFailed.push(item);
     } else {
@@ -149,7 +141,7 @@ const filterCustomMarkdownRules = (evaluationData) => {
 };
 
 const isCustomRule = (ruleName) => {
-  return CUSTOM_RULE_PREFIXES.some((prefix) => ruleName.startsWith(prefix));
+  return CUSTOM_RULE_PREFIXES.some((prefix) => ruleName.includes(prefix));
 };
 
 const arrayIsNotEmpty = (array) => {
@@ -174,6 +166,5 @@ module.exports = {
   scoreLinting,
   scoreMarkdown,
   arrayIsNotEmpty,
-  scoreGRPCLinting,
   calculateAverageScore,
 };

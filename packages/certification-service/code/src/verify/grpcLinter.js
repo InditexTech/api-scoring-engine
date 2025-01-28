@@ -14,12 +14,12 @@ class gRPCLinter {
       const pathFolders = fs.readdirSync(apiDir);
 
       let folderFiles = pathFolders.filter(
-          (item) =>
-              !item.includes("metadata") &&
-              !item.toUpperCase().includes("SUMMARY") &&
-              !item.toUpperCase().includes("README") &&
-              !item.endsWith(".png") &&
-              !item.includes("stubs"),
+        (item) =>
+          !item.includes("metadata") &&
+          !item.toUpperCase().includes("SUMMARY") &&
+          !item.toUpperCase().includes("README") &&
+          !item.endsWith(".png") &&
+          !item.includes("stubs"),
       );
       const issues = await lintFilesWithProtolint(
         path.join(apiDir + "/" + (folderFiles.length > 1 ? "" : folderFiles)),
@@ -28,6 +28,25 @@ class gRPCLinter {
 
       issues.forEach((issue) => (issue.fileName = cleanFileName(issue.fileName, tempDir)));
       design.designValidation.protolintValidation.issues.push(...issues);
+      design.designValidation.validationIssues = issues.map((issue) => {
+        return {
+          fileName: issue.fileName,
+          code: issue.rule,
+          message: issue.message,
+          severity: issue.severity,
+          range: {
+            start: {
+              line: issue.line,
+              character: issue.column,
+            },
+            end: {
+              line: issue.line,
+              character: issue.column,
+            },
+          },
+          path: [],
+        };
+      });
     }
   }
 }

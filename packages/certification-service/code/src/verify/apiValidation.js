@@ -16,13 +16,7 @@ const {
   NUMBER_OF_GRPC_RULES,
 } = require("./types.js");
 const { calculateRating } = require("../scoring/grades");
-const {
-  scoreLinting,
-  scoreMarkdown,
-  scoreGRPCLinting,
-  arrayIsNotEmpty,
-  calculateAverageScore,
-} = require("../scoring/scoring");
+const { scoreLinting, scoreMarkdown, calculateAverageScore } = require("../scoring/scoring");
 const { getAppLogger } = require("../log");
 const { RestLinter } = require("./restLinter");
 const { EventLinter } = require("./eventLinter");
@@ -30,6 +24,7 @@ const { gRPCLinter } = require("./grpcLinter");
 const { DocumentationLinter } = require("./documentationLinter");
 const { DocumentationRuleset } = require("../evaluate/documentation/documentationRuleset");
 const { GraphqlLinter } = require("./graphqlLinter.js");
+const { checkForErrors } = require("./utils.js");
 
 const logger = getAppLogger();
 
@@ -56,7 +51,7 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
   const design = {
     designValidation: {
       validationType: VALIDATION_TYPE_DESIGN,
-      issues: [],
+      validationIssues: [],
       spectralValidation: { issues: [] },
       protolintValidation: { issues: [] },
     },
@@ -64,13 +59,17 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
   const security = {
     securityValidation: {
       validationType: VALIDATION_TYPE_SECURITY,
+      validationIssues: [],
       spectralValidation: { issues: [] },
       protolintValidation: { issues: [] },
     },
   };
-  const documentation = { documentationValidation: { validationType: VALIDATION_TYPE_DOCUMENTATION, issues: [] } };
+  const documentation = {
+    documentationValidation: { validationType: VALIDATION_TYPE_DOCUMENTATION, issues: [], validationIssues: [] },
+  };
 
-  const graphqlLinter = new GraphqlLinter();
+  let numberOfDesignRules;
+
   if (apiProtocol === REST) {
     await RestLinter.lintRest({
       validationType,
@@ -81,30 +80,44 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
       security,
       tempDir,
     });
+    numberOfDesignRules = LintRuleset.REST_GENERAL.numberOfRules;
   } else if (apiProtocol === EVENT) {
     await EventLinter.lintEvent({ file, validationType, fileName, apiDir, tempDir, apiValidation, design });
+    numberOfDesignRules = LintRuleset.EVENT_GENERAL.numberOfRules + LintRuleset.AVRO_GENERAL.numberOfRules;
   } else if (apiProtocol === GRPC) {
     await gRPCLinter.lintgRPC(validationType, apiDir, tempDir, design, new Map());
+    numberOfDesignRules = NUMBER_OF_GRPC_RULES;
   } else if (apiProtocol === GRAPHQL) {
+    const graphqlLinter = new GraphqlLinter();
     await graphqlLinter.lint(validationType, apiDir, tempDir, design);
-    design.designValidation.spectralValidation.issues = design.designValidation.issues.map((i) => {
-      i.source = i.fileName;
-      return i;
+
+    design.designValidation.spectralValidation.issues = design.designValidation.validationIssues.map((i) => {
+      return {
+        ...i,
+        source: i.fileName,
+      };
     });
+    numberOfDesignRules = graphqlLinter.numberOfRulesExclidingInfoSeverity;
   }
 
   await DocumentationLinter.lintDocumentation(validationType, tempDir, api, documentation);
+  
+  apiValidation.hasErrors = checkForErrors(apiValidation, [
+    ...design.designValidation.validationIssues,
+    ...security.securityValidation.validationIssues,
+    ...documentation.documentationValidation.validationIssues,
+  ]);
 
   // Modules Scoring and Rating
-  design.designValidation.score = scoreLinterValidations(design, apiProtocol);
+  design.designValidation.score = scoreLinting(design.designValidation.validationIssues, numberOfDesignRules);
 
   security.securityValidation.score = scoreLinting(
-    security.securityValidation.spectralValidation.issues,
+    security.securityValidation.validationIssues,
     LintRuleset.REST_SECURITY.numberOfRules,
   );
 
   documentation.documentationValidation.score = scoreMarkdown(
-    documentation.documentationValidation.issues,
+    documentation.documentationValidation.validationIssues,
     DocumentationRuleset.numberOfAllCustomRules(),
   );
   Object.assign(design.designValidation, calculateRating(design.designValidation.score));
@@ -147,28 +160,6 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
 
   return apiValidation;
 };
-
-function scoreLinterValidations(design, apiProtocol) {
-  const numberOfRules = resolveNumberOfRulesByProtocol(apiProtocol);
-  const spectralIssues = design.designValidation.spectralValidation.issues;
-  const grpcIssues = design.designValidation.protolintValidation.issues;
-
-  return arrayIsNotEmpty(spectralIssues)
-    ? scoreLinting(spectralIssues, numberOfRules)
-    : scoreGRPCLinting(grpcIssues, NUMBER_OF_GRPC_RULES);
-}
-
-function resolveNumberOfRulesByProtocol(protocol) {
-  let numberOfRules;
-
-  if (protocol == EVENT) {
-    numberOfRules = LintRuleset.EVENT_GENERAL.numberOfRules + LintRuleset.AVRO_GENERAL.numberOfRules;
-  } else {
-    numberOfRules = LintRuleset.REST_GENERAL.numberOfRules;
-  }
-
-  return numberOfRules;
-}
 
 function getApiFile(api, apiProtocol) {
   if (api["definition-file"]) {
