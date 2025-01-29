@@ -67,8 +67,7 @@ const runEslint = async (cwd, config, files) => {
   });
 
   const results = await eslint.lintFiles(files);
-  // const formatter = await eslint.loadFormatter("json");
-  // const formattedResults = JSON.parse(formatter.format(results));
+
   results.forEach((file) => {
     file.messages.forEach((message) => {
       const customSeverity = config.graphqlCustomConfig?.rulesConfig?.severities[message.ruleId];
