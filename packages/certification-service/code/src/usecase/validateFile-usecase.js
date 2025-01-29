@@ -15,6 +15,8 @@ const {
 const { checkForErrors } = require("../verify/utils");
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
 const { API_PROTOCOL } = require("../verify/types");
+const { fromSpectralIssue, fromProtlintIssue, fromEslintIssue } = require("../format/issue");
+const { isGraphqlFileExtension } = require("../utils/fileUtils");
 
 const logger = getAppLogger();
 module.exports.execute = async (url, apiProtocol) => {
@@ -28,7 +30,7 @@ module.exports.execute = async (url, apiProtocol) => {
       (url.mimetype === "text/yaml" ||
         url.mimetype === "application/json" ||
         url.originalFilename?.endsWith(".proto") ||
-        url.originalFilename?.endsWith(".graphql"))
+        isGraphqlFileExtension(url.originalFilename))
     ) {
       fs.copyFileSync(url.filepath, `${url.filepath}_${url.originalFilename}`);
       logger.info(`Received file ${url.originalFilename}`);
@@ -43,46 +45,42 @@ module.exports.execute = async (url, apiProtocol) => {
     }
 
     let results;
+    let issues = [];
+    const tempDir = path.dirname(file);
     switch (apiProtocol) {
       case API_PROTOCOL.REST:
         results = await lintFileWithSpectral({
           file,
           ruleset: LintRuleset.REST_GENERAL.rulesetPath,
         });
+        issues = results.map((issue) => fromSpectralIssue(issue, file, tempDir));
         break;
       case API_PROTOCOL.EVENT:
         results = await lintFileWithSpectral({
           file,
           ruleset: LintRuleset.EVENT_GENERAL.rulesetPath,
         });
+        issues = results.map((issue) => fromSpectralIssue(issue, file, tempDir));
         break;
       case API_PROTOCOL.GRPC:
         const protolintResults = await lintFilesWithProtolint(file, new Map());
         results = formatProtolintIssues(protolintResults);
+        issues = protolintResults.map((issue) => fromProtlintIssue(issue, file, tempDir));
         break;
       case API_PROTOCOL.GRAPHQL:
         const result = await lintGraphqlFile(file);
-        let issues = [];
         result.forEach((element) => {
-          element.messages.forEach((message) =>
-            issues.push({
-              fileName: fileName,
-              code: message.messageId || message.ruleId, // message.ruleId
-              message: message.message,
-              severity: message.severity,
-              range: {
-                start: {
-                  line: message.line - 1,
-                  character: message.column - 1,
-                },
-
-                end: { line: message.endLine - 1, character: message.endColumn - 1 },
-              },
-              path: [],
-            }),
-          );
+          element.messages.forEach((message) => issues.push(fromEslintIssue(message, element.filePath, tempDir)));
         });
-        results = issues;
+        results = issues.map((issue) => ({
+          fileName,
+          code: issue.code,
+          message: issue.message,
+          severity: issue.severity,
+          source: fileName,
+          range: issue.range,
+          path: issue.path,
+        }));
         break;
       default:
         break;
@@ -95,6 +93,7 @@ module.exports.execute = async (url, apiProtocol) => {
     let result = {
       hasErrors: false,
       results,
+      issues: issues.map((issue) => ({ ...issue, fileName: fileName })),
     };
     result.hasErrors = checkForErrors(result, results);
 

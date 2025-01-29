@@ -12,7 +12,8 @@ const checkForErrors = (apiValidation, issues) => {
 };
 
 const cleanFileName = (file, rootFolder) => {
-  return file.replace(rootFolder + "/", "");
+  const replace = rootFolder.endsWith("/") ? rootFolder : rootFolder + "/";
+  return file.replace(replace, "");
   // file.substring(file.indexOf(rootFolder) + rootFolder.length + 1);
 };
 
