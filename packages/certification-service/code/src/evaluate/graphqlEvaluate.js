@@ -5,16 +5,13 @@
 const { ESLint } = require("eslint");
 const graphqlPlugin = require("@graphql-eslint/eslint-plugin");
 const path = require("path");
-const { WARN_SEVERITY, ERROR_SEVERITY } = require("./severity");
-const { getAppLogger } = require("../log");
+const { WARN_SEVERITY } = require("./severity");
 const { configValue } = require("../config/config");
 const GRAPHQL_FILE_EXTENSIONS = configValue("cerws.certification.protocol.GRAPHQL.file-extensions", [
   "graphql",
   "graphqls",
   "gql",
 ]);
-
-const log = getAppLogger();
 
 const evaluateGraphqlRepo = async (rootFolder, config) => {
   return await runEslint(
@@ -69,36 +66,16 @@ const runEslint = async (cwd, config, files) => {
     },
   });
 
-  try {
-    const results = await eslint.lintFiles(files);
-    const formatter = await eslint.loadFormatter("json");
-    const formattedResults = JSON.parse(formatter.format(results));
-    formattedResults.forEach((file) => {
-      file.messages.forEach((message) => {
-        const customSeverity = config.graphqlCustomConfig?.rulesConfig?.severities[message.ruleId];
-        message.severity = typeof customSeverity === "number" ? customSeverity : WARN_SEVERITY;
-      });
+  const results = await eslint.lintFiles(files);
+  // const formatter = await eslint.loadFormatter("json");
+  // const formattedResults = JSON.parse(formatter.format(results));
+  results.forEach((file) => {
+    file.messages.forEach((message) => {
+      const customSeverity = config.graphqlCustomConfig?.rulesConfig?.severities[message.ruleId];
+      message.customSeverity = typeof customSeverity === "number" ? customSeverity : WARN_SEVERITY;
     });
-    return formattedResults;
-  } catch (e) {
-    log.error(e.message);
-    return [
-      {
-        filePath: "",
-        messages: [
-          {
-            ruleId: "graphql-linter",
-            severity: ERROR_SEVERITY,
-            message: e.message,
-            line: 1,
-            column: 1,
-            endLine: 1,
-            endColumn: 1,
-          },
-        ],
-      },
-    ];
-  }
+  });
+  return results;
 };
 
 module.exports = {

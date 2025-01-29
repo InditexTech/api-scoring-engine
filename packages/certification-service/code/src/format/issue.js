@@ -69,7 +69,7 @@ const fromEslintIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.messageId || issue.ruleId,
     message: issue.message,
-    severity: issue.severity,
+    severity: issue.customSeverity,
     range: {
       start: {
         line: issue.line,
