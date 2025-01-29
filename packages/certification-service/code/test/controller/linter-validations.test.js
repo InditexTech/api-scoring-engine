@@ -255,7 +255,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "File validation requires the 'apiProtocol': possible values are REST | EVENT | GRPC",
+          "File validation requires the 'apiProtocol': possible values are REST | EVENT | GRPC | GRAPHQL",
         );
       }
     });
@@ -271,7 +271,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "File validation requires the 'apiProtocol' to be a valid protocol: REST | EVENT | GRPC",
+          "File validation requires the 'apiProtocol' to be a valid protocol: REST | EVENT | GRPC | GRAPHQL",
         );
       }
     });

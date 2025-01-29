@@ -275,6 +275,50 @@ describe("Tests Validation Controller", () => {
     expect(ctx.status).toBe(200);
   });
 
+  test("validate remote graphql", async () => {
+    const ctx = {
+      request: {
+        body: {
+          url: `http://localhost:${port}/data/schema.graphqls`,
+          apiProtocol: "GRAPHQL",
+        },
+      },
+      response: {},
+      state: {},
+    };
+    let next = jest.fn();
+    await validationController.validateFile(ctx, next);
+
+    expect(ctx.status).toBe(200);
+    expect(ctx.body.issues).toBeDefined();
+  });
+
+  test("validate local graphql", async () => {
+    const tmpFile = path.join(os.tmpdir(), Date.now() + "-schema.graphqls");
+    fs.copyFileSync(`${__dirname}/../data/schema.graphqls`, tmpFile);
+    const ctx = {
+      request: {
+        files: {
+          file: {
+            filepath: tmpFile,
+            originalFilename: "schema.graphqls",
+            mimetype: "application/octet-stream",
+          },
+        },
+        body: {
+          apiProtocol: "GRAPHQL",
+        },
+      },
+      response: {},
+      state: {},
+    };
+    let next = jest.fn();
+    await validationController.validateFile(ctx, next);
+
+    expect(ctx.status).toBe(200);
+    expect(ctx.body.issues).toBeDefined();
+  });
+
   test("validate local file OK", async () => {
     const tmpFile = path.join(os.tmpdir(), Date.now() + "-file.yaml");
     fs.copyFileSync(`${__dirname}/../data/openapi-rest2.yml`, tmpFile);
