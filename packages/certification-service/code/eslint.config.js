@@ -13,11 +13,10 @@ const compat = new FlatCompat({
 
 module.exports = [
   {
-     ignores: ["src/rules/**/*.*"],
+    ignores: ["src/rules/**/*.*"],
   },
   ...compat.extends("unobtrusive", "prettier"),
   {
-   
     plugins: {
       prettier,
       jest,

@@ -8,13 +8,8 @@ const { ERROR_SEVERITY, WARN_SEVERITY, INFO_SEVERITY } = require("../../../evalu
 module.exports = {
   rules: {
     ...graphqlPlugin.configs["flat/schema-all"].rules,
-    "custom-rules/my-custom-rule": "error",
-    // "@graphql-eslint/alphabetize": "off",
-    // "@graphql-eslint/require-nullable-result-in-root": "off",
-    "@graphql-eslint/strict-id-in-types": ["error", { acceptedIdNames: ["id", "_id"], acceptedIdTypes: ["ID", "Int"] }],
   },
   severities: {
-    "custom-rules/my-custom-rule": ERROR_SEVERITY,
     // https://the-guild.dev/graphql/eslint/rules
     "@graphql-eslint/description-style": WARN_SEVERITY,
     "@graphql-eslint/known-argument-names": WARN_SEVERITY,

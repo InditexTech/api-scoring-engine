@@ -5,11 +5,11 @@
 const rulesConfig = require("./config/rules-config");
 module.exports = {
   plugins: {
-    "custom-rules": {
-      rules: {
-        "my-custom-rule": require("./my-custom-rule"),
-      },
-    },
+    // "custom-rules": {
+    //   rules: {
+    //     "my-custom-rule": require("./my-custom-rule"),
+    //   },
+    // },
   },
   rulesConfig: rulesConfig,
 };
