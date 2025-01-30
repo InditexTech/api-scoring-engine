@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Industria de Diseño Textil S.A. INDITEX
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const prettier = require("eslint-plugin-prettier");
 const jest = require("eslint-plugin-jest");
 const globals = require("globals");
