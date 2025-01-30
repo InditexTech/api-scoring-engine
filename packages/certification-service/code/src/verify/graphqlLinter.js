@@ -4,7 +4,7 @@
 
 const { VALIDATION_TYPE_DESIGN } = require("./types");
 const { lintGraphql } = require("./lint");
-const graphqlLinterDefaultConfig = require("../rules/grpahql");
+const graphqlLinterDefaultConfig = require("../rules/graphql");
 const { INFO_SEVERITY } = require("../evaluate/severity");
 const { fromEslintIssue } = require("../format/issue");
 

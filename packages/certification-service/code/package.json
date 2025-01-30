@@ -13,11 +13,11 @@
     "src/scoring",
     "src/usecase",
     "src/utils",
-    "src/verify"
+    "src/verify",
+    "src/rules/graphql"
   ],
   "scripts": {
     "build": "node ./scripts/buildApp",
-    "postinstall": "node ./scripts/postInstall",
     "bump:snapshot": "npm version $npm_package_version.$(date \"+%s\")",
     "check:lint": "eslint  ./src ./test",
     "lint:fix": "eslint ./src ./test --fix",

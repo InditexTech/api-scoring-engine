@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const graphqlLinterDefaultConfig = require("../../src/rules/grpahql");
+const graphqlLinterDefaultConfig = require("../../src/rules/graphql");
 const { lintGraphql } = require("../../src/verify/lint");
 const { GraphqlLinter } = require("../../src/verify/graphqlLinter");
 const { VALIDATION_TYPE_DESIGN } = require("../../src/verify/types");
