@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const graphqlPlugin = require("@graphql-eslint/eslint-plugin");
-const { ERROR_SEVERITY, WARN_SEVERITY, INFO_SEVERITY } = require("../../../evaluate/severity");
+const { WARN_SEVERITY } = require("../../../evaluate/severity");
 
 module.exports = {
   rules: {
-    ...graphqlPlugin.configs["flat/schema-all"].rules,
+    ...graphqlPlugin.configs["flat/schema-recommended"].rules,
   },
   severities: {
     // https://the-guild.dev/graphql/eslint/rules
@@ -31,14 +31,5 @@ module.exports = {
     "@graphql-eslint/unique-field-definition-names": WARN_SEVERITY,
     "@graphql-eslint/unique-operation-types": WARN_SEVERITY,
     "@graphql-eslint/unique-type-names": WARN_SEVERITY,
-    "@graphql-eslint/alphabetize": WARN_SEVERITY,
-    "@graphql-eslint/input-name": WARN_SEVERITY,
-    "@graphql-eslint/no-root-type": WARN_SEVERITY,
-    "@graphql-eslint/no-scalar-result-type-on-mutation": WARN_SEVERITY,
-    "@graphql-eslint/require-deprecation-date": WARN_SEVERITY,
-    "@graphql-eslint/require-field-of-type-query-in-mutation-result": WARN_SEVERITY,
-    "@graphql-eslint/require-nullable-fields-with-oneof": WARN_SEVERITY,
-    "@graphql-eslint/require-nullable-result-in-root": WARN_SEVERITY,
-    "@graphql-eslint/require-type-pattern-with-oneof": WARN_SEVERITY,
   },
 };
