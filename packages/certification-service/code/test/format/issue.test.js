@@ -35,7 +35,7 @@ describe("Issue Conversion Functions", () => {
       fileName: "file.yaml",
       code: "contact-email",
       message: "Definition must have a contact email",
-      severity: 1,
+      severity: "WARN",
       range: issue.range,
       path: issue.path,
     });
@@ -55,7 +55,7 @@ describe("Issue Conversion Functions", () => {
       fileName: "proto.proto",
       code: "ENUM_NAMES_LOWER_SNAKE_CASE",
       message: 'Enum name "Brand" must be underscore_separated_names',
-      severity: 1,
+      severity: "WARN",
       range: {
         start: { line: 125, character: 2 },
         end: { line: 125, character: 2 },
@@ -84,7 +84,7 @@ describe("Issue Conversion Functions", () => {
       fileName: "test/README.md",
       code: "MD012, no-multiple-blanks",
       message: "Multiple consecutive blank lines",
-      severity: 1,
+      severity: "WARN",
       range: {
         start: { line: 3, character: 1 },
         end: { line: 3, character: 1 },
@@ -116,7 +116,7 @@ describe("Issue Conversion Functions", () => {
       fileName: "schema.graphqls",
       code: "alphabetize",
       message: 'type "Color" should be before type "MasterData"',
-      severity: 2,
+      severity: "INFO",
       range: {
         start: { line: 91, character: 6 },
         end: { line: 91, character: 11 },
@@ -142,7 +142,7 @@ describe("Issue Conversion Functions", () => {
       fileName: "schema.graphql",
       code: "custom-rules/my-custom-rule",
       message: "The field `Query.executeExampleMethod` has no valid name!",
-      severity: 2,
+      severity: "INFO",
       range: {
         start: { line: 7, character: 3 },
         end: { line: 16, character: 20 },

@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const { evaluateGraphqlRepo, evaluateGraphqlFile } = require("../../src/evaluate/graphqlEvaluate");
+const { evaluateGraphqlApi, evaluateGraphqlFile } = require("../../src/evaluate/graphqlEvaluate");
 const { ESLint } = require("eslint");
 const graphqlPlugin = require("@graphql-eslint/eslint-plugin");
 const path = require("path");
-const { WARN_SEVERITY, INFO_SEVERITY } = require("../../src/evaluate/severity");
+const { WARN_SEVERITY, INFO_SEVERITY, ERROR_SEVERITY } = require("../../src/evaluate/severity");
 const { getAppLogger } = require("../../src/log");
 
 jest.mock("eslint");
@@ -24,7 +24,7 @@ describe("graphqlEvaluate", () => {
     jest.clearAllMocks();
   });
 
-  describe("evaluateGraphqlRepo", () => {
+  describe("evaluateGraphqlApi", () => {
     test("should run ESLint for repository", async () => {
       const mockLintFiles = jest.fn().mockResolvedValue([]);
 
@@ -35,7 +35,7 @@ describe("graphqlEvaluate", () => {
       const mockRootFolder = "/mock/root/folder";
       const mockConfig = {};
 
-      const result = await evaluateGraphqlRepo(mockRootFolder, mockConfig);
+      const result = await evaluateGraphqlApi(mockRootFolder, mockConfig);
 
       expect(ESLint).toHaveBeenCalledWith({
         overrideConfigFile: true,
@@ -53,7 +53,7 @@ describe("graphqlEvaluate", () => {
           plugins: {
             "@graphql-eslint": graphqlPlugin,
           },
-          rules: graphqlPlugin.configs["flat/schema-all"].rules,
+          rules: graphqlPlugin.configs["flat/schema-recommended"].rules,
         },
       });
 
@@ -135,7 +135,7 @@ describe("graphqlEvaluate", () => {
         "/mock/root/folder/**/*.graphqls",
         "/mock/root/folder/**/*.gql",
       ];
-      const result = await evaluateGraphqlRepo(mockRootFolder, mockConfig);
+      const result = await evaluateGraphqlApi(mockRootFolder, mockConfig);
 
       expect(ESLint).toHaveBeenCalledWith({
         overrideConfigFile: true,
@@ -186,7 +186,7 @@ describe("graphqlEvaluate", () => {
                 range: [1304, 1521],
                 text: "",
               },
-              customSeverity: WARN_SEVERITY,
+              customSeverity: ERROR_SEVERITY,
             },
           ],
           suppressedMessages: [],
@@ -234,7 +234,7 @@ describe("graphqlEvaluate", () => {
           plugins: {
             "@graphql-eslint": graphqlPlugin,
           },
-          rules: graphqlPlugin.configs["flat/schema-all"].rules,
+          rules: graphqlPlugin.configs["flat/schema-recommended"].rules,
         },
       });
 

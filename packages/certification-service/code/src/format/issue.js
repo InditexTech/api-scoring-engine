@@ -1,14 +1,20 @@
 // SPDX-FileCopyrightText: 2025 Industria de Diseño Textil S.A. INDITEX
 //
 // SPDX-License-Identifier: Apache-2.0
+const { INFO_SEVERITY, WARN_SEVERITY, ERROR_SEVERITY } = require("../evaluate/severity");
 const { cleanFileName } = require("../verify/utils");
+const severity = {
+  [INFO_SEVERITY]: "INFO",
+  [WARN_SEVERITY]: "WARN",
+  [ERROR_SEVERITY]: "ERROR",
+};
 
 const fromSpectralIssue = (issue, filePath, tempDir) => {
   return {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.code,
     message: issue.message,
-    severity: issue.severity,
+    severity: severity[issue.severity],
     range: {
       start: {
         line: issue.range?.start?.line,
@@ -28,7 +34,7 @@ const fromProtlintIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.rule,
     message: issue.message,
-    severity: issue.severity,
+    severity: severity[issue.severity],
     range: {
       start: {
         line: issue.line,
@@ -48,7 +54,7 @@ const fromMarkdownlintIssue = (issue) => {
     fileName: issue.fileName,
     code: issue.ruleNames.join(", "),
     message: issue.ruleDescription,
-    severity: issue.severity,
+    severity: severity[issue.severity],
     range: {
       start: {
         line: issue.lineNumber,
@@ -69,7 +75,7 @@ const fromEslintIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.messageId || issue.ruleId,
     message: issue.message,
-    severity: issue.customSeverity,
+    severity: severity[issue.customSeverity],
     range: {
       start: {
         line: issue.line,

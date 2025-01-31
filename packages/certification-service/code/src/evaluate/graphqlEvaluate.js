@@ -5,7 +5,7 @@
 const { ESLint } = require("eslint");
 const graphqlPlugin = require("@graphql-eslint/eslint-plugin");
 const path = require("path");
-const { WARN_SEVERITY } = require("./severity");
+const { WARN_SEVERITY, ERROR_SEVERITY } = require("./severity");
 const { configValue } = require("../config/config");
 const GRAPHQL_FILE_EXTENSIONS = configValue("cerws.certification.protocol.GRAPHQL.file-extensions", [
   "graphql",
@@ -13,7 +13,7 @@ const GRAPHQL_FILE_EXTENSIONS = configValue("cerws.certification.protocol.GRAPHQ
   "gql",
 ]);
 
-const evaluateGraphqlRepo = async (rootFolder, config) => {
+const evaluateGraphqlApi = async (rootFolder, config) => {
   return await runEslint(
     rootFolder,
     {
@@ -29,7 +29,7 @@ const evaluateGraphqlFile = async (file, config) => {
     path.dirname(file),
     {
       graphQLConfig: { schema: file },
-      config,
+      graphqlCustomConfig: config,
     },
     [file],
   );
@@ -45,7 +45,7 @@ const runEslint = async (cwd, config, files) => {
   if (config?.graphqlCustomConfig?.rulesConfig?.rules) {
     rules = config.graphqlCustomConfig.rulesConfig.rules;
   } else {
-    rules = graphqlPlugin.configs["flat/schema-all"].rules;
+    rules = graphqlPlugin.configs["flat/schema-recommended"].rules;
   }
 
   const eslint = new ESLint({
@@ -71,13 +71,14 @@ const runEslint = async (cwd, config, files) => {
   results.forEach((file) => {
     file.messages.forEach((message) => {
       const customSeverity = config.graphqlCustomConfig?.rulesConfig?.severities[message.ruleId];
-      message.customSeverity = typeof customSeverity === "number" ? customSeverity : WARN_SEVERITY;
+      message.customSeverity =
+        typeof customSeverity === "number" ? customSeverity : message.severity === 1 ? WARN_SEVERITY : ERROR_SEVERITY;
     });
   });
   return results;
 };
 
 module.exports = {
-  evaluateGraphqlRepo,
+  evaluateGraphqlApi,
   evaluateGraphqlFile,
 };

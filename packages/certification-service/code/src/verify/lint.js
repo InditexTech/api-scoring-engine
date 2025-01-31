@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { evaluate } = require("../evaluate/spectralEvaluate");
-const { evaluateGraphqlRepo, evaluateGraphqlFile } = require("../evaluate/graphqlEvaluate");
+const { evaluateGraphqlApi, evaluateGraphqlFile } = require("../evaluate/graphqlEvaluate");
 const evaluateProtolint = require("../evaluate/protolintEvaluate");
 const { markdownEvaluate } = require("../evaluate/markdownEvaluate");
 const { mkdirSync } = require("fs");
@@ -32,7 +32,7 @@ const lintFileWithMarkdownLint = async (file, ruleset) => {
 
 const lintGraphql = async (rootFolder, config = {}) => {
   logger.info(`Linting graphql folder ${rootFolder}`);
-  return await evaluateGraphqlRepo(rootFolder, config);
+  return await evaluateGraphqlApi(rootFolder, config);
 };
 
 const lintGraphqlFile = async (file, config = {}) => {

@@ -91,7 +91,7 @@ describe("GraphqlLinter", () => {
           fileName: "file1.graphql",
           code: "alphabetize",
           message: 'type "Color" should be before type "MasterData"',
-          severity: INFO_SEVERITY,
+          severity: "INFO",
           range: {
             start: { line: 91, character: 6 },
             end: { line: 91, character: 11 },
