@@ -38,6 +38,7 @@ describe("Issue Conversion Functions", () => {
       severity: "WARN",
       range: issue.range,
       path: issue.path,
+      plugin: "spectral",
     });
   });
 
@@ -61,6 +62,7 @@ describe("Issue Conversion Functions", () => {
         end: { line: 125, character: 2 },
       },
       path: [],
+      plugin: "protolint",
     });
   });
 
@@ -91,6 +93,7 @@ describe("Issue Conversion Functions", () => {
       },
       path: [],
       ruleInformation: "https://github.com/DavidAnson/markdownlint/blob/v0.34.0/doc/md012.md",
+      plugin: "markdownlint",
     });
   });
 
@@ -122,6 +125,7 @@ describe("Issue Conversion Functions", () => {
         end: { line: 91, character: 11 },
       },
       path: [],
+      plugin: "graphql-eslint",
     });
   });
 
@@ -148,6 +152,7 @@ describe("Issue Conversion Functions", () => {
         end: { line: 16, character: 20 },
       },
       path: [],
+      plugin: "graphql-eslint",
     });
   });
 });

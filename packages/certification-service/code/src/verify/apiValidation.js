@@ -93,8 +93,13 @@ const validateApi = async (apiDir, tempDir, api, validationType) => {
 
     design.designValidation.spectralValidation.issues = design.designValidation.validationIssues.map((i) => {
       return {
-        ...i,
+        fileName: i.fileName,
+        code: i.code,
+        message: i.message,
+        severity: i.severity,
         source: i.fileName,
+        range: i.range,
+        path: i.path,
       };
     });
     numberOfDesignRules = graphqlLinter.numberOfRulesExcludingInfoSeverity;

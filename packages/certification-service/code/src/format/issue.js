@@ -9,6 +9,13 @@ const severity = {
   [ERROR_SEVERITY]: "ERROR",
 };
 
+const plugin = {
+  SPECTRAL: "spectral",
+  PROTOLINT: "protolint",
+  MARKDOWNLINT: "markdownlint",
+  GRAPQL_ESLINT: "graphql-eslint",
+};
+
 const fromSpectralIssue = (issue, filePath, tempDir) => {
   return {
     fileName: cleanFileName(filePath, tempDir),
@@ -26,6 +33,7 @@ const fromSpectralIssue = (issue, filePath, tempDir) => {
       },
     },
     path: issue.path,
+    plugin: plugin.SPECTRAL,
   };
 };
 
@@ -46,6 +54,7 @@ const fromProtlintIssue = (issue, filePath, tempDir) => {
       },
     },
     path: [],
+    plugin: plugin.PROTOLINT,
   };
 };
 
@@ -67,6 +76,7 @@ const fromMarkdownlintIssue = (issue) => {
     },
     path: [],
     ruleInformation: issue.ruleInformation,
+    plugin: plugin.MARKDOWNLINT,
   };
 };
 
@@ -84,6 +94,7 @@ const fromEslintIssue = (issue, filePath, tempDir) => {
       end: { line: issue.endLine, character: issue.endColumn },
     },
     path: [],
+    plugin: plugin.GRAPQL_ESLINT,
   };
 };
 

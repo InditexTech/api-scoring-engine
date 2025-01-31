@@ -97,6 +97,7 @@ describe("GraphqlLinter", () => {
             end: { line: 91, character: 11 },
           },
           path: [],
+          plugin: "graphql-eslint",
         },
       ]);
     });
