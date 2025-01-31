@@ -387,16 +387,7 @@ components:
           pattern: ^\S*
           maxLength: 100
         severity:
-          type: integer
-          description: Error level
-          example: 1
-          format: int32
-          maximum: 4
-          minimum: 0
-          enum:
-            - 0
-            - 1
-            - 2
+          $ref: "#/components/schemas/severity"
         range:
           $ref: '#/components/schemas/range'
         path:
@@ -417,11 +408,24 @@ components:
           description: Link of the rule on the open source repository
           pattern: ^\S*
           maxLength: 1000
+        plugin:
+          type: string
+          description: Plugin used to detect the issue
+          maxLength: 1000
+          example: spectral         
       required:
-        - fileName
         - code
         - message
         - severity
+        - plugin
+    severity: 
+      type: string
+      description: Error level.
+      enum:
+        - ERROR
+        - WARN
+        - INFO
+      example: WARN
     spectralRule:
       deprecated: true
       description: |
