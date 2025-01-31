@@ -17,6 +17,7 @@ const { LintRuleset } = require("../evaluate/lint/lintRuleset");
 const { API_PROTOCOL } = require("../verify/types");
 const { fromSpectralIssue, fromProtlintIssue, fromEslintIssue } = require("../format/issue");
 const { isGraphqlFileExtension } = require("../utils/fileUtils");
+const graphqlLinterDefaultConfig = require("../rules/graphql");
 
 const logger = getAppLogger();
 module.exports.execute = async (url, apiProtocol) => {
@@ -68,7 +69,7 @@ module.exports.execute = async (url, apiProtocol) => {
         issues = protolintResults.map((issue) => fromProtlintIssue(issue, file, tempDir));
         break;
       case API_PROTOCOL.GRAPHQL:
-        const result = await lintGraphqlFile(file);
+        const result = await lintGraphqlFile(file, graphqlLinterDefaultConfig);
         result.forEach((element) => {
           element.messages.forEach((message) => issues.push(fromEslintIssue(message, element.filePath, tempDir)));
         });
