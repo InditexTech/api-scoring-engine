@@ -10,8 +10,10 @@ const { fromEslintIssue } = require("../format/issue");
 
 class GraphqlLinter {
   constructor(config = {}) {
-    this.configuration = graphqlLinterDefaultConfig;
-
+    this.configuration = {
+      plugins: { ...graphqlLinterDefaultConfig.plugins },
+      rulesConfig: { ...graphqlLinterDefaultConfig.rulesConfig },
+    };
     if (config?.rulesConfig?.rules) {
       this.configuration.rulesConfig.rules = config.rulesConfig.rules;
     }
