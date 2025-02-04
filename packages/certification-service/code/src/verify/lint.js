@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { evaluate } = require("../evaluate/spectralEvaluate");
+const { evaluateGraphqlApi, evaluateGraphqlFile } = require("../evaluate/graphqlEvaluate");
 const evaluateProtolint = require("../evaluate/protolintEvaluate");
 const { markdownEvaluate } = require("../evaluate/markdownEvaluate");
 const { mkdirSync } = require("fs");
@@ -29,6 +30,16 @@ const lintFileWithMarkdownLint = async (file, ruleset) => {
   return Object.values(await markdownEvaluate(file, ruleset))[0];
 };
 
+const lintGraphql = async (rootFolder, config = {}) => {
+  logger.info(`Linting graphql folder ${rootFolder}`);
+  return await evaluateGraphqlApi(rootFolder, config);
+};
+
+const lintGraphqlFile = async (file, config = {}) => {
+  logger.info(`Linting graphql file ${file}`);
+  return await evaluateGraphqlFile(file, config);
+};
+
 const generateRandomFolder = () => {
   const folderName = toHexoId();
   const fullPath = path.join(os.tmpdir(), folderName);
@@ -42,5 +53,7 @@ module.exports = {
   lintFileWithSpectral,
   lintFilesWithProtolint,
   lintFileWithMarkdownLint,
+  lintGraphql,
+  lintGraphqlFile,
   generateRandomFolder,
 };

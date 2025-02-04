@@ -9,6 +9,7 @@ const { DocumentationRuleset } = require("../evaluate/documentation/documentatio
 const { ERROR_SEVERITY } = require("../evaluate/severity");
 const { lintFileWithMarkdownLint } = require("./lint");
 const { configValue } = require("../config/config");
+const { fromMarkdownlintIssue } = require("../format/issue");
 
 const CUSTOM_RULES_NAMES = {
   README_MUST_EXISTS: "EX_MD063",
@@ -28,6 +29,9 @@ class DocumentationLinter {
       const readmeIssues = await this.validateReadme(apiReadmeFile);
 
       documentation.documentationValidation.issues.push(...readmeIssues);
+      documentation.documentationValidation.validationIssues = readmeIssues.map((issue) =>
+        fromMarkdownlintIssue(issue),
+      );
     }
   }
 

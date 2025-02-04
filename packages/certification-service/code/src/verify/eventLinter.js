@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { glob } = require("glob");
-const path = require("path");
 const fs = require("fs");
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
 const { lintFileWithSpectral } = require("./lint");
 const { VALIDATION_TYPE_DESIGN, INVALID_REF_CUSTOMIZED } = require("./types");
 const { cleanFileName, checkForErrors } = require("./utils");
+const { fromSpectralIssue } = require("../format/issue");
 
 class EventLinter {
-  static async lintEvent({ file, validationType, fileName, rootFolder, apiValidation, design, api }) {
+  static async lintEvent({ file, validationType, fileName, apiDir, apiValidation, design, tempDir }) {
     if (fs.existsSync(file)) {
       if (!validationType || validationType === VALIDATION_TYPE_DESIGN) {
         const issues = await lintFileWithSpectral({
@@ -21,40 +21,46 @@ class EventLinter {
         issues.forEach((issue) => {
           issue.message = issue.code == "invalid-ref" ? INVALID_REF_CUSTOMIZED : issue.message;
           issue.fileName = fileName;
-          issue.source = cleanFileName(issue.source, rootFolder);
+          issue.source = cleanFileName(issue.source, tempDir);
         });
         apiValidation.hasErrors = checkForErrors(apiValidation, issues);
         design.designValidation.spectralValidation.issues.push(...issues);
+        design.designValidation.validationIssues.push(
+          ...issues.map((issue) => fromSpectralIssue(issue, issue.fileName, tempDir)),
+        );
       }
     }
     if (!validationType || validationType === VALIDATION_TYPE_DESIGN) {
-      const avroFiles = await findAllAvroFiles(rootFolder, api);
+      const avroFiles = await findAllAvroFiles(apiDir);
       for (const avroFile of avroFiles) {
         const issues = await lintFileWithSpectral({
           file: avroFile,
           ruleset: this.resolveAvroGeneralRuleset().rulesetPath,
         });
         issues.forEach((issue) => {
-          issue.fileName = cleanFileName(avroFile, rootFolder);
-          issue.source = cleanFileName(issue.source, rootFolder);
+          issue.fileName = cleanFileName(avroFile, tempDir);
+          issue.source = cleanFileName(issue.source, tempDir);
         });
         apiValidation.hasErrors = checkForErrors(apiValidation, issues);
         design.designValidation.spectralValidation.issues.push(...issues);
+        design.designValidation.validationIssues.push(
+          ...issues.map((issue) => fromSpectralIssue(issue, issue.fileName, tempDir)),
+        );
       }
     }
   }
 
-  static resolveEventGeneralRuleset () {
+  static resolveEventGeneralRuleset() {
     return LintRuleset.EVENT_GENERAL;
   }
 
-  static resolveAvroGeneralRuleset () {
+  static resolveAvroGeneralRuleset() {
     return LintRuleset.AVRO_GENERAL;
   }
 }
 
-const findAllAvroFiles = (rootFolder, api) => {
-  return glob.sync(path.join(rootFolder, api["definition-path"]) + "/**/*.avsc", {});
+const findAllAvroFiles = (apiDir) => {
+  return glob.sync(apiDir + "/**/*.avsc", {});
 };
 
 module.exports = {

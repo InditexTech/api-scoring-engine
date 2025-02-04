@@ -225,6 +225,7 @@ components:
         - REST
         - EVENT
         - GRPC
+        - GRAPHQL
       example: REST
     validationTypes:
       type: string
@@ -324,7 +325,16 @@ components:
           type: boolean
           description: If the file has errors or not
           example: true
+        issues:
+          type: array
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/issue'
         results:
+          deprecated: true
+          description: |
+            We are moving to issues.
+            In future versions 'spectralRule' will be removed in favour of '#/components/schemas/issue'
           type: array
           maxItems: 100
           items:
@@ -354,7 +364,73 @@ components:
           maxLength: 20
         score:
           $ref: '#/components/schemas/score'
+    issue:
+      type: object
+      additionalProperties: false
+      properties:
+        fileName:
+          type: string
+          description: Name of the file that is being validated
+          pattern: '^[a-zA-Z0-9_. -]*$'
+          maxLength: 1000
+          example: openapi.yaml
+        code:
+          type: string
+          pattern: '^[a-z-]+$'
+          maxLength: 100
+          example: ensure-basepath-version
+          description: Rule validation name
+        message:
+          type: string
+          example: url version should be v3
+          description: Rule description
+          pattern: ^\S*
+          maxLength: 100
+        severity:
+          $ref: "#/components/schemas/severity"
+        range:
+          $ref: '#/components/schemas/range'
+        path:
+          type: array
+          description: Path of the error
+          maxItems: 10
+          example:
+            - path
+          items:
+            type: string
+            example: path
+            description: Path of the error
+            pattern: '^[a-zA-Z0-9]+$'
+            maxLength: 300
+        ruleInformation:
+          type: string
+          example: 'https://github.com/DavidAnson/markdownlint/blob/v0.24.0/doc/Rules.md#md009'
+          description: Link of the rule on the open source repository
+          pattern: ^\S*
+          maxLength: 1000
+        plugin:
+          type: string
+          description: Plugin used to detect the issue
+          maxLength: 1000
+          example: spectral         
+      required:
+        - code
+        - message
+        - severity
+        - plugin
+    severity: 
+      type: string
+      description: Error level.
+      enum:
+        - ERROR
+        - WARN
+        - INFO
+      example: WARN
     spectralRule:
+      deprecated: true
+      description: |
+        We are moving issues to a common object.
+        In future versions 'spectralRule' will be removed in favour of '#/components/schemas/issue'
       type: object
       additionalProperties: false
       properties:
@@ -438,6 +514,10 @@ components:
           maximum: 10000
           minimum: 1
     spectralValidation:
+      deprecated: true
+      description: |
+        We are moving issues to a common object.
+        In future versions 'spectralValidation' will be removed in favour of array of '#/components/schemas/issue'
       type: object
       additionalProperties: false
       nullable: true
@@ -448,6 +528,10 @@ components:
           items:
             $ref: '#/components/schemas/spectralRule'
     documentationRule:
+      deprecated: true
+      description: |
+        We are moving issues to a common object.
+        In future versions 'documentationRule' will be removed in favour of '#/components/schemas/issue'
       type: object
       additionalProperties: false
       properties:
@@ -512,12 +596,25 @@ components:
         - $ref: '#/components/schemas/moduleDescription'
       additionalProperties: false
       properties:
+        validationIssues:
+          type: array
+          maxItems: 1000
+          items:
+            $ref:  '#/components/schemas/issue'
         issues:
+          deprecated: true
+          description: |
+            We are moving issues to a common object.
+            In future versions 'issues' will be removed in favour of array of '#/components/schemas/issue'
           type: array
           maxItems: 100
           items:
             $ref: '#/components/schemas/documentationRule'
     protolintRule:
+      deprecated: true
+      description: |
+        We are moving issues to a common object.
+        In future versions 'protolintRule' will be removed in favour of '#/components/schemas/issue'
       type: object
       additionalProperties: false
       properties:
@@ -567,6 +664,10 @@ components:
             - 3
             - 4
     protolintValidation:
+      deprecated: true
+      description: |
+        We are moving issues to a common object.
+        In future versions 'protolintValidation' will be removed in favour of array of '#/components/schemas/issue'
       type: object
       nullable: true
       additionalProperties: false
@@ -631,6 +732,11 @@ components:
       allOf:
         - $ref: '#/components/schemas/moduleDescription'
       properties:
+        validationIssues:
+          type: array
+          maxItems: 1000
+          items:
+            $ref:  '#/components/schemas/issue'
         spectralValidation:
           $ref: '#/components/schemas/spectralValidation'
         protolintValidation:

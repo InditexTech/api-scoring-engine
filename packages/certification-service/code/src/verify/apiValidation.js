@@ -4,7 +4,7 @@
 
 const path = require("path");
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
-const { REST, EVENT, GRPC } = require("../evaluate/lint/protocols");
+const { REST, EVENT, GRPC, GRAPHQL } = require("../evaluate/lint/protocols");
 const {
   VALIDATION_TYPE_DESIGN,
   VALIDATION_TYPE_DOCUMENTATION,
@@ -16,33 +16,23 @@ const {
   NUMBER_OF_GRPC_RULES,
 } = require("./types.js");
 const { calculateRating } = require("../scoring/grades");
-const {
-  scoreLinting,
-  scoreMarkdown,
-  scoreGRPCLinting,
-  arrayIsNotEmpty,
-  calculateAverageScore,
-} = require("../scoring/scoring");
+const { scoreLinting, scoreMarkdown, calculateAverageScore } = require("../scoring/scoring");
 const { getAppLogger } = require("../log");
 const { RestLinter } = require("./restLinter");
 const { EventLinter } = require("./eventLinter");
 const { gRPCLinter } = require("./grpcLinter");
 const { DocumentationLinter } = require("./documentationLinter");
 const { DocumentationRuleset } = require("../evaluate/documentation/documentationRuleset");
+const { GraphqlLinter } = require("./graphqlLinter.js");
+const { checkForErrors } = require("./utils.js");
 
 const logger = getAppLogger();
 
-const validateApi = async (rootFolder, api, validationType, isVerbose, tempFolder) => {
+const validateApi = async (apiDir, tempDir, api, validationType) => {
   const apiProtocol = api["api-spec-type"].toUpperCase();
   logger.info(`Validating API '${api.name}/${apiProtocol}'`);
   const fileName = path.join(api["definition-path"], getApiFile(api, apiProtocol)).replace(/\\/g, "/");
-  let file;
-  if (tempFolder) {
-    file = path.join(tempFolder, getApiFile(api, apiProtocol));
-    tempFolder = file;
-  } else {
-    file = path.join(rootFolder, api["definition-path"], getApiFile(api, apiProtocol));
-  }
+  const file = path.join(apiDir, getApiFile(api, apiProtocol));
 
   validationType = validationType === VALIDATION_TYPE_OVERALL_SCORE ? null : validationType;
 
@@ -61,6 +51,7 @@ const validateApi = async (rootFolder, api, validationType, isVerbose, tempFolde
   const design = {
     designValidation: {
       validationType: VALIDATION_TYPE_DESIGN,
+      validationIssues: [],
       spectralValidation: { issues: [] },
       protolintValidation: { issues: [] },
     },
@@ -68,48 +59,77 @@ const validateApi = async (rootFolder, api, validationType, isVerbose, tempFolde
   const security = {
     securityValidation: {
       validationType: VALIDATION_TYPE_SECURITY,
+      validationIssues: [],
       spectralValidation: { issues: [] },
       protolintValidation: { issues: [] },
     },
   };
-  const documentation = { documentationValidation: { validationType: VALIDATION_TYPE_DOCUMENTATION, issues: [] } };
+  const documentation = {
+    documentationValidation: { validationType: VALIDATION_TYPE_DOCUMENTATION, issues: [], validationIssues: [] },
+  };
+
+  let numberOfDesignRules;
 
   if (apiProtocol === REST) {
     await RestLinter.lintRest({
       validationType,
       file,
       fileName,
-      rootFolder,
       apiValidation,
       design,
       security,
-      tempFolder,
+      tempDir,
     });
+    numberOfDesignRules = LintRuleset.REST_GENERAL.numberOfRules;
   } else if (apiProtocol === EVENT) {
-    await EventLinter.lintEvent({ file, validationType, fileName, rootFolder, apiValidation, design, api });
+    await EventLinter.lintEvent({ file, validationType, fileName, apiDir, tempDir, apiValidation, design });
+    numberOfDesignRules = LintRuleset.EVENT_GENERAL.numberOfRules + LintRuleset.AVRO_GENERAL.numberOfRules;
   } else if (apiProtocol === GRPC) {
-    await gRPCLinter.lintgRPC(validationType, rootFolder, api, design, new Map());
+    await gRPCLinter.lintgRPC(validationType, apiDir, tempDir, design, new Map());
+    numberOfDesignRules = NUMBER_OF_GRPC_RULES;
+  } else if (apiProtocol === GRAPHQL) {
+    const graphqlLinter = new GraphqlLinter();
+    await graphqlLinter.lint(validationType, apiDir, tempDir, design);
+
+    design.designValidation.spectralValidation.issues = design.designValidation.validationIssues.map((i) => {
+      return {
+        fileName: i.fileName,
+        code: i.code,
+        message: i.message,
+        severity: i.severity,
+        source: i.fileName,
+        range: i.range,
+        path: i.path,
+      };
+    });
+    numberOfDesignRules = graphqlLinter.numberOfRulesExcludingInfoSeverity;
   }
 
-  await DocumentationLinter.lintDocumentation(validationType, rootFolder, api, documentation);
+  await DocumentationLinter.lintDocumentation(validationType, tempDir, api, documentation);
+
+  apiValidation.hasErrors = checkForErrors(apiValidation, [
+    ...design.designValidation.validationIssues,
+    ...security.securityValidation.validationIssues,
+    ...documentation.documentationValidation.validationIssues,
+  ]);
 
   // Modules Scoring and Rating
-  design.designValidation.score = scoreLinterValidations(design, apiProtocol);
+  design.designValidation.score = scoreLinting(design.designValidation.validationIssues, numberOfDesignRules);
 
   security.securityValidation.score = scoreLinting(
-    security.securityValidation.spectralValidation.issues,
+    security.securityValidation.validationIssues,
     LintRuleset.REST_SECURITY.numberOfRules,
   );
 
   documentation.documentationValidation.score = scoreMarkdown(
-    documentation.documentationValidation.issues,
+    documentation.documentationValidation.validationIssues,
     DocumentationRuleset.numberOfAllCustomRules(),
   );
   Object.assign(design.designValidation, calculateRating(design.designValidation.score));
   Object.assign(security.securityValidation, calculateRating(security.securityValidation.score));
   Object.assign(documentation.documentationValidation, calculateRating(documentation.documentationValidation.score));
 
-  if (apiProtocol === EVENT || apiProtocol === GRPC) {
+  if (apiProtocol === EVENT || apiProtocol === GRPC || apiProtocol === GRAPHQL) {
     apiValidation.result = [design, documentation];
   } else {
     apiValidation.result = [design, security, documentation];
@@ -145,26 +165,6 @@ const validateApi = async (rootFolder, api, validationType, isVerbose, tempFolde
 
   return apiValidation;
 };
-
-function scoreLinterValidations(design, apiProtocol) {
-  const numberOfRules = resolveNumberOfRulesByProtocol(apiProtocol);
-  const spectralIssues = design.designValidation.spectralValidation.issues;
-  const grpcIssues = design.designValidation.protolintValidation.issues;
-
-  return arrayIsNotEmpty(spectralIssues) ? scoreLinting(spectralIssues, numberOfRules) : scoreGRPCLinting(grpcIssues, NUMBER_OF_GRPC_RULES);
-}
-
-function resolveNumberOfRulesByProtocol(protocol) {
-  let numberOfRules;
-
-  if (protocol == EVENT) {
-    numberOfRules = LintRuleset.EVENT_GENERAL.numberOfRules + LintRuleset.AVRO_GENERAL.numberOfRules;
-  } else {
-    numberOfRules = LintRuleset.REST_GENERAL.numberOfRules;
-  }
-
-  return numberOfRules;
-}
 
 function getApiFile(api, apiProtocol) {
   if (api["definition-file"]) {

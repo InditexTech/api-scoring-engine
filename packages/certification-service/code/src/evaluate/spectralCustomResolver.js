@@ -30,7 +30,7 @@ const createResolver = () => {
       http: { resolve: httpResolver },
       file: {
         resolve(ref) {
-          return new Promise((resolve, reject) => {            
+          return new Promise((resolve, reject) => {
             try {
               const refPath = ref.toString();
               const fileContent = fs.readFileSync(refPath, "utf8");

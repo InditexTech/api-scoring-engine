@@ -46,7 +46,6 @@ const formatFlags = (customFlags) => {
 };
 
 const execShellCommand = (cmd) => {
-  // eslint-disable-next-line node/global-require
   const exec = require("child_process").exec;
   return new Promise((resolve) => {
     exec(cmd, (error, stdout, stderr) => {
