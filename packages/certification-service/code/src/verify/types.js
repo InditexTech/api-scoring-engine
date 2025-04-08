@@ -15,6 +15,7 @@ const API_PROTOCOL = {
   REST: "REST",
   EVENT: "EVENT",
   GRPC: "GRPC",
+  GRAPHQL: "GRAPHQL",
 };
 
 const INVALID_REF_CUSTOMIZED = "References to schemas outside of the API directory are not allowed";

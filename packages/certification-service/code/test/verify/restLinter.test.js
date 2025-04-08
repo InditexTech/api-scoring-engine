@@ -121,7 +121,7 @@ describe("Rest linter tests", () => {
       apiValidation,
       design,
       security,
-      tempFolder: "/temp",
+      tempDir: "/temp",
     });
 
     expect(design.designValidation.spectralValidation.issues).toHaveLength(designIssues.length);
@@ -133,7 +133,7 @@ describe("Rest linter tests", () => {
           message: '"sampleCode.example" must be defined',
           path: ["components", "parameters", "pathSampleCode"],
           severity: 1,
-          source: "/my-api/rest/openapi-rest.yml",
+          source: "my-api/rest/openapi-rest.yml",
           range: {
             start: {
               line: 201,
@@ -144,7 +144,7 @@ describe("Rest linter tests", () => {
               character: 26,
             },
           },
-          fileName: "/my-api/rest/openapi-rest.yml",
+          fileName: "my-api/rest/openapi-rest.yml",
         },
         {
           code: "ensure-properties-examples",
@@ -173,7 +173,7 @@ describe("Rest linter tests", () => {
           message: "Global 'security' field is not defined",
           path: [],
           severity: 0,
-          source: "/my-api/rest/openapi-rest.yml",
+          source: "my-api/rest/openapi-rest.yml",
           range: {
             start: {
               line: 4,
@@ -184,7 +184,7 @@ describe("Rest linter tests", () => {
               character: 26,
             },
           },
-          fileName: "/my-api/rest/openapi-rest.yml",
+          fileName: "my-api/rest/openapi-rest.yml",
         },
         {
           code: "string-properties-required-max-length",

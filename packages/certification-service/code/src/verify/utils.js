@@ -12,7 +12,9 @@ const checkForErrors = (apiValidation, issues) => {
 };
 
 const cleanFileName = (file, rootFolder) => {
-  return file.substring(file.indexOf(rootFolder) + rootFolder.length + 1);
+  const replace = rootFolder.endsWith("/") ? rootFolder : rootFolder + "/";
+  return file.replace(replace, "");
+  // file.substring(file.indexOf(rootFolder) + rootFolder.length + 1);
 };
 
 module.exports = {

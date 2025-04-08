@@ -9,9 +9,10 @@ const { checkFileExists } = require("../../utils/fileUtils");
 const { getAppLogger } = require("../../log");
 const { AppError } = require("../../utils/error");
 const { httpStatusCodes } = require("../../utils/httpStatusCodes");
+const { REST, EVENT, GRPC, GRAPHQL } = require("../lint/protocols");
 
 const logger = getAppLogger();
-const protocols = ["rest", "event", "grpc"];
+const protocols = [REST, EVENT, GRPC, GRAPHQL];
 
 class RepositoryParser {
   folder;
@@ -27,7 +28,7 @@ class RepositoryParser {
     parsedData.markdowns = [];
     parsedData.markdowns.push.apply(parsedData.markdowns, await RepositoryParser.addDefaultMarkdowns(this.folder));
 
-    parsedData.apis = parsedData.apis.filter((x) => protocols.includes(x["api-spec-type"].toLowerCase()));
+    parsedData.apis = parsedData.apis.filter((x) => protocols.includes(x["api-spec-type"].toUpperCase()));
 
     logger.info(`Parsed APIs: ` + parsedData.apis.map((api) => `'${api.name}/${api["api-spec-type"]}'`).join(", "));
 

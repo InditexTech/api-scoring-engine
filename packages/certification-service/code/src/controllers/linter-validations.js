@@ -12,6 +12,7 @@ const {
   VALIDATION_TYPE_SECURITY,
   VALIDATION_TYPE_OVERALL_SCORE,
 } = require("../verify/types");
+const { isGraphqlFileExtension } = require("../utils/fileUtils");
 
 const VALIDATION_TYPES = [
   VALIDATION_TYPE_DESIGN,
@@ -39,7 +40,11 @@ const isValidValidateFileRequest = ({ url, apiProtocol }) => {
     if (
       !(
         isValidUrl(url) &&
-        (url.includes("format=yaml") || url.includes(".yaml") || url.includes(".yml") || url.includes(".proto"))
+        (url.includes("format=yaml") ||
+          url.includes(".yaml") ||
+          url.includes(".yml") ||
+          url.includes(".proto") ||
+          isGraphqlFileExtension(url))
       )
     ) {
       throwAppError(configValue("cerws.validation.file.url.message"));
@@ -47,16 +52,16 @@ const isValidValidateFileRequest = ({ url, apiProtocol }) => {
   } else if (
     url.mimetype !== "application/json" &&
     url.mimetype !== "text/yaml" &&
-    !url.originalFilename.endsWith(".proto")
+    !(url.originalFilename.endsWith(".proto") || isGraphqlFileExtension(url.originalFilename))
   ) {
     throwAppError("Not a valid multipart file");
   }
 
   if (!apiProtocol) {
-    throwAppError("File validation requires the 'apiProtocol': possible values are REST | EVENT | GRPC");
+    throwAppError("File validation requires the 'apiProtocol': possible values are REST | EVENT | GRPC | GRAPHQL");
   }
   if (!PROTOCOL_TYPES.includes(apiProtocol)) {
-    throwAppError("File validation requires the 'apiProtocol' to be a valid protocol: REST | EVENT | GRPC");
+    throwAppError("File validation requires the 'apiProtocol' to be a valid protocol: REST | EVENT | GRPC | GRAPHQL");
   }
 };
 

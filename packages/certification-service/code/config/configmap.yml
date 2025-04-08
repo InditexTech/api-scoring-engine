@@ -61,7 +61,11 @@ cerws:
       EVENT:
         available-modules: DESIGN,DOCUMENTATION
       GRAPHQL:
-        available-modules: DOCUMENTATION
+        available-modules: DESIGN,DOCUMENTATION
+        file-extensions: 
+          - graphql
+          - graphqls
+          - gql
       GRPC:
         available-modules: DESIGN,DOCUMENTATION
 

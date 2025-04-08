@@ -255,7 +255,7 @@ describe("Linter Validations", () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "File validation requires the 'apiProtocol': possible values are REST | EVENT | GRPC",
+          "File validation requires the 'apiProtocol': possible values are REST | EVENT | GRPC | GRAPHQL",
         );
       }
     });
@@ -265,13 +265,13 @@ describe("Linter Validations", () => {
       try {
         isValidValidateFileRequest({
           url: "https://raw.githubusercontent.com/app-test/develop/apis/rest/openapi-rest.yml",
-          apiProtocol: "GRAPHQL",
+          apiProtocol: "UNKNOWN",
         });
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
         expect(error).toHaveProperty(
           "message",
-          "File validation requires the 'apiProtocol' to be a valid protocol: REST | EVENT | GRPC",
+          "File validation requires the 'apiProtocol' to be a valid protocol: REST | EVENT | GRPC | GRAPHQL",
         );
       }
     });
