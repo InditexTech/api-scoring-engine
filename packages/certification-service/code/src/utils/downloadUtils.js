@@ -37,6 +37,7 @@ const includeCommitInRepositoryUrl = (commit, repositoryUrl) => {
 
 const downloadRepository = (url, targetFile) => {
   const urlObj = new URL(url);
+  let writer;
   let auth = getHostAuth(url, urlObj);
   logger.info(`Downloading url ${url} to file ${targetFile}`);
   return axios
@@ -46,7 +47,7 @@ const downloadRepository = (url, targetFile) => {
       responseType: "stream",
     })
     .then((response) => {
-      let writer = fs.createWriteStream(targetFile);
+      writer = fs.createWriteStream(targetFile);
       response.data.pipe(writer);
       return new Promise((resolve, reject) => {
         response.data.on("end", () => {
@@ -60,6 +61,9 @@ const downloadRepository = (url, targetFile) => {
     })
     .catch((error) => {
       throw error;
+    })
+    .finally(() => {
+      if (writer) writer.close();
     });
 };
 
