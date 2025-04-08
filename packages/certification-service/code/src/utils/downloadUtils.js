@@ -38,7 +38,7 @@ const includeCommitInRepositoryUrl = (commit, repositoryUrl) => {
 const downloadRepository = (url, targetFile) => {
   const urlObj = new URL(url);
   let writer;
-  let auth = getHostAuth(url, urlObj);
+  let auth = getHostAuth(urlObj);
   logger.info(`Downloading url ${url} to file ${targetFile}`);
   return axios
     .get(url, {
@@ -109,7 +109,7 @@ const downloadFile = async (url, targetFile) => {
   logger.info(`File ${targetFile} written`);
 };
 
-const getHostAuth = (url, urlObj) => {
+const getHostAuth = (urlObj) => {
   if (urlObj.hostname === "github.com" || urlObj.hostname === "raw.githubusercontent.com") {
     return {
       username: configValue("cerws.common.rest.client.github-rest-client.username"),
