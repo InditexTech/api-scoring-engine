@@ -84,7 +84,7 @@
     "prettier": "3.2.5"
   },
   "overrides": {
-    "jsonpath-plus": "7.2.0",
+    "jsonpath-plus": "10.3.0",
     "semver": "7.5.2"
   }
 }
