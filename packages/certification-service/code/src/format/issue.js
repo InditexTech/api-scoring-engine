@@ -4,7 +4,7 @@
 const { INFO_SEVERITY, WARN_SEVERITY, ERROR_SEVERITY } = require("../evaluate/severity");
 const { cleanFileName } = require("../verify/utils");
 
-const mapSeverity = (severity) => {
+const mapSeverityAsString = (severity) => {
   switch (severity) {
     case INFO_SEVERITY:
       return "INFO";
@@ -14,6 +14,19 @@ const mapSeverity = (severity) => {
       return "ERROR";
     default:
       throw new Error(`Invalid severity value: ${severity}`);
+  }
+};
+
+const mapSeverityAsInt = (severityStr) => {
+  switch (severityStr) {
+    case "INFO":
+      return INFO_SEVERITY;
+    case "WARN":
+      return WARN_SEVERITY;
+    case "ERROR":
+      return ERROR_SEVERITY;
+    default:
+      throw new Error(`Invalid severity string: ${severityStr}`);
   }
 };
 
@@ -29,7 +42,7 @@ const fromSpectralIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.code,
     message: issue.message,
-    severity: mapSeverity(issue.severity),
+    severity: mapSeverityAsString(issue.severity),
     range: {
       start: {
         line: issue.range?.start?.line,
@@ -50,7 +63,7 @@ const fromProtlintIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.rule,
     message: issue.message,
-    severity: mapSeverity(issue.severity),
+    severity: mapSeverityAsString(issue.severity),
     range: {
       start: {
         line: issue.line,
@@ -71,7 +84,7 @@ const fromMarkdownlintIssue = (issue) => {
     fileName: issue.fileName,
     code: issue.ruleNames.join(", "),
     message: issue.ruleDescription,
-    severity: mapSeverity(issue.severity),
+    severity: mapSeverityAsString(issue.severity),
     range: {
       start: {
         line: issue.lineNumber,
@@ -93,7 +106,7 @@ const fromEslintIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.messageId || issue.ruleId,
     message: issue.message,
-    severity: mapSeverity(issue.customSeverity),
+    severity: mapSeverityAsString(issue.customSeverity),
     range: {
       start: {
         line: issue.line,
@@ -111,5 +124,6 @@ module.exports = {
   fromProtlintIssue,
   fromMarkdownlintIssue,
   fromEslintIssue,
-  mapSeverity,
+  mapSeverityAsString,
+  mapSeverityAsInt,
 };
