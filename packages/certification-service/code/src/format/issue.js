@@ -3,10 +3,18 @@
 // SPDX-License-Identifier: Apache-2.0
 const { INFO_SEVERITY, WARN_SEVERITY, ERROR_SEVERITY } = require("../evaluate/severity");
 const { cleanFileName } = require("../verify/utils");
-const severity = {
-  [INFO_SEVERITY]: "INFO",
-  [WARN_SEVERITY]: "WARN",
-  [ERROR_SEVERITY]: "ERROR",
+
+const mapSeverity = (severity) => {
+  switch (severity) {
+    case INFO_SEVERITY:
+      return "INFO";
+    case WARN_SEVERITY:
+      return "WARN";
+    case ERROR_SEVERITY:
+      return "ERROR";
+    default:
+      throw new Error(`Invalid severity value: ${severity}`);
+  }
 };
 
 const plugin = {
@@ -21,7 +29,7 @@ const fromSpectralIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.code,
     message: issue.message,
-    severity: severity[issue.severity],
+    severity: mapSeverity(issue.severity),
     range: {
       start: {
         line: issue.range?.start?.line,
@@ -42,7 +50,7 @@ const fromProtlintIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.rule,
     message: issue.message,
-    severity: severity[issue.severity],
+    severity: mapSeverity(issue.severity),
     range: {
       start: {
         line: issue.line,
@@ -63,7 +71,7 @@ const fromMarkdownlintIssue = (issue) => {
     fileName: issue.fileName,
     code: issue.ruleNames.join(", "),
     message: issue.ruleDescription,
-    severity: severity[issue.severity],
+    severity: mapSeverity(issue.severity),
     range: {
       start: {
         line: issue.lineNumber,
@@ -85,7 +93,7 @@ const fromEslintIssue = (issue, filePath, tempDir) => {
     fileName: cleanFileName(filePath, tempDir),
     code: issue.messageId || issue.ruleId,
     message: issue.message,
-    severity: severity[issue.customSeverity],
+    severity: mapSeverity(issue.customSeverity),
     range: {
       start: {
         line: issue.line,
@@ -103,4 +111,5 @@ module.exports = {
   fromProtlintIssue,
   fromMarkdownlintIssue,
   fromEslintIssue,
+  mapSeverity,
 };
