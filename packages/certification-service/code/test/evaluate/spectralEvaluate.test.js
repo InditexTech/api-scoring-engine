@@ -35,6 +35,7 @@ const expectedRESTResult = {
   severity: 1,
   source: emptyOpenAPIFilePath,
   range: { start: { character: 0, line: 4 }, end: { character: 14, line: 4 } },
+  documentationUrl: "https://meta.stoplight.io/docs/spectral/docs/reference/openapi-rules.md#info-contact",
 };
 
 const expectedRESTSecurityResult = {
@@ -44,6 +45,7 @@ const expectedRESTSecurityResult = {
   severity: 0,
   source: faultyOpenAPIFilePath,
   range: { start: { character: 0, line: 4 }, end: { character: 40, line: 26 } },
+  documentationUrl: undefined,
 };
 
 const resultsForCode = (results, code) => {
