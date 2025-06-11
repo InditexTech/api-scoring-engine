@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const { NUMBER_OF_BASE_RULES } = require("../evaluate/documentation/documentationRuleset");
-const { ERROR_SEVERITY, INFO_SEVERITY } = require("../evaluate/severity");
 const { configValue } = require("../config/config");
 const { getAppLogger } = require("../log");
 const { CUSTOM_RULES_NAMES } = require("../verify/documentationLinter");
@@ -62,7 +61,7 @@ const missinOrInvalidReadmeError = (markdownEvaluationData) => {
 
 const filterErrorRules = (evaluationData) => {
   return evaluationData.filter((violation) => {
-    return violation.severity == ERROR_SEVERITY;
+    return violation.severity === "ERROR";
   });
 };
 
@@ -109,7 +108,7 @@ const filterRepeatedAndSuggestionInfractions = (evaluationData, field) => {
     let rule = item[field];
     let severity = item["severity"];
 
-    if (severity !== INFO_SEVERITY && !(rule in lookup)) {
+    if (severity !== "INFO" && !(rule in lookup)) {
       lookup[rule] = 1;
       result.push(item);
     }
