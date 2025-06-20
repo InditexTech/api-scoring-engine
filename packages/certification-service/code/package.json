@@ -84,7 +84,9 @@
     "prettier": "3.2.5"
   },
   "overrides": {
-    "jsonpath-plus": "7.2.0",
-    "semver": "7.5.2"
+    "jsonpath-plus": "10.3.0",
+    "semver": "7.5.2",
+    "brace-expansion": "^1.1.11",
+    "minimatch": "^3.1.2"
   }
 }
