@@ -18,7 +18,7 @@ const agent = new https.Agent({
 
 const MAX_ZIP_FILES = 10000;
 const MAX_ZIP_FILES_SIZE = 50000000; // 50MB
-const THRESHOLD_RATIO = 100; // this is too much but many repos need a this
+const THRESHOLD_RATIO = 500; // this is too much but some repos need this high ratio due to many small files being compressed
 
 const logger = getAppLogger();
 
