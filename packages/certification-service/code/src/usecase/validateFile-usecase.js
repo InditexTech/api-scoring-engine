@@ -6,6 +6,8 @@ const fs = require("fs");
 const path = require("path");
 const { getAppLogger } = require("../log");
 const { downloadFile } = require("../utils/downloadUtils");
+const { AppError } = require("../utils/error");
+const { httpStatusCodes } = require("../utils/httpStatusCodes");
 const {
   lintFilesWithProtolint,
   lintFileWithSpectral,
@@ -16,7 +18,7 @@ const { checkForErrors } = require("../verify/utils");
 const { LintRuleset } = require("../evaluate/lint/lintRuleset");
 const { API_PROTOCOL } = require("../verify/types");
 const { fromSpectralIssue, fromProtlintIssue, fromEslintIssue } = require("../format/issue");
-const { isGraphqlFileExtension } = require("../utils/fileUtils");
+const { isGraphqlFileExtension, sanitizeMultipartFilename } = require("../utils/fileUtils");
 const graphqlLinterDefaultConfig = require("../rules/graphql");
 
 const logger = getAppLogger();
@@ -33,11 +35,23 @@ module.exports.execute = async (url, apiProtocol) => {
         url.originalFilename?.endsWith(".proto") ||
         isGraphqlFileExtension(url.originalFilename))
     ) {
-      fs.copyFileSync(url.filepath, `${url.filepath}_${url.originalFilename}`);
-      logger.info(`Received file ${url.originalFilename}`);
+      const safeFilename = sanitizeMultipartFilename(url.originalFilename);
+      if (!safeFilename) {
+        throw new AppError({
+          code: 400,
+          message: "Not a valid multipart file name",
+          status: httpStatusCodes.HTTP_BAD_REQUEST,
+        });
+      }
+
+      const generatedPrefix = `${path.basename(url.filepath)}_${Date.now()}`;
+      const safeTargetFile = path.join(path.dirname(url.filepath), `${generatedPrefix}_${safeFilename}`);
+
+      fs.copyFileSync(url.filepath, safeTargetFile);
+      logger.info(`Received file ${safeFilename}`);
       auxFile = url.filepath;
-      file = `${url.filepath}_${url.originalFilename}`;
-      fileName = url.originalFilename;
+      file = safeTargetFile;
+      fileName = safeFilename;
     } else {
       fileName = url.split("/").pop().split("?").shift();
       file = path.join(folderPath, fileName);

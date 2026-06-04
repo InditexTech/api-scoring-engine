@@ -5,6 +5,7 @@
 const { configValue } = require("../config/config");
 const { formatProtolint } = require("../format/protolintFormatter");
 const path = require("path");
+const { execFile } = require("child_process");
 const { getAppLogger } = require("../log");
 
 const logger = getAppLogger();
@@ -15,10 +16,15 @@ const evaluateProtoLint = async (files, customFlags) => {
   const protolintPluginBin = path.join(process.cwd(), configValue("cerws.lint.grpc.protolint-custom-rules-bin-path"));
 
   const customFlagsFormatted = formatFlags(customFlags);
-
-  const rawData = await execShellCommand(
-    `${protolintBin} -plugin  ${protolintPluginBin} ${customFlagsFormatted} -config_dir_path=${configDirectory} --reporter=json ${files}`,
-  );
+  const fileArguments = formatFileArguments(files);
+  const rawData = await execProtolint(protolintBin, [
+    "-plugin",
+    protolintPluginBin,
+    ...customFlagsFormatted,
+    `-config_dir_path=${configDirectory}`,
+    "--reporter=json",
+    ...fileArguments,
+  ]);
 
   let data;
   try {
@@ -40,15 +46,26 @@ const evaluateProtoLint = async (files, customFlags) => {
 };
 
 const formatFlags = (customFlags) => {
+  if (!(customFlags instanceof Map)) {
+    return [];
+  }
+
   return Array.from(customFlags.entries())
     .map(([key, value]) => `-${key}=${value}`)
-    .join(" ");
+    .filter((flag) => flag.length > 2);
 };
 
-const execShellCommand = (cmd) => {
-  const exec = require("child_process").exec;
+const formatFileArguments = (files) => {
+  if (Array.isArray(files)) {
+    return files.map((file) => String(file));
+  }
+
+  return [String(files)];
+};
+
+const execProtolint = (binaryPath, args) => {
   return new Promise((resolve) => {
-    exec(cmd, (error, stdout, stderr) => {
+    execFile(binaryPath, args, (error, stdout, stderr) => {
       resolve(stdout ? stdout : stderr);
     });
   });
