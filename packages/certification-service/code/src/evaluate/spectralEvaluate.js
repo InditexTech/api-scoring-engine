@@ -2,6 +2,29 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+const jsonpathPlus = require("jsonpath-plus");
+
+if (!jsonpathPlus.__apicertHardened) {
+  const originalJSONPath = jsonpathPlus.JSONPath;
+  jsonpathPlus.JSONPath = (options, ...rest) => {
+    if (options !== null && typeof options === "object") {
+      return originalJSONPath(
+        {
+          ...options,
+          // Force-disable script evaluation for untrusted rule/document input.
+          preventEval: true,
+          sandbox: {},
+        },
+        ...rest,
+      );
+    }
+
+    return originalJSONPath(options, ...rest);
+  };
+
+  jsonpathPlus.__apicertHardened = true;
+}
+
 const { Spectral, Document } = require("@stoplight/spectral-core");
 const Parsers = require("@stoplight/spectral-parsers");
 const { fetch } = require("@stoplight/spectral-runtime");
