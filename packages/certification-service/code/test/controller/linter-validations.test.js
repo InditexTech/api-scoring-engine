@@ -283,5 +283,22 @@ describe("Linter Validations", () => {
       });
       expect(true).toBeDefined();
     });
+
+    test("validate multipart file with malicious name should throw error", () => {
+      expect.assertions(2);
+
+      try {
+        isValidValidateFileRequest({
+          url: {
+            mimetype: "application/octet-stream",
+            originalFilename: "../api.proto",
+          },
+          apiProtocol: "GRPC",
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error).toHaveProperty("message", "Not a valid multipart file name");
+      }
+    });
   });
 });

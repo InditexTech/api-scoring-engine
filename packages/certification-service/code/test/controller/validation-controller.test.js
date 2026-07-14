@@ -369,6 +369,34 @@ describe("Tests Validation Controller", () => {
     expect(ctx.status).toBe(200);
   });
 
+  test("validate grpc file KO with malicious filename", async () => {
+    const tmpFile = path.join(os.tmpdir(), uuid());
+    fs.copyFileSync(`${__dirname}/../data/product_service.proto`, tmpFile);
+    const ctx = {
+      request: {
+        files: {
+          file: {
+            filepath: tmpFile,
+            originalFilename: "../product_service.proto",
+            mimetype: "application/octet-stream",
+          },
+        },
+        body: {
+          apiProtocol: "GRPC",
+        },
+      },
+      response: {},
+      state: {},
+    };
+    let next = jest.fn();
+    try {
+      await validationController.validateFile(ctx, next);
+    } catch (e) {
+      expect(e.status).toBe(400);
+      expect(e.message).toBe("Not a valid multipart file name");
+    }
+  });
+
   test("validate local file KO, no protocol", async () => {
     const tmpFile = path.join(os.tmpdir(), Date.now() + "-file.yaml");
     fs.copyFileSync(`${__dirname}/../data/openapi-rest2.yml`, tmpFile);

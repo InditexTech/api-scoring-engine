@@ -6,6 +6,7 @@ const fs = require("fs");
 const fse = require("fs-extra");
 const axios = require("axios");
 const https = require("https");
+const path = require("path");
 const extractZip = require("extract-zip");
 const { configValue } = require("../config/config");
 
@@ -69,11 +70,15 @@ const downloadRepository = (url, targetFile) => {
 
 const extractFiles = async (sourceFile, targetFolder) => {
   logger.info(`Extracting file ${sourceFile} to ${targetFolder}`);
-  let totalSize,
-    fileCount = 0;
+  let totalSize = 0;
+  let fileCount = 0;
   return extractZip(sourceFile, {
     dir: targetFolder,
     onEntry: function (entry, zipfile) {
+      if (!isZipEntryPathSafe(entry.fileName, targetFolder)) {
+        throw new AppError({ code: 400, message: "Invalid zip entry path" });
+      }
+
       fileCount++;
       if (fileCount > MAX_ZIP_FILES) {
         throw new AppError({ code: 400, message: "Reached max. number of files" });
@@ -95,6 +100,17 @@ const extractFiles = async (sourceFile, targetFolder) => {
       }
     },
   });
+};
+
+const isZipEntryPathSafe = (entryName, targetFolder) => {
+  if (!entryName || typeof entryName !== "string") {
+    return false;
+  }
+
+  const absoluteTargetFolder = path.resolve(targetFolder);
+  const absoluteEntryPath = path.resolve(targetFolder, entryName);
+
+  return absoluteEntryPath === absoluteTargetFolder || absoluteEntryPath.startsWith(`${absoluteTargetFolder}${path.sep}`);
 };
 
 const downloadFile = async (url, targetFile) => {
@@ -133,4 +149,5 @@ module.exports = {
   includeCommitInRepositoryUrl,
   moveFiles,
   deleteFiles,
+  isZipEntryPathSafe,
 };

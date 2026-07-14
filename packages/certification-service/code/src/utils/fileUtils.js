@@ -11,6 +11,7 @@ const GRAPHQL_FILE_EXTENSIONS = configValue("cerws.certification.protocol.GRAPHQ
   "graphqls",
   "gql",
 ]);
+const SAFE_MULTIPART_FILENAME_REGEX = /^[A-Za-z0-9._-]+$/;
 
 const checkFileExists = async (filePath) => {
   return fs.promises
@@ -37,4 +38,34 @@ const isGraphqlFileExtension = (file) => {
   return GRAPHQL_FILE_EXTENSIONS.includes(ext.substring(1, ext.length));
 };
 
-module.exports = { checkFileExists, isGraphqlFileExtension };
+const hasSafeMultipartFilename = (fileName) => {
+  if (!fileName || typeof fileName !== "string") {
+    return false;
+  }
+
+  const trimmedFileName = fileName.trim();
+  if (!trimmedFileName) {
+    return false;
+  }
+
+  const normalizedFileName = path.basename(trimmedFileName);
+  if (normalizedFileName !== trimmedFileName) {
+    return false;
+  }
+
+  if (normalizedFileName.includes("..")) {
+    return false;
+  }
+
+  return SAFE_MULTIPART_FILENAME_REGEX.test(normalizedFileName);
+};
+
+const sanitizeMultipartFilename = (fileName) => {
+  if (!hasSafeMultipartFilename(fileName)) {
+    return null;
+  }
+
+  return fileName.trim();
+};
+
+module.exports = { checkFileExists, isGraphqlFileExtension, hasSafeMultipartFilename, sanitizeMultipartFilename };

@@ -12,7 +12,7 @@ const {
   VALIDATION_TYPE_SECURITY,
   VALIDATION_TYPE_OVERALL_SCORE,
 } = require("../verify/types");
-const { isGraphqlFileExtension } = require("../utils/fileUtils");
+const { isGraphqlFileExtension, hasSafeMultipartFilename } = require("../utils/fileUtils");
 
 const VALIDATION_TYPES = [
   VALIDATION_TYPE_DESIGN,
@@ -49,12 +49,20 @@ const isValidValidateFileRequest = ({ url, apiProtocol }) => {
     ) {
       throwAppError(configValue("cerws.validation.file.url.message"));
     }
-  } else if (
-    url.mimetype !== "application/json" &&
-    url.mimetype !== "text/yaml" &&
-    !(url.originalFilename.endsWith(".proto") || isGraphqlFileExtension(url.originalFilename))
-  ) {
-    throwAppError("Not a valid multipart file");
+  } else {
+    const isValidMultipartType =
+      url.mimetype === "application/json" ||
+      url.mimetype === "text/yaml" ||
+      url.originalFilename?.endsWith(".proto") ||
+      isGraphqlFileExtension(url.originalFilename);
+
+    if (!isValidMultipartType) {
+      throwAppError("Not a valid multipart file");
+    }
+
+    if (!hasSafeMultipartFilename(url.originalFilename)) {
+      throwAppError("Not a valid multipart file name");
+    }
   }
 
   if (!apiProtocol) {

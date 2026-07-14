@@ -32,10 +32,14 @@ const protolintFormatted = {
 };
 
 describe("Tests Protolint Evaluation", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("Protolint on file with rule violations must return results with violations", async () => {
     const filePath = path.join(__dirname, "../data/bad.proto");
 
-    cp.exec.mockImplementation((command, callback) => callback(null, protolintSampleOutput));
+    cp.execFile.mockImplementation((command, args, callback) => callback(null, protolintSampleOutput));
 
     const evaluationResult = await protolintEvaluate([filePath], new Map());
 
@@ -46,11 +50,22 @@ describe("Tests Protolint Evaluation", () => {
 
   test("Should return PROTOLINT_FAILED when failed Protolint", async () => {
     const filePath = path.join(__dirname, "../data/bad.proto");
-    cp.exec.mockImplementation((command, callback) =>
+    cp.execFile.mockImplementation((command, args, callback) =>
       callback(null, 'Protolint output failed client.Client(), err=exec: "sh": executable file not found in %PATH%'),
     );
     const evaluationResult = await protolintEvaluate([filePath], new Map());
     expect(evaluationResult).toHaveLength(1);
     expect(evaluationResult[0].rule).toBe("PROTOLINT_FAILED");
+  });
+
+  test("Should pass malicious-looking file name as plain argument", async () => {
+    const filePath = "bad.proto;touch_/tmp/pwned";
+    cp.execFile.mockImplementation((command, args, callback) => callback(null, protolintSampleOutput));
+
+    await protolintEvaluate(filePath, new Map());
+
+    expect(cp.execFile).toHaveBeenCalledTimes(1);
+    const [, args] = cp.execFile.mock.calls[0];
+    expect(args).toContain(filePath);
   });
 });

@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const { isGraphqlFileExtension } = require("../../src/utils/fileUtils");
+const {
+  isGraphqlFileExtension,
+  hasSafeMultipartFilename,
+  sanitizeMultipartFilename,
+} = require("../../src/utils/fileUtils");
 
 describe("FileUtils tests", () => {
   describe("isGraphqlFileExtension", () => {
@@ -29,6 +33,19 @@ describe("FileUtils tests", () => {
 
     test("should return false for non-GraphQL file in URL", () => {
       expect(isGraphqlFileExtension("https://example.com/file.txt")).toBe(false);
+    });
+  });
+
+  describe("multipart filename validation", () => {
+    test("should accept a safe multipart file name", () => {
+      expect(hasSafeMultipartFilename("openapi-rest2.yml")).toBe(true);
+      expect(sanitizeMultipartFilename("openapi-rest2.yml")).toBe("openapi-rest2.yml");
+    });
+
+    test("should reject traversal and shell meta characters", () => {
+      expect(hasSafeMultipartFilename("../evil.proto")).toBe(false);
+      expect(hasSafeMultipartFilename("evil.proto;touch_/tmp/pwned")).toBe(false);
+      expect(sanitizeMultipartFilename("../evil.proto")).toBeNull();
     });
   });
 });
